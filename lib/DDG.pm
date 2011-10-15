@@ -3,5 +3,12 @@ package DDG;
 
 use strict;
 use warnings;
+use File::ShareDir::ProjectDistDir;
+
+use Exporter 'import';
+
+our @EXPORT = qw( templates_dir );
+
+sub templates_dir { File::Spec->rel2abs( File::Spec->catfile(dist_dir('DDG'), 'templates') ) }
 
 1;
