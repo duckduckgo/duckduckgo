@@ -7,7 +7,7 @@ use 5.010;
 
 use FindBin qw($Bin);
 
-use Locale::gettext_xs qw(:locale_h :libintl_h);
+use Locale::gettext_pp qw(:locale_h :libintl_h);
 
 say $Bin.'/data/locale';
 
