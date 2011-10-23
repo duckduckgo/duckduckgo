@@ -1,43 +1,63 @@
 package DDG::Util::Translate;
+# ABSTRACT: Functions for translate text based on gettext data
 
 use strict;
 use warnings;
 
 use Exporter 'import';
+use Locale::gettext_pp qw(:locale_h :libintl_h);
 
-our @EXPORT = qw( l l_set_locales l_add_context l_set_context );
+our @EXPORT = qw(
+	
+	l_dir
+	l_lang
 
-use Data::Localize;
-use IO::All;
+	l
+	ln
+	lp
+	lnp
+	ld
+	ldn
+	ldp
+	ldnp
+	
+	ltd
 
-my %cons;
-my @locales;
-my $current;
+);
 
-sub l { $current->localize(@_) }
+my %tds;
+my $dir;
 
-sub l_add_context {
-	my $contextname = shift;
-	my $contextdir = shift;
-	die "[DDG::Util::Translate] need contextname and contextdir" unless $contextname && $contextdir;
-	$cons{$contextname} = Data::Localize->new();
-	$cons{$contextname}->add_localizer(
-		class => 'Gettext',
-		path => $contextdir.'/*.po',
-	);
-	$cons{$contextname}->set_languages(@locales);
+sub l_dir { $dir = shift }
+
+sub l_lang {
+	my $primary = shift;
+	$ENV{LANG} = $primary;
+	$ENV{LANGUAGE} = $primary;
+	$ENV{LC_ALL} = $primary;
 }
 
-sub l_set_locales {
-	@locales = @_;
-	$_->set_languages(@locales) for (values %cons);
+sub l { sprintf(gettext(shift),@_) }
+sub ln { ldnp('',undef,@_) }
+sub lp { sprintf(pgettext(shift,shift),@_) }
+sub lnp { ldnp('',@_) }
+sub ld { sprintf(dgettext(shift,shift),@_) }
+sub ldn { ldnp(shift,undef,@_) }
+sub ldp { sprintf(dpgettext(shift,shift,shift),@_) }
+sub ldnp {
+	my ($td, $ctxt, $id, $idp, $n) = (shift,shift,shift,shift,shift);
+	sprintf(dnpgettext($td, $ctxt, $id, $idp, $n),$n,@_)
 }
 
-sub l_set_context {
-	my $contextname = shift;
-	die "[DDG::Util::Translate] need contextname" unless $contextname;
-	die "[DDG::Util::Translate] requested context ".$contextname." is not loaded" unless defined $cons{$contextname};
-	$current = $cons{$contextname};
+sub ltd {
+	die "please set a locale directory with l_dir() before using other translate functions" unless $dir;
+	my $td = shift;
+	unless (defined $tds{$td}) {
+		bindtextdomain($td,$dir);
+		bind_textdomain_codeset($td,'utf-8');
+		$tds{$td} = 1;
+	}
+	textdomain($td);
 }
 
 1;

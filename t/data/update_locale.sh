@@ -2,8 +2,10 @@
 
 BASE=$(dirname $0)
 
-msgfmt -o $BASE/locale/de_DE/LC_MESSAGES/test.mo $BASE/locale/de_DE/LC_MESSAGES/test.po
-echo -n "locale_data['test'] = " >$BASE/locale/de_DE/LC_MESSAGES/test.json
-$BASE/../../share/gettextjs/po2json $BASE/locale/de_DE/LC_MESSAGES/test.po >>$BASE/locale/de_DE/LC_MESSAGES/test.json
-echo ";" >>$BASE/locale/de_DE/LC_MESSAGES/test.json
-
+for domain in test othertest
+do
+	msgfmt -o $BASE/locale/de_DE/LC_MESSAGES/$domain.mo $BASE/locale/de_DE/LC_MESSAGES/$domain.po
+	echo -n "locale_data['$domain'] = " >$BASE/locale/de_DE/LC_MESSAGES/$domain.json
+	$BASE/../../share/js/gettext/po2json $BASE/locale/de_DE/LC_MESSAGES/$domain.po >>$BASE/locale/de_DE/LC_MESSAGES/$domain.json
+	echo ";" >>$BASE/locale/de_DE/LC_MESSAGES/$domain.json
+done

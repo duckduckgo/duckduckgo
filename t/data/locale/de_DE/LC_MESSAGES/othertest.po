@@ -13,16 +13,14 @@ msgstr ""
 
 msgid "You have %d message"
 msgid_plural "You have %d messages"
-msgstr[0] "Du hast %d Nachricht"
-msgstr[1] "Du hast %d Nachrichten"
-
-msgid "You have %d message of %s"
-msgid_plural "You have %d messages of %s"
-msgstr[0] "Du hast %d Nachricht von %s"
-msgstr[1] "Du hast %d Nachrichten von %s"
+msgstr[0] "Du hast %d AndereNachricht"
+msgstr[1] "Du hast %d AndereNachrichten"
 
 msgid "Hello"
-msgstr "Hallo"
+msgstr "Anderes Hallo"
 
 msgid "Change order test %s %s"
-msgstr "Andere Reihenfolge hier %2$s %1$s"
+msgstr "Ganz andere Reihenfolge hier %2$s %1$s"
+
+msgid "Other"
+msgstr "Anderes"
