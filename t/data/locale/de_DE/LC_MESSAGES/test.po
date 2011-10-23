@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: DuckDuckGo-Translation-0.001\n"
+"Project-Id-Version: DuckDuckGo-Translation-0.000\n"
 "Last-Translator: Community\n"
 "Language-Team: DuckDuckGo Community <community@duckduckgo.com>\n"
 "POT-Creation-Date: 2009-06-14 09:29-0400\n"
@@ -18,3 +18,6 @@ msgstr[1] "Du hast %d Nachrichten"
 
 msgid "Hello"
 msgstr "Hallo"
+
+msgid "Change order test %s %s"
+msgstr "Andere Reihenfolge hier %2$s %1$s"

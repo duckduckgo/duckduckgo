@@ -1,14 +1,32 @@
 <html>
 	<head>
+		<script language="javascript"> var locale_data = {}; </script>
 		<script language="javascript" src="locale/de_DE/LC_MESSAGES/test.json"></script>
-		<script language="javascript" src="../../share/gettextjs/Gettext.js"></script>
+		<script language="javascript" src="../../share/js/gettext/Gettext.js"></script>
+		<script language="javascript" src="../../share/js/sprintf.js"></script>
 		<script language="javascript">
-			var gt = new Gettext({ domain : 'test', locale_data : my_locale_data});
-			console.debug(gt.gettext("Hello"));
-			console.debug(gt.ngettext("You have %d message","You have %d messages",4));
+
+			function add_t(text) {
+				var newdiv = document.createElement('div');
+				var tn = document.createTextNode(text);
+				newdiv.appendChild(tn);
+				document.getElementById("t").appendChild(newdiv);
+			}		
+
+			window.onload = function() {
+		
+				var gt = new Gettext({ 'domain' : 'test', 'locale_data' : locale_data });
+
+				add_t(gt.gettext("Hello"));
+				add_t(sprintf(gt.ngettext("You have %d message","You have %d messages",4),4));
+				add_t(sprintf(gt.gettext("Change order test %s %s"),1,2));
+				
+			}
+
 		</script>
 	</head>
 	<body>
-		<h1>Test</h1>
+		<h1>Gettext.js Translation Test</h1>
+		<div id="t"></div>
 	</body>
 </html>
