@@ -1,0 +1,14 @@
+<html>
+	<head>
+		<script language="javascript" src="locale/de_DE/LC_MESSAGES/test.json"></script>
+		<script language="javascript" src="../../share/gettextjs/Gettext.js"></script>
+		<script language="javascript">
+			var gt = new Gettext({ domain : 'test', locale_data : my_locale_data});
+			console.debug(gt.gettext("Hello"));
+			console.debug(gt.ngettext("You have %d message","You have %d messages",4));
+		</script>
+	</head>
+	<body>
+		<h1>Test</h1>
+	</body>
+</html>
