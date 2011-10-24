@@ -69,7 +69,7 @@ var ddg_translate = {
 			// var loc_url = this.dir+'/'+this.lang+'/LC_MESSAGES/'+textdomain+'.json';
 			this.tds[textdomain] = new Gettext({
 				'domain': textdomain,
-				'locale_data': locale_data,
+				'locale_data': locale_data
 			});
 		}
 		this.curr = this.tds[textdomain];
