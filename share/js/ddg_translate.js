@@ -23,22 +23,21 @@ var ddg_translate = {
 	curr: null,
 	lang: null,
 	dir: null,
+	dry: 0,
+	nowrite: 0,
 
 	tds: {},
-	
-	l: function(){
-		console.debug(this.argarr(arguments));
-		var A = this.argarr(arguments);
-		var msgid = A.shift();
-		console.debug(msgid);
-		console.debug(A);
-	},
 	
 	l_dir: function(dir) {
 		if (this.dir != null) {
 			throw "ddg_translate.js: can't switch dir";
 		}
 		this.dir = dir;
+	},
+
+	l_dry: function(dry,nowrite) {
+		this.dry = dry;
+		this.nowrite = nowrite;
 	},
 
 	l_lang: function(lang) {
@@ -76,9 +75,33 @@ var ddg_translate = {
 		return textdomain;
 	},
 	
+	wd: function(td,msgctxt,msgid,msgid_plural) {
+		if (typeof console != 'object') {
+			return;
+		}
+		if (typeof console.debug != 'function') {
+			return;
+		}
+		if (td) { console.debug('# domain: '+td) }
+		if (msgctxt) { console.debug('msgctxt "'+msgctxt+'"') }
+		if (msgid) { console.debug('msgid "'+msgid+'"') }
+		if (msgid_plural) { console.debug('msgid_plural "'+msgid_plural+'"') }
+		console.debug('');
+	},
+	
 	l: function() {
 		var A = this.argarr(arguments);
-		A.unshift(this.curr.gettext(A.shift()));
+		var id = A.shift();
+		var gt;
+		if (this.dry) {
+			gt = id;
+			if (!this.nowrite) {
+				this.wd(null,null,id,null);
+			}
+		} else {
+			gt = this.curr.gettext(id);
+		}
+		A.unshift(gt);
 		return sprintf.apply(null,A);
 	},
 
@@ -87,7 +110,19 @@ var ddg_translate = {
 		var id = A.shift();
 		var idp = A.shift();
 		var n = A.shift();
-		var gt = this.curr.ngettext(id,idp,n);
+		var gt;
+		if (this.dry) {
+			if (n != 1) {
+				gt = idp;
+			} else {
+				gt = id;
+			}
+			if (!this.nowrite) {
+				this.wd(null,null,id,idp);
+			}
+		} else {
+			gt = this.curr.ngettext(id,idp,n);
+		}
 		A.unshift(n);
 		A.unshift(gt);
 		return sprintf.apply(null,A);
@@ -97,19 +132,38 @@ var ddg_translate = {
 		var A = this.argarr(arguments);
 		var ctxt = A.shift();
 		var id = A.shift();
-		var gt = this.curr.pgettext(ctxt,id);
+		var gt;
+		if (this.dry) {
+			gt = id;
+			if (!this.nowrite) {
+				this.wd(null,ctxt,id,null);
+			}
+		} else {
+			gt = this.curr.pgettext(ctxt,id);
+		}
 		A.unshift(gt);
 		return sprintf.apply(null,A);
 	},
 
 	lnp: function() {
 		var A = this.argarr(arguments);
-		var td = A.shift();
 		var ctxt = A.shift();
 		var id = A.shift();
 		var idp = A.shift();
 		var n = A.shift();
-		var gt = this.curr.npgettext(ctxt,id,idp,n);
+		var gt;
+		if (this.dry) {
+			if (n != 1) {
+				gt = idp;
+			} else {
+				gt = id;
+			}
+			if (!this.nowrite) {
+				this.wd(null,ctxt,id,idp);
+			}
+		} else {
+			gt = this.curr.npgettext(ctxt,id,idp,n);
+		}
 		A.unshift(n);
 		A.unshift(gt);
 		return sprintf.apply(null,A);
@@ -119,7 +173,16 @@ var ddg_translate = {
 		var A = this.argarr(arguments);
 		var td = A.shift();
 		var id = A.shift();
-		A.unshift(this.curr.dgettext(td,id));
+		var gt;
+		if (this.dry) {
+			gt = id;
+			if (!this.nowrite) {
+				this.wd(td,null,id,null);
+			}
+		} else {
+			gt = this.curr.dgettext(td,id);
+		}
+		A.unshift(gt);
 		return sprintf.apply(null,A);
 	},
 
@@ -129,7 +192,19 @@ var ddg_translate = {
 		var id = A.shift();
 		var idp = A.shift();
 		var n = A.shift();
-		var gt = this.curr.dngettext(td,id,idp,n);
+		var gt;
+		if (this.dry) {
+			if (n != 1) {
+				gt = idp;
+			} else {
+				gt = id;
+			}
+			if (!this.nowrite) {
+				this.wd(td,null,id,idp);
+			}
+		} else {
+			gt = this.curr.dngettext(td,id,idp,n);
+		}
 		A.unshift(n);
 		A.unshift(gt);
 		return sprintf.apply(null,A);
@@ -140,7 +215,15 @@ var ddg_translate = {
 		var td = A.shift();
 		var ctxt = A.shift();
 		var id = A.shift();
-		var gt = this.curr.dpgettext(td,ctxt,id);
+		var gt;
+		if (this.dry) {
+			gt = id;
+			if (!this.nowrite) {
+				this.wd(td,ctxt,id,null);
+			}
+		} else {
+			gt = this.curr.dpgettext(td,ctxt,id);
+		}
 		A.unshift(gt);
 		return sprintf.apply(null,A);
 	},
@@ -152,7 +235,19 @@ var ddg_translate = {
 		var id = A.shift();
 		var idp = A.shift();
 		var n = A.shift();
-		var gt = this.curr.dnpgettext(td,ctxt,id,idp,n);
+		var gt;
+		if (this.dry) {
+			if (n != 1) {
+				gt = idp;
+			} else {
+				gt = id;
+			}
+			if (!this.nowrite) {
+				this.wd(td,ctxt,id,idp);
+			}
+		} else {
+			gt = this.curr.dnpgettext(td,ctxt,id,idp,n);
+		}
 		A.unshift(n);
 		A.unshift(gt);
 		return sprintf.apply(null,A);
@@ -168,6 +263,7 @@ var ddg_translate = {
 	
 };
 
+function l_dry() { return ddg_translate.l_dry.apply(ddg_translate,arguments) }
 function l_dir() { return ddg_translate.l_dir.apply(ddg_translate,arguments) }
 function l_lang() { return ddg_translate.l_lang.apply(ddg_translate,arguments) }
 function ltd() { return ddg_translate.ltd.apply(ddg_translate,arguments) }

@@ -1,0 +1,34 @@
+<html>
+	<head>
+		<script language="javascript" src="../../share/js/sprintf.js"></script>
+		<script language="javascript" src="../../share/js/gettext/Gettext.js"></script>
+		<script language="javascript" src="../../share/js/ddg_translate.js"></script>
+		<script language="javascript">
+
+			function add_t(text) {
+				var newdiv = document.createElement('div');
+				var tn = document.createTextNode(text);
+				newdiv.appendChild(tn);
+				document.getElementById("t").appendChild(newdiv);
+			}		
+
+			window.onload = function() {
+
+				l_dry(1);
+
+				add_t(l("Hello"));
+				add_t(ln("You have %d message","You have %d messages",4));
+				add_t(ln("You have %d message","You have %d messages",1));
+				add_t(ln("You have %d message of %s","You have %d messages of %s",4,'harry'));
+				add_t(ln("You have %d message of %s","You have %d messages of %s",1,'harry'));
+				add_t(l("Mulitply args test %s %s",1,2));
+				
+			}
+
+		</script>
+	</head>
+	<body>
+		<h1>ddg_translate.js Translation Dryrun Test</h1>
+		<div id="t"></div>
+	</body>
+</html>
