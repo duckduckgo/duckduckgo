@@ -7,10 +7,13 @@ use warnings;
 use Exporter 'import';
 use Locale::gettext_pp qw(:locale_h :libintl_h);
 
+use IO::All -utf8;
+
 our @EXPORT = qw(
 	
 	l_dir
 	l_lang
+	l_dry
 
 	l
 	ln
@@ -25,6 +28,9 @@ our @EXPORT = qw(
 
 );
 
+my $dry;
+my $nowrite;
+
 my %tds;
 my $dir;
 
@@ -37,16 +43,43 @@ sub l_lang {
 	$ENV{LC_ALL} = $primary;
 }
 
-sub l { sprintf(gettext(shift),@_) }
-sub ln { ldnp('',undef,@_) }
-sub lp { sprintf(pgettext(shift,shift),@_) }
-sub lnp { ldnp('',@_) }
-sub ld { sprintf(dgettext(shift,shift),@_) }
-sub ldn { ldnp(shift,undef,@_) }
-sub ldp { sprintf(dpgettext(shift,shift,shift),@_) }
+sub l_dry { $dry = shift, $nowrite = shift }
+
+# write dry
+sub wd { io($dry)->append(join("\n",@_)."\n\n") if !$nowrite }
+
+# l(msgid,...)
+sub l { return ldnp('',undef,shift,undef,undef,@_) }
+# ln(msgid,msgid_plural,count,...)
+sub ln { return ldnp('',undef,@_) }
+# lp(msgctxt,msgid,...)
+sub lp { return ldnp('',shift,shift,undef,undef,@_) }
+# lnp(msgctxt,msgid,msgid_plural,count,...)
+sub lnp { return ldnp('',shift,shift,shift,shift,@_) }
+# ld(domain,msgid,...)
+sub ld { return ldnp(shift,undef,shift,undef,undef,@_) }
+# ldn(domain,msgid,msgid_plural,count,...)
+sub ldn { return ldnp(shift,undef,shift,shift,shift,@_) }
+# ldp(domain,msgctxt,msgid,...)
+sub ldp { return ldnp(shift,shift,shift,undef,undef,@_) }
+# ldnp(domain,msgctxt,msgid,msgid_plural,count,...)
 sub ldnp {
 	my ($td, $ctxt, $id, $idp, $n) = (shift,shift,shift,shift,shift);
-	sprintf(dnpgettext($td, $ctxt, $id, $idp, $n),$n,@_)
+	my @args = @_;
+	unshift @args, $n if $idp;
+	if ($dry) {
+		if (!$nowrite) {
+			my @save;
+			push @save, '# domain: '.$td if $td;
+			push @save, 'msgctxt "'.$ctxt.'"' if $ctxt;
+			push @save, 'msgid "'.$id.'"';
+			push @save, 'msgid_plural "'.$idp.'"' if $idp;
+			wd(@save);
+		}
+		return sprintf($idp && $n != 1 ? $idp : $id, @args);
+	} else {
+		return sprintf(dnpgettext($td, $ctxt, $id, $idp, $n),@args);
+	}
 }
 
 sub ltd {
