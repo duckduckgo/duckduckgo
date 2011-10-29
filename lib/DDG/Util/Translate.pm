@@ -34,6 +34,17 @@ my $nowrite;
 my %tds;
 my $dir;
 
+sub coderef_hash {{
+	l => sub { l(@_) },
+	ln => sub { ln(@_) },
+	lp => sub { lp(@_) },
+	lnp => sub { lnp(@_) },
+	ld => sub { ld(@_) },
+	ldn => sub { ldn(@_) },
+	ldp => sub { ldp(@_) },
+	ldnp => sub { ldnp(@_) },
+}}
+
 sub l_dir { $dir = shift }
 
 sub l_lang {
