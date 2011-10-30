@@ -14,8 +14,7 @@ my $site = DDGTestSite->new( test_template_dir => "$Bin/templates/testsite" );
 isa_ok($site,'DDGTestSite');
 
 my %files = $site->files;
-
-is_deeply(\%files,{
+my $stash = {
           'test.en_US.html' => '<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,6 +55,8 @@ b::b
 b::b
 </body>
 </html>'
-},'generate testsite');
+};
+
+is_deeply( \%files, $stash ,'generate testsite');
 
 done_testing;
