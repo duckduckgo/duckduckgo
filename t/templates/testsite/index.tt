@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Index<@ a @></title>
+</head>
+<body id="index" class="home">
+<@ b @>:<@ c @>:<@ d @>
+</body>
+</html>
