@@ -3,6 +3,8 @@ package DDG::App::GenerateStatic;
 use Moose;
 extends 'DDG::App';
 
+use Text::Zilla::Dir::FromHash;
+
 has targetdir => (
 	isa => 'Str',
 	is => 'ro',
@@ -52,6 +54,18 @@ has site => (
 sub BUILD {
 	my ( $self ) = @_;
 	$self->error($self->target." is not writeable") unless -w $self->target;
+	my $class = "DDG::Site::".$self->site;
+    my $error;
+    {
+        local $@;
+        my $file = $class . '.pm';
+        $file =~ s{::}{/}g;
+        eval { CORE::require($file) };
+        $error = $@;
+    }
+	die $error if $error;
+	my $site = $class->new;
+	Text::Zilla::Dir::FromHash->new($site->files)->tzil_to($self->target);
 }
 
 1;

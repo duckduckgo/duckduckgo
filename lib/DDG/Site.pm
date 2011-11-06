@@ -4,6 +4,7 @@ use Moose;
 use Template;
 use File::Spec;
 use File::ShareDir::ProjectDistDir;
+use DDG::Util::Translate;
 
 sub key { die "please overwrite key" }
 sub locales { die "please overwrite locales" }
@@ -37,22 +38,54 @@ has statics => (
 	isa => 'HashRef',
 	lazy_build => 1,
 );
-sub _build_statics {}
+sub _build_statics {{}}
+
+has locale_urls => (
+	is => 'ro',
+	isa => 'HashRef',
+	lazy_build => 1,
+);
+sub _build_locale_urls {{}}
+
+sub locale_url {
+	my ( $self, $basename, $locale ) = @_;
+	defined $self->locale_urls->{$basename}->{$locale} ?
+	$self->locale_urls->{$basename}->{$locale} :
+	$basename.$self->suffix;
+}
+
+has suffix => (
+	is => 'ro',
+	isa => 'Str',
+	lazy_build => 1,
+);
+sub _build_suffix { '.html' }
 
 sub get_locale_statics {
-	my ( $self, $basename, $suffix, $template, $stash ) = @_;
-	my %s;
+	my ( $self, $basename, $template, $stash ) = @_;
+	$self->locale_urls->{$basename} = {};
 	for ($self->locales) {
-		my $filename = $basename.'.'.$_.'.'.$suffix;
-		$s{$filename} = {
+		if ($_ eq $self->default_locale) {
+			$self->locale_urls->{$basename}->{$_} = $basename.$self->suffix;
+		} else {
+			$self->locale_urls->{$basename}->{$_} = $basename.'.'.$_.$self->suffix;
+		}
+	}
+	my %statics;
+	for ($self->locales) {
+		my $filename = $self->locale_url($basename,$_);
+		$statics{$filename} = {
 			template => $template,
 			stash => {
 				%$stash,
+				site => $self,
+				basename => $basename,
+				filename => $filename,
 				locale => $_,
 			},
-		}
+		};
 	}
-	return %s;
+	return %statics;
 }
 
 sub files {
@@ -63,9 +96,12 @@ sub files {
 		my $config = $self->statics->{$_};
 		my $template = delete $config->{template};
 		my $stash = delete $config->{stash};
+		use DDP;
+		p($template);
+		p($stash);
 		$f{$filename} = $self->generate($template,$stash);
 	}
-	return %f;
+	return \%f;
 }
 
 sub generate {
@@ -76,7 +112,9 @@ sub generate {
 			$stash->{$_} = $self->default_stash->{$_} unless defined $stash->{$_};
 		}
 	}
-	$self->tt->process($template, $stash, \$content) || die $self->tt->error(), "\n";
+	$stash->{$_} = DDG::Util::Translate->coderef_hash->{$_} for (keys %{DDG::Util::Translate->coderef_hash});
+	$stash->{u} = sub { $self->locale_url(@_) };
+	$self->tt->process($template.".tt", $stash, \$content) || die $self->tt->error(), "\n";
 	return $content;
 }
 

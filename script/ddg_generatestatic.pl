@@ -5,6 +5,6 @@ use warnings;
 use FindBin;
 use lib $FindBin::Dir . "/../lib";
 
-use DDGC::App::GenerateStatic;
+use DDG::App::GenerateStatic;
 
-DDGC::App::GenerateStatic->new_with_options();
+DDG::App::GenerateStatic->new_with_options();
