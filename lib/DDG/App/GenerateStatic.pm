@@ -25,6 +25,13 @@ sub _build__target {
 	return File::Spec->rel2abs($self->targetdir);
 }
 
+has packed => (
+	is => 'ro',
+	isa => 'Bool',
+	lazy_build => 1,
+);
+sub _build_packed { 1 }
+
 has podir => (
 	isa => 'Str',
 	is => 'ro',
@@ -64,7 +71,7 @@ sub BUILD {
         $error = $@;
     }
 	die $error if $error;
-	my $site = $class->new;
+	my $site = $class->new( packed => $self->packed );
 	Text::Zilla::Dir::FromHash->new($site->files)->tzil_to($self->target);
 }
 

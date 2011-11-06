@@ -13,6 +13,7 @@ sub _build_statics {
 	my ( $self ) = @_;
 	my $return = {
 		$self->get_locale_statics('settings','settings',{
+			extra_head => 'head/settings.tt',
 			setting_blocks => [
 				{
 					id => 'result',
@@ -176,6 +177,9 @@ sub _build_statics {
 					],
 				},
 			],
+		}),
+		$self->get_locale_statics('index','index',{
+			extra_head => 'head/index.tt',
 		}),
 	};
 	return $return;

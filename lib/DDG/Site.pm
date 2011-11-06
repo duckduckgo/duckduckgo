@@ -5,6 +5,7 @@ use Template;
 use File::Spec;
 use File::ShareDir::ProjectDistDir;
 use DDG::Util::Translate;
+use HTML::Packer;
 
 sub key { die "please overwrite key" }
 sub locales { die "please overwrite locales" }
@@ -30,7 +31,24 @@ sub _build_tt {
 		render_die => 1,
 		START_TAG => '<@',
 		END_TAG => '@>',
+		WRAPPER => 'base.tt',
 	});
+}
+
+has packed => (
+	is => 'ro',
+	isa => 'Bool',
+	lazy_build => 1,
+);
+sub _build_packed { 1 }
+
+has packer => (
+	isa => 'HTML::Packer',
+	is => 'ro',
+	lazy_build => 1,
+);
+sub _build_packer {
+	HTML::Packer->init()
 }
 
 has statics => (
@@ -47,11 +65,22 @@ has locale_urls => (
 );
 sub _build_locale_urls {{}}
 
+sub minify {
+	my ( $self, $contentref ) = @_;
+	$self->packer->minify($contentref,{
+		remove_comments => 1,
+		remove_newlines => 1,
+		do_javascript => 'shrink',
+		do_stylesheet => 'minify',
+	});
+}
+
 sub locale_url {
 	my ( $self, $basename, $locale ) = @_;
+	defined $locale && defined $self->locale_urls->{$basename} &&
 	defined $self->locale_urls->{$basename}->{$locale} ?
 	$self->locale_urls->{$basename}->{$locale} :
-	$basename.$self->suffix;
+	$self->root.$basename.$self->suffix;
 }
 
 has suffix => (
@@ -61,19 +90,24 @@ has suffix => (
 );
 sub _build_suffix { '.html' }
 
+has root => (
+	is => 'ro',
+	isa => 'Str',
+	lazy_build => 1,
+);
+sub _build_root { '/' }
+
 sub get_locale_statics {
 	my ( $self, $basename, $template, $stash ) = @_;
 	$self->locale_urls->{$basename} = {};
-	for ($self->locales) {
-		if ($_ eq $self->default_locale) {
-			$self->locale_urls->{$basename}->{$_} = $basename.$self->suffix;
-		} else {
-			$self->locale_urls->{$basename}->{$_} = $basename.'.'.$_.$self->suffix;
-		}
-	}
 	my %statics;
 	for ($self->locales) {
-		my $filename = $self->locale_url($basename,$_);
+		my $filename = $basename.($_ eq $self->default_locale ? '' : '.'.$_ ).$self->suffix;
+		if ($basename eq 'index' and $_ eq $self->default_locale) {
+			$self->locale_urls->{$basename}->{$_} = $self->root;
+		} else {
+			$self->locale_urls->{$basename}->{$_} = $self->root.$filename;
+		}
 		$statics{$filename} = {
 			template => $template,
 			stash => {
@@ -96,10 +130,9 @@ sub files {
 		my $config = $self->statics->{$_};
 		my $template = delete $config->{template};
 		my $stash = delete $config->{stash};
-		use DDP;
-		p($template);
-		p($stash);
-		$f{$filename} = $self->generate($template,$stash);
+		my $content = $self->generate($template,$stash);
+		$self->minify(\$content) if ($self->packed);
+		$f{$filename} = $content;
 	}
 	return \%f;
 }
@@ -114,6 +147,7 @@ sub generate {
 	}
 	$stash->{$_} = DDG::Util::Translate->coderef_hash->{$_} for (keys %{DDG::Util::Translate->coderef_hash});
 	$stash->{u} = sub { $self->locale_url(@_) };
+	$stash->{root} = $self->root;
 	$self->tt->process($template.".tt", $stash, \$content) || die $self->tt->error(), "\n";
 	return $content;
 }

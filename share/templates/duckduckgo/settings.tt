@@ -1,50 +1,6 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=us-ascii" />
-
-  <title>Duck Duck Go Settings</title>
-  <link rel="stylesheet" href="/s357.css" type="text/css" />
-  <link title="DuckDuckGo" type="application/opensearchdescription+xml" rel="search"
-  href="/opensearch.xml" />
-  <link title="DuckDuckGo (SSL)" type="application/opensearchdescription+xml" rel=
-  "search" href="/opensearch_ssl.xml" />
-  <link rel="image_src" href="/nduck.v104.png" />
-  <link rel="apple-touch-icon" href="icon128.png" />
-  <style type="text/css">
-/*<![CDATA[*/
-  .ctd {
-  padding-top:15px;
-  padding-bottom:5px;
-  font-size: 85%;
-  }
-  .ctd2 {
-  padding-bottom:10px;
-  font-size: 75%;
-  }
-  .ctd3 {
-  padding-top:15px;
-  }
-  /*]]>*/
-  </style>
-  <style type="text/css">
-/*<![CDATA[*/
-
-  /*style for the server response field*/
-    #resp { font-family:courier;margin:10px;padding:5px;border:1px solid #ccc;background:#fff;}
-  #yui-picker-panel {visibility:hidden;}
-  #container .yui-picker-controls li {
-    list-style: none;
-  }
-  /*]]>*/
-  </style>
-</head>
-
 <body class="yui-skin-sam">
   <div id="c">
-    <a href="/"><img id="d" src="nduck.v105.png" alt="Duck Duck Go" title="Duck Duck Go"
+    <a href="<@ root @>"><img id="d" src="nduck.v105.png" alt="Duck Duck Go" title="Duck Duck Go"
     style="padding-top:10px;" name="d" /></a>
 
     <div id="t" style="width: 620px; padding-left:20px; padding-top:15px;">
@@ -2132,4 +2088,3 @@ you've already done to see changes.//--></span>
     <br />
   </div>
 </body>
-</html>

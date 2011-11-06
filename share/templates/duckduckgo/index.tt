@@ -1,53 +1,58 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <link rel="canonical" href="http://duckduckgo.com/" />
-  <meta http-equiv="content-type" content="text/html; charset=us-ascii" />
-
-  <title>DuckDuckGo</title>
-  <link title="DuckDuckGo" type="application/opensearchdescription+xml" rel="search" href="/opensearch.xml" />
-  <link title="DuckDuckGo (SSL)" type="application/opensearchdescription+xml" rel="search" href="/opensearch_ssl.xml" />
-  <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
-  <meta name="HandheldFriendly" content="true" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <link rel="image_src" href="/nduck.v104.png" />
-  <link rel="alternate" type="application/rss+xml" title="RSS" href=
-  "http://feeds.feedburner.com/yegg" />
-  <link rel="apple-touch-icon" href="icon128.png" />
-  <link rel="stylesheet" href="/s357.css" type="text/css" />
-  <style type="text/css">
-/*<![CDATA[*/
-  html{overflow:hidden}a:visited{color:#1168CC}#t{padding-top:0px}#dh{background:url(/nduck.v104.png) no-repeat center top}@media only screen and (max-device-width: 701px) {#dh {background:url(/nduck.v105.mobile.png) no-repeat center top}}@media only screen and (-webkit-min-device-pixel-ratio:1.5){#dh {background:url(/nduck.v105.mobile.png) no-repeat center top}}
-  /*]]>*/
-  </style>
-  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-</head>
-
 <body>
-  <div id="nibh" class="cnib"></div>
-  <div id="niba" class="cnib"></div>
-  <div id="t">
-    <a id="dhl" href="/?q=DuckDuckGo" title="DuckDuckGo" name="dhl"></a>
-    <div id="dh">
-      DuckDuckGo
-    </div>
-    <form name="x" method="post" action="https://duckduckgo.com/html" id="hfh" onsubmit="return nbr()">
-        <div id="hfxh">
-            <input id="hfbh" tabindex="2" type="submit" value="" /><a id="hfdh" class="btn" href="javascript:;" onclick="nbc(1);" name="hfdh"></a>
-        </div>
-		<input type="text" autocomplete="off" name="q" autofocus="" tabindex="1" onclick= "if (this.value=='put search terms here') {this.value='';this.style.color='#000000';}" id="hfih" onfocus="if ('rc' in window) {nua('nro',rc)};fq=1;" onblur="fq=0" value="" />
-		<script src="/d609.js" type="text/javascript"></script>
-		<script type="text/javascript">
-//<![CDATA[
-      fq=1;ric=0;var karr = new Array('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','1','2','3','4','5','6','7','8','9','aa','ab','ac','ad','ae','af','ag','ah','ai','aj','ak','al','am','an','ao','ap','aq','ar','as','at','au','av','aw','ax','ay','az');for (var i=0;i<karr.length;i++) {var kre=new RegExp('[\?\&]k'+karr[i]+'=([^\&]+)');var ktmp='';if (kre.test(window.location.href)) {ktmp=RegExp.$1;if (ktmp.length<11) document.write('<input type="hidden" name="k'+karr[i]+'" value="'+decodeURIComponent(ktmp)+'">');eval('k'+karr[i]+'=ktmp');}if (karr[i]=='i'&&((ktmp&&ktmp==-1)||YAHOO.util.Cookie.get("i")=='-1')) {document.write('<input type="hidden" name="v" value="n">');}else if(karr[i]=='g'){if((ktmp&&ktmp=='p')||YAHOO.util.Cookie.get("g")=='p'){d.x.method='POST';}else{d.x.method='GET';}}else if(karr[i]=='h'){if(((ktmp&&ktmp=='1')||YAHOO.util.Cookie.get("h")=='1')&&document.location.protocol!='https:'){d.x.action='https://duckduckgo.com/'}else {d.x.action='/';}};}{var kre=new RegExp('[\?\&]t=([^\&]+)');if (kre.test(window.location.href)) {document.write('<input type="hidden" name="t" value="'+RegExp.$1+'">');};}
-      //]]>
-        </script>
+	<div id="nibh" class="cnib"></div>
+	<div id="niba" class="cnib"></div>
+	<div id="t">
+		<a id="dhl" href="<@ root @>?q=DuckDuckGo" title="DuckDuckGo" name="dhl"></a>
+		<div id="dh">
+		  DuckDuckGo
+		</div>
+	<form name="x" method="post" action="https://duckduckgo.com/html" id="hfh" onsubmit="return nbr()">
+		<div id="hfxh">
+			<input id="hfbh" tabindex="2" type="submit" value="" />
+			<a id="hfdh" class="btn" href="javascript:;" onclick="nbc(1);" name="hfdh"></a>
+		</div>
+		<input type="text" autocomplete="off" name="q" autofocus="" tabindex="1" onclick= "if (this.value=='<@ l('put search terms here') @>') {this.value='';this.style.color='#000000';}" id="hfih" onfocus="if ('rc' in window) {nua('nro',rc)};fq=1;" onblur="fq=0" value="" />
+		<script src="<@ root @>d609.js" type="text/javascript"></script>
+		<script type="text/javascript">//<![CDATA[
+
+			fq=1;
+			ric=0;
+			var karr = new Array('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','1','2','3','4','5','6','7','8','9','aa','ab','ac','ad','ae','af','ag','ah','ai','aj','ak','al','am','an','ao','ap','aq','ar','as','at','au','av','aw','ax','ay','az');
+			
+			for (var i=0;i<karr.length;i++) {
+				var kre=new RegExp('[\?\&]k'+karr[i]+'=([^\&]+)');
+				var ktmp='';
+				if (kre.test(window.location.href)) {
+					ktmp=RegExp.$1;
+					if (ktmp.length<11) document.write('<input type="hidden" name="k'+karr[i]+'" value="'+decodeURIComponent(ktmp)+'">');
+					eval('k'+karr[i]+'=ktmp');
+				}
+				if (karr[i]=='i'&&((ktmp&&ktmp==-1)||YAHOO.util.Cookie.get("i")=='-1')) {document.write('<input type="hidden" name="v" value="n">');}else if(karr[i]=='g') {
+					if((ktmp&&ktmp=='p')||YAHOO.util.Cookie.get("g")=='p') {
+						d.x.method='POST';
+					} else {
+						d.x.method='GET';
+					}
+				} else if(karr[i]=='h') {
+					if (((ktmp&&ktmp=='1')||YAHOO.util.Cookie.get("h")=='1')&&document.location.protocol!='https:') {
+						d.x.action='https://duckduckgo.com/'
+					} else {
+						d.x.action='/';
+					}
+				};
+			} {
+				var kre=new RegExp('[\?\&]t=([^\&]+)');
+				if (kre.test(window.location.href)) {
+					document.write('<input type="hidden" name="t" value="'+RegExp.$1+'">');
+				};
+			}
+		//]]></script>
     </form>
-	<script type="text/javascript">
-//<![CDATA[
-    document.x.q.focus();if (kurl) d.getElementById("dhl").href+=kurl;
-    //]]>
-    </script>
+	<script type="text/javascript">//<![CDATA[
+
+		document.x.q.focus();if (kurl) d.getElementById("dhl").href+=kurl;
+
+    //]]></script>
 	<select id="b" size="2" onchange="if (ip) nbb(this);" onclick="if (!ip) nbb(this);" onblur="nbc(1)"></select>
     <div id="error"></div>
     <div style="clear:both;margin-top:20px;"></div><script type="text/javascript">
@@ -57,18 +62,40 @@
     </script>
 
     <div id="fh">
-      <a href="/about.html">About</a> &nbsp;|&nbsp; <a href=
-      "/settings.html">Settings</a><script type="text/javascript">
-//<![CDATA[
-      nib(0,'',' &nbsp;|&nbsp; ','',0,0);{var err=new RegExp('[\?\&]e=([^\&]+)');var errm=new Array();errm['2']='no search';errm['3']='search too long';errm['4']='not UTF-8 encoding';if (err.test(window.location.href)) {var error=document.getElementById('error');error.innerHTML='Oops, '+(errm[RegExp.$1]?errm[RegExp.$1]:'there was an error')+'. &nbsp;Please try again';YAHOO.util.Dom.setStyle(error,'display','block');}}if (ip) setTimeout('nuo(1)',250);
-      //]]>
-      </script> &nbsp;|&nbsp; <a href="/goodies.html">Goodies</a>
+		<a href="<@ u('about') @>"><@ l('About') @></a> &nbsp;|&nbsp; <a href="<@ u('settings') @>"><@ l('Settings') @></a>
+		<script type="text/javascript">//<![CDATA[
+		nib(0,'',' &nbsp;|&nbsp; ','',0,0);
+		
+		{
+			var err=new RegExp('[\?\&]e=([^\&]+)');
+			var errm=new Array();
+			errm['2']='<@ l('no search') @>';
+			errm['3']='<@ l('search too long') @>';
+			errm['4']='<@ l('not UTF-8 encoding') @>';
+			if (err.test(window.location.href)) {
+				var error=document.getElementById('error');
+				error.innerHTML='Oops, '+(errm[RegExp.$1]?errm[RegExp.$1]:'<@ l('there was an error') @>')+'. &nbsp;<@ l('Please try again') @>';
+				YAHOO.util.Dom.setStyle(error,'display','block');
+			}
+		} if (ip) setTimeout('nuo(1)',250);
+
+		//]]></script>
+		&nbsp;|&nbsp;
+		<a href="<@ u('goodies') @>"><@ l('Goodies') @></a>
     </div>
     <div id="fh2">
-      We don't <a href="http://dontbubble.us">bubble</a> or <a href=
-      "http://donttrack.us">track</a> you! &nbsp;See our <a href="/privacy.html">privacy
-      policy</a>.
-    </div><br />
+		<@ l(
+				'We don\'t %s or %s you!',
+				'<a href="http://dontbubble.us/">' _ l('bubble') _ '</a>',
+				'<a href="http://donttrack.us/">' _ lp('donttrackus','track') _ '</a>',
+		) @>
+		&nbsp;
+		<@ l(
+				'See our %s',
+				'<a href="' _ u('privacy') _ '">' _ l('privacy policy') _ '</a>',
+		) @>.
+    </div>
+	<br />
     <br />
     <br />
     <br />
@@ -88,4 +115,3 @@
     <br />
   </div>
 </body>
-</html>

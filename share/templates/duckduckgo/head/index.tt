@@ -1,0 +1,33 @@
+<style type="text/css">
+/*<![CDATA[*/
+
+html {
+	overflow:hidden
+}
+
+a:visited {
+	color:#1168CC
+}
+
+#t {
+	padding-top:0px
+}
+
+#dh {
+	background:url(<@ root @>nduck.v104.png) no-repeat center top
+}
+
+@media only screen and (max-device-width: 701px) {
+	#dh {
+		background:url(<@ root @>nduck.v105.mobile.png) no-repeat center top
+	}
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio:1.5) {
+	#dh {
+		background:url(<@ root @>nduck.v105.mobile.png) no-repeat center top
+	}
+}
+
+/*]]>*/
+</style>
