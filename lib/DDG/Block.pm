@@ -45,25 +45,15 @@ sub _build__plugin_objs {
 		$args{block} = $self;
 		my $plugin = $class->new(\%args);
 		my @triggers = $plugin->triggers;
-		if (@triggers) {
-			for (@triggers) {
-				my $trigger = $self->parse_trigger($_);
-				push @plugin_objs, [
-					$trigger,
-					$plugin,
-				];
-			}
-		} else {
-			my @empty_trigger = $self->empty_trigger;
-			if (@empty_trigger) {
-				for (@empty_trigger) {
-					push @plugin_objs, [
-						$_,
-						$plugin,
-					];
-				}
-			}
+		@triggers = $self->empty_trigger unless @triggers;
+		my @parsed_triggers;
+		for (@triggers) {
+			push @parsed_triggers, $self->parse_trigger($_);
 		}
+		push @plugin_objs, [
+			\@parsed_triggers,
+			$plugin,
+		] if @parsed_triggers;
 	}
 	return \@plugin_objs;
 }
@@ -73,6 +63,10 @@ sub parse_class { shift; 'DDG::Plugin::'.(shift); }
 sub parse_trigger { shift; shift; }
 
 sub empty_trigger { return undef }
+
+sub run_plugin {
+	my ( $self, $plugin, @args ) = @_;
+}
 
 sub BUILD {
 	my ( $self ) = @_;

@@ -5,6 +5,6 @@ with qw( DDG::Plugin );
 
 sub triggers { qw( bla blub ) }
 
-sub simple_query { shift; 'I was hit cause of query "'.(shift).'"' }
+sub simple_query { shift; __PACKAGE__ }
 
 1;

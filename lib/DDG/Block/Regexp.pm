@@ -12,17 +12,20 @@ sub parse_trigger {
 sub query {
 	my ( $self, $query, @args ) = @_;
 	my @results;
+	my $query_string = $query->query;
 	for (@{$self->plugin_objs}) {
-		my $re = $_->[0];
-		my @matches = $query =~ /$re/;
-		if (!$re || ( my @matches = $query =~ /$re/ ) ) {
-			my $plugin = $_->[1];
-			my @return = $plugin->query($query,\@matches,@args);
-			if (@return) {
-				if ($self->return_one) {
-					return @return;
-				} else {
-					push @results, $_ for @return;
+		my $res = $_->[0];
+		my $plugin = $_->[1];
+		for (@{$res}) {
+			if (!$_ || ( my @matches = $query_string =~ $_ ) ) {
+				my @return = $plugin->query($query,\@matches,@args);
+				if (@return) {
+					if ($self->return_one) {
+						return @return;
+					} else {
+						push @results, $_ for @return;
+					}
+					last;
 				}
 			}
 		}
