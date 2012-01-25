@@ -17,6 +17,8 @@ BEGIN {
 		)],
 	});
 
+	isa_ok($re_block,'DDG::Block::Regexp');
+
 	my $are_block = DDG::Block::Regexp->new({
 		plugins => [qw(
 			Sample::Regexp

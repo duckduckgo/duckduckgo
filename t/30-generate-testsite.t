@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use Test::More;
 
+plan( skip_all => 'still in the pipe' );
+
 use FindBin qw($Bin);
 use lib "$Bin/lib";
 
@@ -15,7 +17,7 @@ isa_ok($site,'DDGTestSite');
 
 my %files = $site->files;
 my $stash = {
-          'test.en_US.html' => '<!DOCTYPE html>
+		  'test.en_US.html' => '<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -25,7 +27,7 @@ my $stash = {
 :c:c
 </body>
 </html>',
-          'test.de_DE.html' => '<!DOCTYPE html>
+		  'test.de_DE.html' => '<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -35,7 +37,7 @@ my $stash = {
 :c:c
 </body>
 </html>',
-          'index.de_DE.html' => '<!DOCTYPE html>
+		  'index.de_DE.html' => '<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -45,7 +47,7 @@ my $stash = {
 b::b
 </body>
 </html>',
-          'index.en_US.html' => '<!DOCTYPE html>
+		  'index.en_US.html' => '<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
