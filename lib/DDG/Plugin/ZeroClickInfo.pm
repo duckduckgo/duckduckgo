@@ -26,17 +26,22 @@ sub _build_answer_type {
 
 sub query {
 	my ( $self, $query, $parameter ) = @_;
-	my @result = $self->simple_query($query,@{$parameter});
+	my @result = $self->simple_query($query->query,@{$parameter});
 	return unless @result;
 	if (ref $result[0] eq 'HASH') {
-		return DDG::ZeroClickInfo->new($result[0]);
+		return $self->get_zci($result[0]);
 	} elsif (ref $result[0] eq '') {
-		return DDG::ZeroClickInfo->new({
+		return $self->get_zci({
 			answer => join("\n",@result),
 			answer_type => $self->answer_type,
 			type => $self->type,
 		});
 	}
+}
+
+sub get_zci {
+	my ( $self, $hash ) = @_;
+	return DDG::ZeroClickInfo->new($hash);
 }
 
 sub simple_query {}

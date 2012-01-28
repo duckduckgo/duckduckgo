@@ -40,7 +40,7 @@ sub _build__plugin_objs_hash {
 
 sub query {
 	my ( $self, $query, @args ) = @_;
-	my @words = @{$query->words};
+	my @words = @{$query->hash_words};
 	return unless @words;
 	my @search_words = $self->all_words ? @words : $words[0];
 	my @filtered_search_words;
@@ -52,12 +52,20 @@ sub query {
 	for (@filtered_search_words) {
 		if (defined $self->plugin_objs_hash->{$_}) {
 			my $hit = $_;
-			my @params;
-			push @params, $hit;
-			for (@words) {
-				push @params, $_ if $_ ne $hit;
+			my $is_hit = 0;
+			my @before; my @after;
+			for (@{$self->words}) {
+				if ($_ eq $hit) {
+					$is_hit = 1;
+				} else {
+					if ($is_hit) {
+						push @after, $_;
+					} else {
+						push @before, $_;
+					}
+				}
 			}
-			my @return = $self->plugin_objs_hash->{$hit}->query($query,\@params,@args);
+			my @return = $self->plugin_objs_hash->{$hit}->query($query,[\@before,$hit,\@after],@args);
 			if (@return) {
 				if ($self->return_one || !$self->all_words) {
 					return @return;

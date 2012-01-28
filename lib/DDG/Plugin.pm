@@ -2,13 +2,9 @@ package DDG::Plugin;
 
 use Moo::Role;
 
-requires qw(
-	triggers
-);
-
 sub query {
 	my ( $self, $query, $parameter ) = @_;
-	return $self->simple_query($query->query,@{$parameter});
+	return $self->simple_query($query->query_normalized,@{$parameter});
 }
 
 sub simple_query {}

@@ -5,13 +5,17 @@ use Class::Load ':all';
 
 requires qw(
 	query
+	get_triggers_of_plugin
 );
 
 has plugins => (
 	#isa => 'ArrayRef[Str|HashRef]',
 	is => 'ro',
-	required => 1,
+	lazy => 1,
+	builder => '_build_plugins',
 );
+
+sub _build_plugins { die (ref shift)." requires plugins" }
 
 has return_one => (
 	#isa => 'Bool',
@@ -44,7 +48,7 @@ sub _build__plugin_objs {
 		load_class($class);
 		$args{block} = $self;
 		my $plugin = $class->new(\%args);
-		my @triggers = $plugin->triggers;
+		my @triggers = $self->get_triggers_of_plugin($plugin);
 		@triggers = $self->empty_trigger unless @triggers;
 		my @parsed_triggers;
 		for (@triggers) {
