@@ -1,4 +1,4 @@
-package DDG::Query;
+package DDG::Request;
 
 use Moo;
 
@@ -12,29 +12,29 @@ has query_unmodified => (
 	required => 1,
 );
 
-my $whitechars = qr{[\s\n\t]+};
+my $whitespaces = qr{\s+};
 
-has nowhitechars => (
+has nowhitespaces => (
 	is => 'ro',
 	lazy => 1,
-	builder => '_build_nowhitechars',
+	builder => '_build_nowhitespaces',
 );
-sub _build_nowhitechars {
+sub _build_nowhitespaces {
 	my $q = shift->query;
-	$q =~ s/$whitechars//g;
+	$q =~ s/$whitespaces//g;
 	return $q;
 }
 
-my $whitechars_dashes = qr{[\s\n\t\-]+};
+my $whitespaces_dashes = qr{[\s\-]+};
 
-has nowhitechars_nodashes => (
+has nowhitespaces_nodashes => (
 	is => 'ro',
 	lazy => 1,
-	builder => '_build_nowhitechars_nodashes',
+	builder => '_build_nowhitespaces_nodashes',
 );
-sub _build_nowhitechars_nodashes {
+sub _build_nowhitespaces_nodashes {
 	my $q = shift->query;
-	$q =~ s/$whitechars_dashes//g;
+	$q =~ s/$whitespaces_dashes//g;
 	return $q;
 }
 
@@ -47,7 +47,7 @@ has query => (
 	builder => '_build_query',
 );
 sub _build_query {
-	my $q = join(' ',@{shift->words});
+	my $q = join(' ',@{shift->words_unmodified});
 	$q =~ s/$query_start_filter//;
 	$q =~ s/$query_end_filter//;
 	return $q;
@@ -60,27 +60,27 @@ has words => (
 );
 sub _build_words {
 	my ( $self ) = @_;
+	my @text_words;
+	for (@{$self->words_unmodified}) {
+		my $word = $_;
+		$word =~ s/[\W]//g;
+		push @text_words, $word unless $word eq '';
+	}
+	return \@text_words;
+}
+
+has words_unmodified => (
+	is => 'ro',
+	lazy => 1,
+	builder => '_build_words_unmodified',
+);
+sub _build_words_unmodified {
+	my ( $self ) = @_;
 	my @words;
 	for (split(/[ \t\n]+/,$self->query_unmodified)) {
 		push @words, $_ unless $_ eq '';
 	}
 	return \@words;
-}
-
-has text_words => (
-	is => 'ro',
-	lazy => 1,
-	builder => '_build_text_words',
-);
-sub _build_text_words {
-	my ( $self ) = @_;
-	my @text_words;
-	for (@{$self->words}) {
-		my $word = $_;
-		$word =~ s/[\W_]//g;
-		push @text_words, $word unless $word eq '';
-	}
-	return \@text_words;
 }
 
 has lc_query => (
@@ -97,12 +97,12 @@ has wordcount => (
 );
 sub _build_wordcount { scalar @{shift->words} }
 
-has text_wordcount => (
+has wordcount_unmodified => (
 	is => 'ro',
 	lazy => 1,
-	builder => '_build_text_wordcount',
+	builder => '_build_wordcount_unmodified',
 );
-sub _build_text_wordcount { scalar @{shift->text_words} }
+sub _build_wordcount_unmodified { scalar @{shift->words_unmodified} }
 
 has lc_words => (
 	is => 'ro',
@@ -116,37 +116,28 @@ sub _build_lc_words {
 	return \@lc_words;
 }
 
-has lc_text_words => (
-	is => 'ro',
-	lazy => 1,
-	builder => '_build_lc_text_words',
-);
-sub _build_lc_text_words {
-	my ( $self ) = @_;
-	my @lc_text_words;
-	push @lc_text_words, lc($_) for (@{$self->text_words});
-	return \@lc_text_words;
-}
-
-# combined lc word cache
+# combined lc words cache
 has _clwc => (
 	is => 'ro',
 	default => sub {{}},
 );
 
-sub combined_lc_text_words {
+sub combined_lc_words {
 	my ( $self, $count ) = @_;
-	return unless $count >= $self->text_wordcount;
+	return [] if $count > $self->wordcount;
 	if ( !defined $self->_clwc->{$count} ) {
-		$self->_clwc->{$count} = [$self->query_normalized] if $count == $self->wordcount;
-		my @words = @{$self->lc_words};
-		my @clw;
-		for (1..($self->wordcount - $count + 1)) {
-			my $start = $_ - 1;
-			my $end = $count + $start;
-			push @clw, join(' ',@words[$start..$end]);
+		if ($count == $self->wordcount) {
+			$self->_clwc->{$count} = [join(' ',@{$self->lc_words})];
+		} else {
+			my @words = @{$self->lc_words};
+			my @clw;
+			for (1..($self->wordcount - $count + 1)) {
+				my $start = $_ - 1;
+				my $end = $count + $start - 1;
+				push @clw, join(' ',@words[$start..$end]);
+			}
+			$self->_clwc->{$count} = \@clw;
 		}
-		$self->_clwc->{$count} = \@clw;
 	}
 	return $self->_clwc->{$count};
 }
