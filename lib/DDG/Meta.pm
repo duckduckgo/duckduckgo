@@ -14,7 +14,9 @@ sub make_blockable {
 	{
 		my %words;
 		no strict "refs";
+
 		*{"${target}::all_words_by_type"} = sub { \%words };
+		*{"${target}::has_words"} = sub { %words ? 1 : 0 };
 		*{"${target}::words"} = sub {
 			my @args;
 			if (ref $_[0] eq 'CODE') {
@@ -50,11 +52,12 @@ sub make_blockable {
 		no strict "refs";
 		
 		*{"${target}::all_regexps"} = sub { @res };
+		*{"${target}::has_regexps"} = sub { @res ? 1 : 0 };
 		*{"${target}::regexp"} = sub {
 			for (@_) {
 				my @arg_res = (ref $_ eq 'CODE' ? $_->() : ref $_ eq 'ARRAY' ? @{$_} : $_);
 				for (@arg_res) {
-					die 'regexp need to be a compiled regexp qr{...}' unless ref $_ eq 'REGEXP';
+					die 'regexp need to be a compiled regexp qr{...}' unless ref $_ eq 'Regexp';
 					push @res, $_;
 				}
 			}
