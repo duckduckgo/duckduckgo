@@ -12,10 +12,17 @@ sub import {
 	my $target = caller;
 
 	#
+	# Make base
+	#
+
+	DDG::Meta->apply_base_to_package($target);
+	
+	#
 	# Applying DDG::Goodie::Role
 	#
 	
 	Moo::Role->apply_role_to_package($target,'DDG::Goodie::Role');
+	Moo::Role->apply_role_to_package($target,'DDG::ZeroClickInfo::Role::Block');
 	
 	#
 	# Make blockable
@@ -23,15 +30,6 @@ sub import {
 
 	DDG::Meta->make_blockable($target);
 	
-	#
-	# Import Data::Printer
-	#
-	
-	#
-	# let there be Moo!
-	#
-
-	goto &Moo::import;
 }
 
 1;

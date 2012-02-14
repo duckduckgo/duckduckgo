@@ -4,6 +4,16 @@ use strict;
 use warnings;
 use Carp;
 
+sub apply_base_to_package {
+	my ( $class, $target ) = @_;
+	
+	eval qq{
+		package $target;
+		use Moo;
+		use Data::Printer;
+	};
+}
+
 sub make_blockable {
 	my ( $class, $target ) = @_;
 	
