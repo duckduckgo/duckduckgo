@@ -14,7 +14,7 @@ sub apply_base_to_package {
 	};
 }
 
-sub make_blockable {
+sub apply_blockable_keywords {
 	my ( $class, $target ) = @_;
 	
 	#

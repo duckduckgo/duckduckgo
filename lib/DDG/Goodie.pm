@@ -28,7 +28,7 @@ sub import {
 	# Make blockable
 	#
 
-	DDG::Meta->make_blockable($target);
+	DDG::Meta->apply_blockable_keywords($target);
 	
 }
 
