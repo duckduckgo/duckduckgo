@@ -3,8 +3,6 @@ package DDG::Block::Hash;
 use Moo;
 with qw( DDG::Block );
 
-use Class::Load ':all';
-
 has all_words => (
 	#isa => 'Bool',
 	is => 'ro',

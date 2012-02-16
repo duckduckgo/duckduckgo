@@ -4,30 +4,30 @@ use Moo::Role;
 use Class::Load ':all';
 
 requires qw(
-query
-get_triggers_of_plugin
+	query
+	get_triggers_of_plugin
 );
 
 has plugins => (
-#isa => 'ArrayRef[Str|HashRef]',
-is => 'ro',
-lazy => 1,
-builder => '_build_plugins',
+	#isa => 'ArrayRef[Str|HashRef]',
+	is => 'ro',
+	lazy => 1,
+	builder => '_build_plugins',
 );
 
 sub _build_plugins { die (ref shift)." requires plugins" }
 
 has return_one => (
-#isa => 'Bool',
-is => 'ro',
-default => sub { 1 },
+	#isa => 'Bool',
+	is => 'ro',
+	default => sub { 1 },
 );
 
 has _plugin_objs => (
-# like ArrayRef[ArrayRef[$trigger,DDG::Block::Plugin]]',
-is => 'ro',
-lazy => 1,
-builder => '_build__plugin_objs',
+	# like ArrayRef[ArrayRef[$trigger,DDG::Block::Plugin]]',
+	is => 'ro',
+	lazy => 1,
+	builder => '_build__plugin_objs',
 );
 sub plugin_objs { shift->_plugin_objs }
 
@@ -44,7 +44,6 @@ sub _build__plugin_objs {
 		} else {
 			$class = $_;
 		}
-		$class = $self->parse_class($class);
 		load_class($class);
 		$args{block} = $self;
 		my $plugin = $class->new(\%args);
@@ -61,8 +60,6 @@ sub _build__plugin_objs {
 	}
 	return \@plugin_objs;
 }
-
-sub parse_class { shift; 'DDG::Plugin::'.(shift); }
 
 sub parse_trigger { shift; shift; }
 
