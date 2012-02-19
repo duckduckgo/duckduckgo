@@ -32,8 +32,15 @@ sub check_zeroclickinfo_key {
 sub apply_keywords {
 	my ( $class, $target ) = @_;
 	
+	my @parts = split('::',$target);
+	shift @parts;
+	shift @parts;
+	my $answer_type = lc(join(' ',@parts));
+	
 	{
-		my %zci_params;
+		my %zci_params = (
+			answer_type => $answer_type,
+		);
 		no strict "refs";
 
 		*{"${target}::zci_new"} = sub { DDG::ZeroClickInfo->new(%zci_params) };
