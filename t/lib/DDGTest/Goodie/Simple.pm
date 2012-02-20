@@ -15,4 +15,6 @@ words sub {
 
 words around => sub { 'afoo', 'afoofoo' };
 
+handle remainder => sub { @_ };
+
 1;
