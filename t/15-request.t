@@ -40,6 +40,15 @@ BEGIN {
 			lc_words => [qw/ test tesfsd /],
 			combined_lc_words_2 => ['test tesfsd'],
 		},
+		'test...test test...Test' => {
+			query => 'test...test test...Test',
+			wordcount_unmodified => 2,
+			wordcount => 4,
+			words_unmodified => ['test...test','test...Test'],
+			words => [qw/ test test test Test /],
+			lc_words => [qw/ test test test test /],
+			combined_lc_words_2 => ['test test','test test','test test'],
+		},
 		'   %%test     %%%%%      %%%TeSFsd%%%  ' => {
 			query => '%%test %%%%% %%%TeSFsd%%%',
 			wordcount_unmodified => 3,

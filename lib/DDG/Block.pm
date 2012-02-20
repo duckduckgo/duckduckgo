@@ -4,7 +4,7 @@ use Moo::Role;
 use Class::Load ':all';
 
 requires qw(
-	query
+	request
 	get_triggers_of_plugin
 );
 

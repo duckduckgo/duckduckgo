@@ -63,8 +63,10 @@ sub _build_words {
 	my @text_words;
 	for (@{$self->words_unmodified}) {
 		my $word = $_;
-		$word =~ s/[\W]//g;
-		push @text_words, $word unless $word eq '';
+		$word =~ s/[\W\.]/ /g;
+		for (split(/\s+/,$word)) {
+			push @text_words, $_ unless $_ eq '';
+		}
 	}
 	return \@text_words;
 }

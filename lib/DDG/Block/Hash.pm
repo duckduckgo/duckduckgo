@@ -3,12 +3,6 @@ package DDG::Block::Hash;
 use Moo;
 with qw( DDG::Block );
 
-has all_words => (
-	#isa => 'Bool',
-	is => 'ro',
-	default => sub { 0 },
-);
-
 has case_sensitive => (
 	#isa => 'Bool',
 	is => 'ro',
@@ -36,18 +30,12 @@ sub _build__plugin_objs_hash {
 	return \%hash;
 }
 
-sub query {
-	my ( $self, $query, @args ) = @_;
-	my @words = @{$query->hash_words};
+sub request {
+	my ( $self, $request ) = @_;
+	my @words = @{$self->case_sensitive ? $request->words : $request->lc_words};
 	return unless @words;
-	my @search_words = $self->all_words ? @words : $words[0];
-	my @filtered_search_words;
-	for (@search_words) {
-		push @filtered_search_words, $_ unless $_ eq '';
-	}
-	return unless @filtered_search_words;
 	my @results;
-	for (@filtered_search_words) {
+	for (0..(scalar @words-1)) {
 		if (defined $self->plugin_objs_hash->{$_}) {
 			my $hit = $_;
 			my $is_hit = 0;

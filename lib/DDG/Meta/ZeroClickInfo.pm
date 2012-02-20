@@ -18,6 +18,7 @@ sub zeroclickinfo_attributes {qw(
 	definition_source
 	definition_url
 	type
+	is_cached
 )}
 
 sub check_zeroclickinfo_key {
@@ -43,7 +44,11 @@ sub apply_keywords {
 		);
 		no strict "refs";
 
-		*{"${target}::zci_new"} = sub { DDG::ZeroClickInfo->new(%zci_params) };
+		*{"${target}::zci_new"} = sub {
+			ref $_[0] eq 'HASH' ? 
+				DDG::ZeroClickInfo->new(%zci_params, %{$_[0]}) :
+				DDG::ZeroClickInfo->new(%zci_params, @_)
+		};
 		*{"${target}::zci"} = sub {
 			if (ref $_[0] eq 'HASH') {
 				for (keys %{$_[0]}) {
