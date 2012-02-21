@@ -55,9 +55,11 @@ sub apply_keywords {
 					$zci_params{check_zeroclickinfo_key($_)} = $_[0]->{$_};
 				}
 			} else {
-				my $key = shift;
-				my $value = shift;
-				$zci_params{check_zeroclickinfo_key($key)} = $value;
+				while (@_) {
+					my $key = shift;
+					my $value = shift;
+					$zci_params{check_zeroclickinfo_key($key)} = $value;
+				}
 			}
 		};
 	}

@@ -14,28 +14,17 @@ has query_unmodified => (
 
 my $whitespaces = qr{\s+};
 
-has nowhitespaces => (
+has query_parts => (
 	is => 'ro',
 	lazy => 1,
-	builder => '_build_nowhitespaces',
+	builder => '_build_query_parts',
 );
-sub _build_nowhitespaces {
-	my $q = shift->query;
-	$q =~ s/$whitespaces//g;
-	return $q;
-}
-
-my $whitespaces_dashes = qr{[\s\-]+};
-
-has nowhitespaces_nodashes => (
-	is => 'ro',
-	lazy => 1,
-	builder => '_build_nowhitespaces_nodashes',
-);
-sub _build_nowhitespaces_nodashes {
-	my $q = shift->query;
-	$q =~ s/$whitespaces_dashes//g;
-	return $q;
+sub _build_query_parts {
+	my @words;
+	for (split(/$whitespaces/,shift->query_unmodified)) {
+		push @words, $_ unless $_ eq '';
+	}
+	return \@words;
 }
 
 my $query_start_filter = qr{^\!};
@@ -47,9 +36,62 @@ has query => (
 	builder => '_build_query',
 );
 sub _build_query {
-	my $q = join(' ',@{shift->words_unmodified});
+	my $q = join(' ',@{shift->query_parts});
 	$q =~ s/$query_start_filter//;
 	$q =~ s/$query_end_filter//;
+	return $q;
+}
+
+has query_lc => (
+	is => 'ro',
+	lazy => 1,
+	builder => '_build_query_lc',
+);
+sub _build_query_lc { lc(shift->query) }
+
+has query_nowhitespace => (
+	is => 'ro',
+	lazy => 1,
+	builder => '_build_query_nowhitespace',
+);
+sub _build_query_nowhitespace {
+	my $q = shift->query;
+	$q =~ s/$whitespaces//g;
+	return $q;
+}
+
+my $whitespaces_dashes = qr{[\s\-]+};
+
+has query_nowhitespace_nodash => (
+	is => 'ro',
+	lazy => 1,
+	builder => '_build_query_nowhitespace_nodash',
+);
+sub _build_query_nowhitespace_nodash {
+	my $q = shift->query;
+	$q =~ s/$whitespaces_dashes//g;
+	return $q;
+}
+
+my @cleanup_regexps => (
+	qr{\B[\+]+\b},
+	qr{^\s+},
+	qr{\s+$},
+	qr{[\,\"\(\)\#\+\?]},
+	qr{[\'\.\:]},
+);
+
+my $non_alphanumeric_ascii = qr{[\x00-\x1f\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x81]+};
+
+has query_clean => (
+	is => 'ro',
+	lazy => 1,
+	builder => '_build_query_clean',
+);
+sub _build_query_clean {
+	my $q = shift->query_lc;
+	$q =~ s/$non_alphanumeric_ascii//g;
+	$q = substr($q,0,100);
 	return $q;
 }
 
@@ -59,38 +101,12 @@ has words => (
 	builder => '_build_words',
 );
 sub _build_words {
-	my ( $self ) = @_;
-	my @text_words;
-	for (@{$self->words_unmodified}) {
-		my $word = $_;
-		$word =~ s/[\W\.]/ /g;
-		for (split(/\s+/,$word)) {
-			push @text_words, $_ unless $_ eq '';
-		}
-	}
-	return \@text_words;
-}
-
-has words_unmodified => (
-	is => 'ro',
-	lazy => 1,
-	builder => '_build_words_unmodified',
-);
-sub _build_words_unmodified {
-	my ( $self ) = @_;
 	my @words;
-	for (split(/[ \t\n]+/,$self->query_unmodified)) {
+	for (split(/$whitespaces/,shift->query_clean)) {
 		push @words, $_ unless $_ eq '';
 	}
 	return \@words;
 }
-
-has lc_query => (
-	is => 'ro',
-	lazy => 1,
-	builder => '_build_lc_query',
-);
-sub _build_lc_query { lc(shift->query) }
 
 has wordcount => (
 	is => 'ro',
@@ -99,49 +115,30 @@ has wordcount => (
 );
 sub _build_wordcount { scalar @{shift->words} }
 
-has wordcount_unmodified => (
-	is => 'ro',
-	lazy => 1,
-	builder => '_build_wordcount_unmodified',
-);
-sub _build_wordcount_unmodified { scalar @{shift->words_unmodified} }
-
-has lc_words => (
-	is => 'ro',
-	lazy => 1,
-	builder => '_build_lc_words',
-);
-sub _build_lc_words {
-	my ( $self ) = @_;
-	my @lc_words;
-	push @lc_words, lc($_) for (@{$self->words});
-	return \@lc_words;
-}
-
-# combined lc words cache
-has _clwc => (
+# combined words cache
+has _cwc => (
 	is => 'ro',
 	default => sub {{}},
 );
 
-sub combined_lc_words {
+sub combined_words {
 	my ( $self, $count ) = @_;
 	return [] if $count > $self->wordcount;
-	if ( !defined $self->_clwc->{$count} ) {
+	if ( !defined $self->_cwc->{$count} ) {
 		if ($count == $self->wordcount) {
-			$self->_clwc->{$count} = [join(' ',@{$self->lc_words})];
+			$self->_cwc->{$count} = [join(' ',@{$self->words})];
 		} else {
-			my @words = @{$self->lc_words};
+			my @words = @{$self->words};
 			my @clw;
 			for (1..($self->wordcount - $count + 1)) {
 				my $start = $_ - 1;
 				my $end = $count + $start - 1;
 				push @clw, join(' ',@words[$start..$end]);
 			}
-			$self->_clwc->{$count} = \@clw;
+			$self->_cwc->{$count} = \@clw;
 		}
 	}
-	return $self->_clwc->{$count};
+	return $self->_cwc->{$count};
 }
 
 #

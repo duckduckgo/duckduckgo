@@ -17,12 +17,6 @@ sub import {
 	DDG::Meta->apply_base_to_package($target);
 	
 	#
-	# Applying DDG::Goodie::Role
-	#
-	
-	Moo::Role->apply_role_to_package($target,'DDG::Goodie::Role');
-	
-	#
 	# Apply keywords
 	#
 

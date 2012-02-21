@@ -10,73 +10,31 @@ BEGIN {
 
 	my @t = (
 		'   !bang test' => {
+			query_unmodified => '   !bang test',
 			query => 'bang test',
-			wordcount_unmodified => 2,
+			query_lc => 'bang test',
+			query_nowhitespace => 'bangtest',
+			query_nowhitespace_nodash => 'bangtest',
+			query_clean => 'bang test',
 			wordcount => 2,
-			words_unmodified => [qw/ !bang test /],
-			words => [qw/ bang test /],
+			query_parts => [qw( !bang test )],
+			words => [qw( bang test )],
 		},
-		'!bang  	  test' => {
-			query => 'bang test',
-			wordcount_unmodified => 2,
-			wordcount => 2,
-			words_unmodified => [qw/ !bang test /],
-			words => [qw/ bang test /],
+		'!bang  	  test-test' => {
 		},
 		'other !bang test' => {
-			query => 'other !bang test',
-			wordcount_unmodified => 3,
-			wordcount => 3,
-			words_unmodified => [qw/ other !bang test /],
-			words => [qw/ other bang test /],
-			combined_lc_words_2 => ['other bang','bang test'],
 		},
 		'%"test %)()%!%§ +##+tesfsd' => {
-			query => '%"test %)()%!%§ +##+tesfsd',
-			wordcount_unmodified => 3,
-			wordcount => 2,
-			words_unmodified => ['%"test','%)()%!%§','+##+tesfsd'],
-			words => [qw/ test tesfsd /],
-			lc_words => [qw/ test tesfsd /],
-			combined_lc_words_2 => ['test tesfsd'],
 		},
 		'test...test test...Test' => {
-			query => 'test...test test...Test',
-			wordcount_unmodified => 2,
-			wordcount => 4,
-			words_unmodified => ['test...test','test...Test'],
-			words => [qw/ test test test Test /],
-			lc_words => [qw/ test test test test /],
-			combined_lc_words_2 => ['test test','test test','test test'],
 		},
 		'   %%test     %%%%%      %%%TeSFsd%%%  ' => {
-			query => '%%test %%%%% %%%TeSFsd%%%',
-			wordcount_unmodified => 3,
-			wordcount => 2,
-			words_unmodified => ['%%test','%%%%%','%%%TeSFsd%%%'],
-			words => [qw/ test TeSFsd /],
-			lc_words => [qw/ test tesfsd /],
 		},
 		'reverse bla' => {
-			query => 'reverse bla',
-			wordcount_unmodified => 2,
-			wordcount => 2,
-			words => [qw/ reverse bla /],
-			lc_words => [qw/ reverse bla /],
 		},
 		'    !reverse bla   ' => {
-			query => 'reverse bla',
-			wordcount_unmodified => 2,
-			wordcount => 2,
-			words_unmodified => [qw/ !reverse bla /],
 		},
 		'    !REVerse BLA   ' => {
-			query => 'REVerse BLA',
-			wordcount_unmodified => 2,
-			wordcount => 2,
-			words_unmodified => [qw/ !REVerse BLA /],
-			words => [qw/ REVerse BLA /],
-			lc_words => [qw/ reverse bla /],
 		},
 	);
 
@@ -88,10 +46,10 @@ BEGIN {
 		my $req = DDG::Request->new({ query_unmodified => $query, %args });
 		isa_ok($req,'DDG::Request');
 		is($req->query_unmodified,$query,'Testing query_unmodified of "'.$query.'"');
-		for (qw/ query wordcount text_wordcount /) {
+		for (qw/ query_unmodified query query_lc query_nowhitespace query_nowhitespace_nodash query_clean wordcount /) {
 			is($req->$_,$result{$_},'Testing '.$_.' of "'.$query.'"') if defined $result{$_};
 		}
-		for (qw/ words text_words lc_words lc_text_words /) {
+		for (qw/ query_parts /) {
 			is_deeply($req->$_,$result{$_},'Testing '.$_.' of "'.$query.'"') if defined $result{$_};
 		}
 		for (qw/ combined_lc_words_2 /) {

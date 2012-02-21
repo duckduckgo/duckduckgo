@@ -27,7 +27,6 @@ sub apply_goodie_keywords {
 
 sub apply_spice_keywords {
 	my ( $class, $target ) = @_;
-	DDG::Meta::ZeroClickInfo->apply_keywords($target);
 	DDG::Meta::Block->apply_keywords($target);
 	DDG::Meta::RequestHandler->apply_keywords($target,sub { "TODO" });
 }
