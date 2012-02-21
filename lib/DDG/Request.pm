@@ -7,7 +7,7 @@ use Moo;
 #
 ###############################
 
-has query_unmodified => (
+has query_raw => (
 	is => 'ro',
 	required => 1,
 );
@@ -21,7 +21,7 @@ has query_parts => (
 );
 sub _build_query_parts {
 	my @words;
-	for (split(/$whitespaces/,shift->query_unmodified)) {
+	for (split(/$whitespaces/,shift->query_raw)) {
 		push @words, $_ unless $_ eq '';
 	}
 	return \@words;

@@ -10,7 +10,7 @@ BEGIN {
 
 	my @t = (
 		'   !bang test'                   => {
-			query_unmodified          => '   !bang test',
+			query_raw                 => '   !bang test',
 			query                     => 'bang test',
 			query_lc                  => 'bang test',
 			query_nowhitespace        => 'bangtest',
@@ -21,7 +21,7 @@ BEGIN {
 			words                     => [qw( bang test )],
 		},
 		'!bang            test-test'      => {
-		        query_unmodified          => '!bang            test-test',
+		        query_raw                 => '!bang            test-test',
 			query                     => 'bang test-test',
 			query_lc                  => 'bang test-test',
 			query_nowhitespace        => 'bangtest-test',
@@ -32,7 +32,7 @@ BEGIN {
 			words                     => [qw( bang test-test )],
 		},
 		'other !bang test'                => {
-		        query_unmodified          => 'other !bang test',
+		        query_raw                 => 'other !bang test',
 			query                     => 'other !bang test',
 			query_lc                  => 'other !bang test',
 			query_nowhitespace        => 'other!bangtest',
@@ -43,18 +43,18 @@ BEGIN {
 			words                     => [qw( other bang test )],
 		},
 		'%"test %)()%!%§ +##+tesfsd' => {
-		        query_unmodified                  => '%"test %)()%!%§ +##+tesfsd',
+		        query_raw                         => '%"test %)()%!%§ +##+tesfsd',
 			query                             => '%"test %)()%!%§ +##+tesfsd',
 			query_lc                          => '%"test %)()%!%§ +##+tesfsd',
 			query_nowhitespace                => '%"test%)()%!%§+##+tesfsd',
 			query_nowhitespace_nodash         => '%"test%)()%!%§+##+tesfsd',
-			query_clean                       => 'test § tesfsd',
-			wordcount                         => 3,
+			query_clean                       => 'test tesfsd',
+			wordcount                         => 2,
 			query_parts                       => [qw( %"test %\)\(\)%!%§ +##+tesfsd )],
 			words                             => [qw( test tesfsd )],
 		},
 		'test...test test...Test'         => {
-		        query_unmodified          => 'test...test test...Test',
+		        query_raw                 => 'test...test test...Test',
 			query                     => 'test...test test...Test',
 			query_lc                  => 'test...test test...test',
 			query_nowhitespace        => 'test...testtest...Test',
@@ -65,18 +65,18 @@ BEGIN {
 			words                     => [qw( test test test Test )],
 		},
 		'   %%test     %%%%%      %%%TeSFsd%%%  ' => {
-		        query_unmodified                  => '   %%test     %%%%%      %%%TeSFsd%%%  ',
+		        query_raw                         => '   %%test     %%%%%      %%%TeSFsd%%%  ',
 			query                             => '%%test %%%%% %%%TeSFsd%%%',
 			query_lc                          => '%%test %%%%% %%%tesfsd%%%',
 			query_nowhitespace                => '%%test%%%%%%%%TeSFsd%%%',
 			query_nowhitespace_nodash         => '%%test%%%%%%%%TeSFsd%%%',
-			query_clean                       => 'test  tesfsd',
+			query_clean                       => 'test tesfsd',
 			wordcount                         => 2,
 			query_parts                       => [qw( %%test %%%%% %%%TeSFsd%%% )],
 			words                             => [qw( test tesfsd )],
 		},
 		'reverse bla'                     => {
-		        query_unmodified          => 'reverse bla',
+		        query_raw                 => 'reverse bla',
 			query                     => 'reverse bla',
 			query_lc                  => 'reverse bla',
 			query_nowhitespace        => 'reversebla',
@@ -87,7 +87,7 @@ BEGIN {
 			words                     => [qw( reverse bla )],
 		},
 		'    !reverse bla   '             => {
-		        query_unmodified          => '    !reverse bla   ',
+		        query_raw                 => '    !reverse bla   ',
 			query                     => 'reverse bla',
 			query_lc                  => 'reverse bla',
 			query_nowhitespace        => 'reversebla',
@@ -98,7 +98,7 @@ BEGIN {
 			words                     => [qw( reverse bla )],
 		},
 		'    !REVerse BLA   '             => {
-		        query_unmodified          => '    !REVerse BLA   ',
+		        query_raw                 => '    !REVerse BLA   ',
 			query                     => 'REVerse BLA',
 			query_lc                  => 'reverse bla',
 			query_nowhitespace        => 'REVerseBLA',
@@ -115,10 +115,10 @@ BEGIN {
 		my %result = %{shift @t};
 		my %args;
 		%args = $result{args} if defined $result{args};
-		my $req = DDG::Request->new({ query_unmodified => $query, %args });
+		my $req = DDG::Request->new({ query_raw => $query, %args });
 		isa_ok($req,'DDG::Request');
-		is($req->query_unmodified,$query,'Testing query_unmodified of "'.$query.'"');
-		for (qw/ query_unmodified query query_lc query_nowhitespace query_nowhitespace_nodash query_clean wordcount /) {
+		is($req->query_raw,$query,'Testing query_raw of "'.$query.'"');
+		for (qw/ query_raw query query_lc query_nowhitespace query_nowhitespace_nodash query_clean wordcount /) {
 			is($req->$_,$result{$_},'Testing '.$_.' of "'.$query.'"') if defined $result{$_};
 		}
 		for (qw/ query_parts /) {
