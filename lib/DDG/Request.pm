@@ -73,14 +73,6 @@ sub _build_query_nowhitespace_nodash {
 	return $q;
 }
 
-my @cleanup_regexps => (
-	qr{\B[\+]+\b},
-	qr{^\s+},
-	qr{\s+$},
-	qr{[\,\"\(\)\#\+\?]},
-	qr{[\'\.\:]},
-);
-
 my $non_alphanumeric_ascii = qr{[\x00-\x1f\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x81]+};
 
 has query_clean => (
