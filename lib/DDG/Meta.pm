@@ -15,6 +15,7 @@ sub apply_base_to_package {
 		package $target;
 		use Moo;
 		use Data::Printer;
+		use utf8::all;
 	};
 }
 

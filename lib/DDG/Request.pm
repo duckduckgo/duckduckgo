@@ -1,6 +1,7 @@
 package DDG::Request;
 
 use Moo;
+use utf8;
 
 #
 # QUERY
@@ -13,6 +14,20 @@ has query_raw => (
 );
 
 my $whitespaces = qr{\s+};
+my $whitespaces_matches = qr{($whitespaces)};
+my $whitespaces_dashes = qr{[\s\-]+};
+my $non_alphanumeric_ascii = qr{[\x00-\x1f\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x81\x{a7}]+};
+
+has query_raw_parts => (
+	is => 'ro',
+	lazy => 1,
+	builder => '_build_query_raw_parts',
+);
+sub _build_query_raw_parts {
+	[
+		split(/$whitespaces_matches/,shift->query_raw)
+	]
+}
 
 has query_parts => (
 	is => 'ro',
@@ -20,15 +35,36 @@ has query_parts => (
 	builder => '_build_query_parts',
 );
 sub _build_query_parts {
-	my @words;
-	for (split(/$whitespaces/,shift->query_raw)) {
-		push @words, $_ unless $_ eq '';
-	}
-	return \@words;
+	my $x;
+	[
+		grep { ( $x += length ) < 100 }
+		grep { ! /$whitespaces/ } 
+		grep { length }
+		@{shift->query_raw_parts}
+	]
 }
 
-my $query_start_filter = qr{^\!};
-my $query_end_filter = qr{\?$};
+has query_parts_lc => (
+	is => 'ro',
+	lazy => 1,
+	builder => '_build_query_parts_lc',
+);
+sub _build_query_parts_lc {
+	[
+		map { lc }
+		@{shift->query_parts}
+	]
+}
+
+has trigger => (
+	is => 'ro',
+	lazy => 1,
+	builder => '_build_trigger',
+);
+sub _build_trigger {
+	my @parts = @{shift->query_parts_lc};
+	
+}
 
 has query => (
 	is => 'ro',
@@ -36,10 +72,7 @@ has query => (
 	builder => '_build_query',
 );
 sub _build_query {
-	my $q = join(' ',@{shift->query_parts});
-	$q =~ s/$query_start_filter//;
-	$q =~ s/$query_end_filter//;
-	return $q;
+	join(' ',@{shift->query_parts})
 }
 
 has query_lc => (
@@ -47,7 +80,9 @@ has query_lc => (
 	lazy => 1,
 	builder => '_build_query_lc',
 );
-sub _build_query_lc { lc(shift->query) }
+sub _build_query_lc {
+	lc(shift->query)
+}
 
 has query_nowhitespace => (
 	is => 'ro',
@@ -55,12 +90,11 @@ has query_nowhitespace => (
 	builder => '_build_query_nowhitespace',
 );
 sub _build_query_nowhitespace {
-	my $q = shift->query;
-	$q =~ s/$whitespaces//g;
-	return $q;
+	for (shift->query) {
+		s/$whitespaces//g;
+		return $_;
+	}
 }
-
-my $whitespaces_dashes = qr{[\s\-]+};
 
 has query_nowhitespace_nodash => (
 	is => 'ro',
@@ -68,12 +102,11 @@ has query_nowhitespace_nodash => (
 	builder => '_build_query_nowhitespace_nodash',
 );
 sub _build_query_nowhitespace_nodash {
-	my $q = shift->query;
-	$q =~ s/$whitespaces_dashes//g;
-	return $q;
+	for (shift->query) {
+		s/$whitespaces_dashes//g;
+		return $_;
+	}
 }
-
-my $non_alphanumeric_ascii = qr{[\x00-\x1f\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x81]+};
 
 has query_clean => (
 	is => 'ro',
@@ -81,10 +114,11 @@ has query_clean => (
 	builder => '_build_query_clean',
 );
 sub _build_query_clean {
-	my $q = shift->query_lc;
-	$q =~ s/$non_alphanumeric_ascii//g;
-	$q = substr($q,0,100);
-	return $q;
+	for (shift->query_lc) {
+		s/$non_alphanumeric_ascii//g;
+		s/$whitespaces/ /g;
+		return $_;
+	}
 }
 
 has words => (
@@ -93,11 +127,10 @@ has words => (
 	builder => '_build_words',
 );
 sub _build_words {
-	my @words;
-	for (split(/$whitespaces/,shift->query_clean)) {
-		push @words, $_ unless $_ eq '';
-	}
-	return \@words;
+	[
+		grep { length }
+		split(/$whitespaces/,shift->query_clean)
+	]
 }
 
 has wordcount => (
