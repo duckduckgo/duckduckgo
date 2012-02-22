@@ -2,6 +2,7 @@ package DDG::Request;
 
 use Moo;
 use utf8;
+use List::MoreUtils qw{ uniq };
 
 #
 # QUERY
@@ -16,6 +17,7 @@ has query_raw => (
 my $whitespaces = qr{\s+};
 my $whitespaces_matches = qr{($whitespaces)};
 my $whitespaces_dashes = qr{[\s\-]+};
+my $dashes = qr{\-+};
 my $non_alphanumeric_ascii = qr{[\x00-\x1f\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x81\x{a7}]+};
 
 has query_raw_parts => (
@@ -62,8 +64,47 @@ has trigger => (
 	builder => '_build_trigger',
 );
 sub _build_trigger {
-	my @parts = @{shift->query_parts_lc};
+	my ( $self ) = @_;
+	my @parts = @{$self->query_parts_lc};
+	my @trigger;
+	$trigger[0] = [uniq $self->generate_trigger(shift @parts)];
+	if (scalar @parts == 1) {
+		$trigger[1] = [];
+		$trigger[2] = [uniq $self->generate_trigger(pop @parts)];
+	} elsif (scalar @parts > 1) {
+		my $last = pop @parts;
+		my @parts_trigger;
+		for (@parts) {
+			push @parts_trigger, $self->generate_trigger($_);
+		}
+		$trigger[1] = [uniq @parts_trigger];
+		$trigger[2] = [uniq $self->generate_trigger($last)];
+	} else {
+		$trigger[1] = [];
+		$trigger[2] = [];
+	}
 	
+	return \@trigger;
+}
+
+sub generate_trigger {
+	my ( $self, $original_part ) = @_;
+	my $part = $original_part;
+	my @parts = ($part);
+	$part =~ s/^!//g;
+	push @parts, $part;
+	$part =~ s/\?$//g;
+	push @parts, $part;
+	if ($part =~ m/$dashes/) {
+		my @dashparts = split(/$dashes/, $part);
+		for my $dashpart (@dashparts) {
+			push @parts, $dashpart;
+		}
+		push @parts, $_ for @dashparts;
+		my $joined = join('', @dashparts);
+		push @parts, $joined;
+	}
+	return @parts;
 }
 
 has query => (

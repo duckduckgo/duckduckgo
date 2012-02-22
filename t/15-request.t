@@ -21,6 +21,11 @@ BEGIN {
 			query_raw_parts           => ['','   ','!bang',' ','test'],
 			query_parts               => [qw( !bang test )],
 			words                     => [qw( bang test )],
+			trigger                   => [
+				[qw( !bang bang )],
+				[qw()],
+				[qw( test )],
+			]
 		},
 		'!bang            test-test'      => {
 			query_raw                 => '!bang            test-test',
@@ -33,6 +38,11 @@ BEGIN {
 			query_raw_parts           => ['!bang','            ','test-test'],
 			query_parts               => [qw( !bang test-test )],
 			words                     => [qw( bang test-test )],
+			trigger                   => [
+				[qw( !bang bang )],
+				[qw()],
+				[qw( test-test test testtest )],
+			]
 		},
 		'other !bang test'                => {
 			query_raw                 => 'other !bang test',
@@ -45,6 +55,11 @@ BEGIN {
 			query_raw_parts           => ['other',' ','!bang',' ','test'],
 			query_parts               => [qw( other !bang test )],
 			words                     => [qw( other bang test )],
+			trigger                   => [
+				[qw( other )],
+				[qw( !bang bang )],
+				[qw( test )],
+			]
 		},
 		'%"test %)()%!%§ +##+tesfsd' => {
 			query_raw                         => '%"test %)()%!%§ +##+tesfsd',
@@ -56,16 +71,21 @@ BEGIN {
 			wordcount                         => 2,
 			query_parts                       => ['%"test',qq{%\)\(\)%!%§},'+##+tesfsd'],
 			words                             => [qw( test tesfsd )],
+			trigger                   => [
+				['%"test'],
+				['%)()%!%§'],
+				['+##+tesfsd'],
+			]
 		},
-		'test...test test...Test'         => {
-			query_raw                 => 'test...test test...Test',
-			query                     => 'test...test test...Test',
-			query_lc                  => 'test...test test...test',
-			query_nowhitespace        => 'test...testtest...Test',
-			query_nowhitespace_nodash => 'test...testtest...Test',
+		'test...test test...Test?'         => {
+			query_raw                 => 'test...test test...Test?',
+			query                     => 'test...test test...Test?',
+			query_lc                  => 'test...test test...test?',
+			query_nowhitespace        => 'test...testtest...Test?',
+			query_nowhitespace_nodash => 'test...testtest...Test?',
 			query_clean               => 'testtest testtest',
 			wordcount                 => 2,
-			query_parts               => [qw( test...test test...Test )],
+			query_parts               => [qw( test...test test...Test? )],
 			words                     => [qw( test test test Test )],
 		},
 		'   %%test     %%%%%      %%%TeSFsd%%%  ' => {
@@ -124,6 +144,11 @@ BEGIN {
 				' ', 'query', ' ', '0123456789abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' ],
 			query_parts               => [qw( a really very very very very very long query )],
 			words                     => [qw( a really very very very very very long query )],
+			trigger                   => [
+				['a'],
+				['long','really','very'],
+				['query'],
+			]
 		},
 	);
 
@@ -145,6 +170,11 @@ BEGIN {
 			my $result_key = $_;
 			my ( $param ) = $_ =~ m/_(\w)+$/;
 			is_deeply($req->combined_lc_words($param),$result{$result_key},'Testing '.$result_key.' of "'.$query.'"') if defined $result{$result_key};
+		}
+		if (defined $result{trigger}) {
+			for (0..2) {
+				is_deeply([sort @{$req->trigger->[$_]}],[sort @{$result{trigger}->[$_]}],'Trigger test '.$_.' of "'.$query.'"');
+			}
 		}
 	}
 	

@@ -15,11 +15,11 @@ my @word_types = qw(
 
 my @regexp_types = qw(
 
-	query_unmodified
-	nowhitespaces
-	nowhitespaces_nodashes
+	query_raw
 	query
-	lc_query
+	query_nowhitespace
+	query_nowhitespace_nodash
+	query_clean
 
 );
 
