@@ -112,6 +112,19 @@ BEGIN {
 			query_parts               => [qw( !REVerse BLA )],
 			words                     => [qw( reverse bla )],
 		},
+		'a really very very very very very long query 0123456789abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' => {
+			query_raw                 => 'a really very very very very very long query 0123456789abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+			query                     => 'a really very very very very very long query',
+			query_lc                  => 'a really very very very very very long query',
+			query_nowhitespace        => 'areallyveryveryveryveryverylongquery',
+			query_nowhitespace_nodash => 'areallyveryveryveryveryverylongquery',
+			query_clean               => 'a really very very very very very long query',
+			wordcount                 => 9,
+			query_raw_parts           => [ 'a', ' ', 'really', ' ', 'very', ' ', 'very', ' ', 'very', ' ', 'very', ' ', 'very', ' ', 'long',
+				' ', 'query', ' ', '0123456789abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' ],
+			query_parts               => [qw( a really very very very very very long query )],
+			words                     => [qw( a really very very very very very long query )],
+		},
 	);
 
 	while (@t) {
