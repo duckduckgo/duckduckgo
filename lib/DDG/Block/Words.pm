@@ -68,6 +68,7 @@ sub request {
 				$end && defined $self->words_plugins->{after}->{$word} ? $self->words_plugins->{after}->{$word} :
 				defined $self->words_plugins->{any}->{$word} ? $self->words_plugins->{any}->{$word} : undef) {				
 				push @results, $plugin->handle_request_matches($request,$pos);
+				return @results if $self->return_one && @results;
 			}
 		}
 	}

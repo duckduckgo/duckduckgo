@@ -1,6 +1,7 @@
 package DDG::Block;
 
 use Moo::Role;
+use Carp;
 use Class::Load ':all';
 
 requires qw(
@@ -38,15 +39,20 @@ sub _build__plugin_objs {
 		my $class;
 		my %args;
 		if (ref $_ eq 'HASH') {
-			die "require a class key in hash" unless defined $_->{class};
+			croak "require a class key in hash" unless defined $_->{class};
 			$class = delete $_->{class};
 			%args = %{$_};
 		} else {
 			$class = $_;
 		}
-		load_class($class);
-		$args{block} = $self;
-		my $plugin = $class->new(\%args);
+		my $plugin;
+		if (ref $class) {
+			$plugin = $class;
+		} else {
+			load_class($class);
+			$args{block} = $self;
+			$plugin = $class->new(\%args);
+		}
 		my @triggers = $self->get_triggers_of_plugin($plugin);
 		@triggers = $self->empty_trigger unless @triggers;
 		my @parsed_triggers;

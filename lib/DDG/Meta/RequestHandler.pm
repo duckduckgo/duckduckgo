@@ -7,20 +7,19 @@ require Moo::Role;
 
 my @request_attributes = qw(
 
-	query_unmodified
-	nowhitespaces
-	nowhitespaces_nodashes
+	query_raw
+	query_nowhitespace
+	query_nowhitespace_nodash
 	query
+	query_lc
+	query_clean
 	words
-	words_unmodified
-	lc_query
 	wordcount
-	wordcount_unmodified
-	lc_words
+	triggers
 
 );
 
-my $default_handler = 'lc_query';
+my $default_handler = 'query_raw';
 
 sub apply_keywords {
 	my ( $class, $target, $result_handler ) = @_;
@@ -47,13 +46,13 @@ sub apply_keywords {
 				: '';
 			if (grep { $_ eq $handler } @request_attributes) {
 				*{"${target}::handle_request_matches"} = sub {
-					my ( $self, $block, $request ) = @_;
+					my ( $self, $request ) = @_;
 					my @result = $code->($request->$handler);
 					return @result ? $result_handler->($self,@result) : ();
 				};
 			} elsif ($handler eq 'request') {
 				*{"${target}::handle_request_matches"} = sub {
-					my ( $self, $block, $request ) = @_;
+					my ( $self, $request ) = @_;
 					my @result = $code->($request);
 					return @result ? $result_handler->($self,@result) : ();
 				};
@@ -62,7 +61,7 @@ sub apply_keywords {
 				*{"${target}::handle_request_matches"} = sub {
 					my ( $self, $request, $pos ) = @_;
 					my $remainder = $request->generate_remainder($pos);
-					my @result = $code->($request,$handler eq 'remainder' ? $remainder : lc($remainder));
+					my @result = $code->($handler eq 'remainder' ? $remainder : lc($remainder));
 					return @result ? $result_handler->($self, @result) : ();
 				};
 			} elsif ($handler eq 'matches') {
@@ -74,8 +73,8 @@ sub apply_keywords {
 				};
 			} elsif ($handler eq 'all') {
 				*{"${target}::handle_request_matches"} = sub {
-					my ( $self, $request, $matches ) = @_;
-					my @result = $code->($self,$request,$matches);
+					my ( $self, $request, @matches_or_pos ) = @_;
+					my @result = $code->($self,$request,\@matches_or_pos);
 					return @result ? $result_handler->($self,@result) : ();
 				};
 			} else {

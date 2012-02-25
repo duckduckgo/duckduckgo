@@ -4,28 +4,29 @@ use Moo;
 with qw( DDG::Block );
 
 sub parse_trigger {
-	my ( $self, $trigger ) = @_;
-	return $trigger if ref $trigger eq 'Regexp';
-	return qr{$trigger};
+	my ( $self, $triggers ) = @_;
+	for my $key (keys %{$triggers}) {
+		my @triggers = map {
+			ref $_ eq 'Regexp' ? $_ : qr{$_};
+		} @{$triggers->{$key}};
+		$triggers->{$key} = \@triggers;
+	}
+	return $triggers;
 }
 
 sub request {
-	my ( $self, $query, @args ) = @_;
+	my ( $self, $request ) = @_;
 	my @results;
-	my $query_string = $query->query;
 	for (@{$self->plugin_objs}) {
-		my $res = $_->[0];
+		my $triggers = $_->[0];
 		my $plugin = $_->[1];
-		for (@{$res}) {
-			if (!$_ || ( my @matches = $query_string =~ $_ ) ) {
-				my @return = $plugin->query($query,\@matches,@args);
-				if (@return) {
-					if ($self->return_one) {
-						return @return;
-					} else {
-						push @results, $_ for @return;
+		for my $trigger (@{$triggers}) {
+			for my $attr (keys %{$trigger}) {
+				for (@{$trigger->{$attr}}) {
+					if ( my @matches = $request->$attr =~ m/$_/i ) {
+						push @results, $plugin->handle_request_matches($request,@matches);
+						return @results if $self->return_one && @results;
 					}
-					last;
 				}
 			}
 		}

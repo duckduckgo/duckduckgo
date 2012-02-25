@@ -9,14 +9,14 @@ BEGIN {
     use_ok('DDG::App');
     use_ok('DDG::App::GenerateStatic');
     use_ok('DDG::Block');
-    use_ok('DDG::Block::Hash');
+    use_ok('DDG::Block::Words');
     use_ok('DDG::Block::Regexp');
     use_ok('DDG::Plugin');
     use_ok('DDG::Plugin::Sample::Hash');
     use_ok('DDG::Plugin::Sample::Regexp');
     use_ok('DDG::Plugin::Sample::Regexp::Matches');
     use_ok('DDG::Plugin::ZeroClickInfo');
-    use_ok('DDG::Query');
+    use_ok('DDG::Request');
     use_ok('DDG::Util::Translate');
     use_ok('DDG::ZeroClickInfo');
 

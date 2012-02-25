@@ -1,4 +1,4 @@
-package DDGTest::Goodie::Simple;
+package DDGTest::Goodie::Words;
 
 use DDG::Goodie;
 
@@ -15,6 +15,6 @@ words sub {
 
 words around => sub { 'afoo', 'afoofoo' };
 
-handle remainder => sub { @_ };
+handle remainder => sub { shift; };
 
 1;

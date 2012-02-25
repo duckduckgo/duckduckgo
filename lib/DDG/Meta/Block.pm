@@ -24,7 +24,7 @@ our @regexp_types = qw(
 
 );
 
-my $default_regexp_type = 'query';
+my $default_regexp_type = 'query_raw';
 
 sub apply_keywords {
 	my ( $class, $target ) = @_;

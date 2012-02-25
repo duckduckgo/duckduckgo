@@ -11,49 +11,62 @@ use DDG::Block::Any;
 use DDG::Block::Regexp;
 use DDG::Block::Words;
 use DDG::Request;
+use DDG::ZeroClickInfo;
+
+sub zci {
+	my ( $answer, $answer_type, $is_cached ) = @_;
+	DDG::ZeroClickInfo->new(
+		answer => $answer,
+		answer_type => $answer_type,
+		is_cached => $is_cached ? 1 : 0,
+	);
+}
 
 BEGIN {
 
 	my $re_block = DDG::Block::Regexp->new({
 		plugins => [qw(
-			DDGTest::Goodie::Regexp
+			DDGTest::Goodie::ReBlockOne
 		)],
 	});
 
 	isa_ok($re_block,'DDG::Block::Regexp');
 
-	my $hash_block = DDG::Block::Words->new({
+	my $words_block = DDG::Block::Words->new({
 		plugins => [qw(
-			DDGTest::Goodie::Simple
+			DDGTest::Goodie::WoBlockOne
 		)],
 	});
 
-	isa_ok($hash_block,'DDG::Block::Words');
+	isa_ok($words_block,'DDG::Block::Words');
 
-	my $any_block = DDG::Block::Any->new({
-		plugins => [qw(
-			DDGTest::Goodie::Simple
-		)],
-	});
-
-	isa_ok($any_block,'DDG::Block::Any');
-
-	my %queries = (
-		'foo blub blaeh' => {
+	my @queries = (
+		'around whatever' => {
+			wo => [zci('whatever','woblockone')],
+			re => [],
 		},
-		'  foo blaeh' => {
+		'whatever around' => {
+			wo => [zci('whatever','woblockone')],
+			re => [],
+		},
+		'regexp xxxxx xxxxx' => {
+			wo => [],
+			re => [zci('xxxxx xxxxx','reblockone')],
+		},
+		'  regexp		xxxxx before' => {
+			wo => [zci('  regexp		xxxxx','woblockone')],
+			re => [zci('	xxxxx before','reblockone')],
 		},
 	);
 	
-	for (sort keys %queries) {
-		my $query = DDG::Request->new({ query_raw => $_ });
-		my $expect = $queries{$_};
-		my @hash_result = $hash_block->request($query);
-		is_deeply(\@hash_result,$expect->{hash} ? $expect->{hash} : [],'Testing hash block result of query "'.$_.'"');
-		my @re_result = $re_block->request($query);
-		is_deeply(\@re_result,$expect->{re} ? $expect->{re} : [],'Testing regexp block result of query "'.$_.'"');
-		my @any_result = $any_block->request($query);
-		is_deeply(\@any_result,$expect->{any} ? $expect->{any} : [],'Testing any block result of query "'.$_.'"');
+	while (@queries) {
+		my $query = shift @queries;
+		my $expect = shift @queries;
+		my $request = DDG::Request->new({ query_raw => $query });
+		my @words_result = $words_block->request($request);
+		is_deeply(\@words_result,$expect->{wo} ? $expect->{wo} : [],'Testing words block result of query "'.$query.'"');
+		my @re_result = $re_block->request($request);
+		is_deeply(\@re_result,$expect->{re} ? $expect->{re} : [],'Testing regexp block result of query "'.$query.'"');
 	}
 	
 }

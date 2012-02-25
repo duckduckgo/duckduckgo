@@ -7,29 +7,27 @@ use Test::More;
 use FindBin qw($Bin);
 use lib "$Bin/lib";
 
-use DDGTest::Goodie::Simple;
+use DDGTest::Goodie::Words;
 use DDGTest::Goodie::Regexp;
 
-my $goodie = DDGTest::Goodie::Simple->new;
+my $goodie = DDGTest::Goodie::Words->new( block => undef );
 
-isa_ok($goodie,'DDGTest::Goodie::Simple');
-ok($goodie->does('DDG::Goodie::Role'),'Checking DDGTest::Goodie::Simple does DDG::Goodie::Role');
+isa_ok($goodie,'DDGTest::Goodie::Words');
 
-is_deeply(DDGTest::Goodie::Simple->all_words_by_type,{
+is_deeply(DDGTest::Goodie::Words->all_words_by_type,{
 	around => [ "foo", "foofoo", "afoo", "afoofoo" ],
 	before => [ "bar", "baz", "buu", "abar", "abaz" ],
-},'Checking resulting all_words_by_type of DDGTest::Goodie::Simple',);
+},'Checking resulting all_words_by_type of DDGTest::Goodie::Words',);
 
-is_deeply(DDGTest::Goodie::Simple->all_regexps_by_type,{},'Checking DDGTest::Goodie::Simple has no regexps',);
-ok(DDGTest::Goodie::Simple->has_words,'Checking DDGTest::Goodie::Simple has_words');
+is_deeply(DDGTest::Goodie::Words->all_regexps_by_type,{},'Checking DDGTest::Goodie::Words has no regexps',);
+ok(DDGTest::Goodie::Words->has_words,'Checking DDGTest::Goodie::Words has_words');
 
-my $re = DDGTest::Goodie::Regexp->new;
+my $re = DDGTest::Goodie::Regexp->new( block => undef );
 
 isa_ok($re,'DDGTest::Goodie::Regexp');
-ok($re->does('DDG::Goodie::Role'),'Checking DDGTest::Goodie::Regexp does DDG::Goodie::Role');
 
 is_deeply(DDGTest::Goodie::Regexp->all_regexps_by_type,{
-	lc_query => [qr{aregexp (.*)}, qr{bregexp (.*) (.*)}, qr{cregexp (.*)}]
+	query_raw => [qr{aregexp (.*)}, qr{bregexp (.*) (.*)}, qr{cregexp (.*)}]
 },'Checking resulting all_regexps_by_type of DDGTest::Goodie::Regexp',);
 
 is_deeply(DDGTest::Goodie::Regexp->all_words_by_type,{},'Checking DDGTest::Goodie::Regexp has no words',);

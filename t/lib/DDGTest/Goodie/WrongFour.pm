@@ -2,7 +2,7 @@ package DDGTest::Goodie::WrongFour;
 
 use DDG::Goodie;
 
-regexp nowhitespaces_nodashes => qr{(.*)};
+regexp query_nowhitespace_nodash => qr{(.*)};
 
 handle remainder => sub { 'should anyway crash' };
 
