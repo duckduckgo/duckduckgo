@@ -9,7 +9,7 @@ sub parse_trigger {
 	return qr{$trigger};
 }
 
-sub query {
+sub request {
 	my ( $self, $query, @args ) = @_;
 	my @results;
 	my $query_string = $query->query;
@@ -32,5 +32,7 @@ sub query {
 	}
 	return @results;
 }
+
+sub get_triggers_of_plugin { shift; shift->all_regexps_by_type }
 
 1;

@@ -4,63 +4,56 @@ use strict;
 use warnings;
 use Test::More;
 
+use FindBin qw($Bin);
+use lib "$Bin/lib";
+
+use DDG::Block::Any;
 use DDG::Block::Regexp;
-use DDG::Block::Hash;
-use DDG::Query;
+use DDG::Block::Words;
+use DDG::Request;
 
 BEGIN {
 
 	my $re_block = DDG::Block::Regexp->new({
 		plugins => [qw(
-			Sample::Regexp
-			Sample::Regexp::Matches
+			DDGTest::Goodie::Regexp
 		)],
 	});
 
 	isa_ok($re_block,'DDG::Block::Regexp');
 
-	my $are_block = DDG::Block::Regexp->new({
+	my $hash_block = DDG::Block::Words->new({
 		plugins => [qw(
-			Sample::Regexp
-			Sample::Regexp::Matches
-		)],
-		return_one => 0,
-	});
-
-	isa_ok($are_block,'DDG::Block::Regexp');
-
-	my $hash_block = DDG::Block::Hash->new({
-		plugins => [qw(
-			Sample::Hash
+			DDGTest::Goodie::Simple
 		)],
 	});
 
-	isa_ok($hash_block,'DDG::Block::Hash');
+	isa_ok($hash_block,'DDG::Block::Words');
+
+	my $any_block = DDG::Block::Any->new({
+		plugins => [qw(
+			DDGTest::Goodie::Simple
+		)],
+	});
+
+	isa_ok($any_block,'DDG::Block::Any');
 
 	my %queries = (
-		'bla blub blaeh' => {
-			hash => ['DDG::Plugin::Sample::Hash'],
-			re => ['DDG::Plugin::Sample::Regexp'],
-			are => ['DDG::Plugin::Sample::Regexp'],
+		'foo blub blaeh' => {
 		},
-		'    bla blaeh' => {
-			hash => ['DDG::Plugin::Sample::Hash'],
-		},
-		'  reverse duckduckgo' => {
-			re => ['ogkcudkcud'],
-			are => ['ogkcudkcud'],
+		'  foo blaeh' => {
 		},
 	);
 	
 	for (sort keys %queries) {
-		my $query = DDG::Query->new({ query => $_ });
+		my $query = DDG::Request->new({ query_raw => $_ });
 		my $expect = $queries{$_};
-		my @hash_result = $hash_block->query($query);
+		my @hash_result = $hash_block->request($query);
 		is_deeply(\@hash_result,$expect->{hash} ? $expect->{hash} : [],'Testing hash block result of query "'.$_.'"');
-		my @re_result = $re_block->query($query);
+		my @re_result = $re_block->request($query);
 		is_deeply(\@re_result,$expect->{re} ? $expect->{re} : [],'Testing regexp block result of query "'.$_.'"');
-		my @are_result = $are_block->query($query);
-		is_deeply(\@are_result,$expect->{are} ? $expect->{are} : [],'Testing all regexp block result of query "'.$_.'"');
+		my @any_result = $any_block->request($query);
+		is_deeply(\@any_result,$expect->{any} ? $expect->{any} : [],'Testing any block result of query "'.$_.'"');
 	}
 	
 }

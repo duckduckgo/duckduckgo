@@ -45,6 +45,7 @@ sub apply_keywords {
 		no strict "refs";
 
 		*{"${target}::zci_new"} = sub {
+			shift;
 			ref $_[0] eq 'HASH' ? 
 				DDG::ZeroClickInfo->new(%zci_params, %{$_[0]}) :
 				DDG::ZeroClickInfo->new(%zci_params, @_)

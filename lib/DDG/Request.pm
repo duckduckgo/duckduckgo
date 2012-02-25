@@ -58,36 +58,25 @@ sub _build_query_parts_lc {
 	]
 }
 
-has trigger => (
+has triggers => (
 	is => 'ro',
 	lazy => 1,
-	builder => '_build_trigger',
+	builder => '_build_triggers',
 );
-sub _build_trigger {
+sub _build_triggers {
 	my ( $self ) = @_;
-	my @parts = @{$self->query_parts_lc};
-	my @trigger;
-	$trigger[0] = [uniq $self->generate_trigger(shift @parts)];
-	if (scalar @parts == 1) {
-		$trigger[1] = [];
-		$trigger[2] = [uniq $self->generate_trigger(pop @parts)];
-	} elsif (scalar @parts > 1) {
-		my $last = pop @parts;
-		my @parts_trigger;
-		for (@parts) {
-			push @parts_trigger, $self->generate_trigger($_);
+	my @parts = @{$self->query_raw_parts};
+	my $x = $parts[0] eq '' ? 2 : 0;
+	my %triggers;
+	for ($x..(scalar @parts-1)) {
+		unless ($_ % 2) {
+			$triggers{$_} = [uniq $self->generate_triggers($parts[$_])];
 		}
-		$trigger[1] = [uniq @parts_trigger];
-		$trigger[2] = [uniq $self->generate_trigger($last)];
-	} else {
-		$trigger[1] = [];
-		$trigger[2] = [];
 	}
-	
-	return \@trigger;
+	return \%triggers;
 }
 
-sub generate_trigger {
+sub generate_triggers {
 	my ( $self, $original_part ) = @_;
 	my $part = $original_part;
 	my @parts = ($part);
@@ -105,6 +94,21 @@ sub generate_trigger {
 		push @parts, $joined;
 	}
 	return @parts;
+}
+
+sub generate_remainder {
+	my ( $self, $pos ) = @_;
+	my @query_raw_parts = @{$self->query_raw_parts};
+	my $max = scalar @query_raw_parts-1;
+	my $remainder = '';
+	if ( $pos < $max && ( $pos == 0 || ( $pos == 2 && $query_raw_parts[0] eq '' ) ) ) {
+		$remainder = join('',@query_raw_parts[$pos+1..$max]);
+		$remainder =~ s/^\s//;
+	} elsif ( $max % 2 ? $pos == $max-1 : $pos == $max ) {
+		$remainder = join('',@query_raw_parts[0..$pos-1]);
+		$remainder =~ s/\s$//;
+	}
+	return $remainder;
 }
 
 has query => (

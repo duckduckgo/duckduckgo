@@ -47,37 +47,35 @@ sub apply_keywords {
 				: '';
 			if (grep { $_ eq $handler } @request_attributes) {
 				*{"${target}::handle_request_matches"} = sub {
-					my ( $self, $request ) = @_;
+					my ( $self, $block, $request ) = @_;
 					my @result = $code->($request->$handler);
 					return @result ? $result_handler->($self,@result) : ();
 				};
 			} elsif ($handler eq 'request') {
 				*{"${target}::handle_request_matches"} = sub {
-					my ( $self, $request ) = @_;
+					my ( $self, $block, $request ) = @_;
 					my @result = $code->($request);
 					return @result ? $result_handler->($self,@result) : ();
 				};
-			} elsif ($handler eq 'remainder' || $handler eq 'lc_remainder') {
+			} elsif ($handler eq 'remainder' || $handler eq 'remainder_lc') {
 				croak "You must be using words matching for remainder handler" if !$block or $block eq 'regexp';
 				*{"${target}::handle_request_matches"} = sub {
-					my ( $self, $request, $hit ) = @_;
-					delete $hit->[1];
-					my $remainder = join(" ",grep { $_ ne '' } @{$hit});
+					my ( $self, $request, $pos ) = @_;
+					my $remainder = $request->generate_remainder($pos);
 					my @result = $code->($request,$handler eq 'remainder' ? $remainder : lc($remainder));
-					return @result ? $result_handler->($self,@result) : ();
+					return @result ? $result_handler->($self, @result) : ();
 				};
-			} elsif ($handler eq 'matches' || $handler eq 'lc_matches') {
+			} elsif ($handler eq 'matches') {
 				croak "You must be using regexps matching for matches handler" if !$block or $block eq 'words';
 				*{"${target}::handle_request_matches"} = sub {
-					my ( $self, $request, $matches_ref ) = @_;
-					my @matches = $handler eq 'matches' ? @{$matches_ref} : map { lc($_) } @{$matches_ref};
+					my ( $self, $request, @matches ) = @_;
 					my @result = $code->(@matches);
 					return @result ? $result_handler->($self,@result) : ();
 				};
 			} elsif ($handler eq 'all') {
 				*{"${target}::handle_request_matches"} = sub {
-					my ( $self, $request, $matches_or_hit ) = @_;
-					my @result = $code->($self,$request,$matches_or_hit);
+					my ( $self, $request, $matches ) = @_;
+					my @result = $code->($self,$request,$matches);
 					return @result ? $result_handler->($self,@result) : ();
 				};
 			} else {

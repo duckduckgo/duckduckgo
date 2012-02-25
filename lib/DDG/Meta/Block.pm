@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp;
 
-my @word_types = qw(
+our @words_types = qw(
 
 	after
 	before
@@ -13,17 +13,18 @@ my @word_types = qw(
 
 );
 
-my @regexp_types = qw(
+our @regexp_types = qw(
 
 	query_raw
 	query
+	query_lc
 	query_nowhitespace
 	query_nowhitespace_nodash
 	query_clean
 
 );
 
-my $default_regexp_type = 'lc_query';
+my $default_regexp_type = 'query';
 
 sub apply_keywords {
 	my ( $class, $target ) = @_;
@@ -50,7 +51,7 @@ sub apply_keywords {
 			if (ref $args[0] eq 'HASH') {
 				my %types = %{$args[0]};
 				for my $type (keys %types) {
-					croak "unknown type ".$type." for words" unless grep { $_ eq $type } @word_types;
+					croak "unknown type ".$type." for words" unless grep { $_ eq $type } @words_types;
 					my $value = $types{$type};
 					$words{$type} = [] unless defined $words{$type};
 					my $ref = ref $value;
@@ -60,7 +61,7 @@ sub apply_keywords {
 				croak "you cant give back CODEREFs as result of a CODEREF for words";
 			} else {
 				my $type = shift @args;
-				croak "unknown type ".$type." for words" unless grep { $_ eq $type } @word_types;
+				croak "unknown type ".$type." for words" unless grep { $_ eq $type } @words_types;
 				$words{$type} = [] unless defined $words{$type};
 				my $ref = ref $args[0];
 				push @{$words{$type}}, ($ref eq 'ARRAY' ? @{$args[0]} : $ref eq 'CODE' ? $args[0]->() : @args);
