@@ -35,6 +35,7 @@ BEGIN {
 
 	my $words_block = DDG::Block::Words->new({
 		plugins => [qw(
+			DDGTest::Goodie::WoBlockBang
 			DDGTest::Goodie::WoBlockOne
 			DDGTest::Goodie::WoBlockTwo
 			DDGTest::Goodie::WoBlockThree
@@ -46,6 +47,14 @@ BEGIN {
 	my @queries = (
 		'aROUNd two' => {
 			wo => [zci('two','woblockone')],
+			re => [],
+		},
+		'wikipedia blub' => {
+			wo => [],
+			re => [],
+		},
+		'bla !wikipedia blub' => {
+			wo => [zci('bla blub','woblockbang')],
 			re => [],
 		},
 		'whatever around two around whatever' => {
