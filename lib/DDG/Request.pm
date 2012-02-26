@@ -70,7 +70,7 @@ sub _build_triggers {
 	my %triggers;
 	for ($x..(scalar @parts-1)) {
 		unless ($_ % 2) {
-			$triggers{$_} = [uniq $self->generate_triggers($parts[$_])];
+			$triggers{$_} = [uniq sort $self->generate_triggers($parts[$_])];
 		}
 	}
 	return \%triggers;
@@ -79,19 +79,19 @@ sub _build_triggers {
 sub generate_triggers {
 	my ( $self, $original_part ) = @_;
 	my $part = $original_part;
-	my @parts = ($part);
+	my @parts = (lc($part));
 	$part =~ s/^!//g;
-	push @parts, $part;
+	push @parts, lc($part);
 	$part =~ s/\?$//g;
-	push @parts, $part;
+	push @parts, lc($part);
 	if ($part =~ m/$dashes/) {
 		my @dashparts = split(/$dashes/, $part);
 		for my $dashpart (@dashparts) {
-			push @parts, $dashpart;
+			push @parts, lc($dashpart);
 		}
-		push @parts, $_ for @dashparts;
+		push @parts, lc($_) for @dashparts;
 		my $joined = join('', @dashparts);
-		push @parts, $joined;
+		push @parts, lc($joined);
 	}
 	return @parts;
 }

@@ -153,7 +153,7 @@ BEGIN {
 				12 => ["very"],
 				14 => ["long"],
 				16 => ["query"],
-				18 => ["0123456789abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"],
+				18 => ["0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789"],
 			}
 		},
 	);
