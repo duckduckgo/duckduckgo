@@ -43,7 +43,7 @@ BEGIN {
 	isa_ok($words_block,'DDG::Block::Words');
 
 	my @queries = (
-		'around two' => {
+		'aROUNd two' => {
 			wo => [zci('two','woblockone')],
 			re => [],
 		},
@@ -55,7 +55,7 @@ BEGIN {
 			wo => [zci('whatever around three around whatever','woblockthree')],
 			re => [],
 		},
-		'whatever around' => {
+		'whatever ArouND' => {
 			wo => [zci('whatever','woblockone')],
 			re => [],
 		},
@@ -63,9 +63,9 @@ BEGIN {
 			wo => [],
 			re => [zci('xxxxx xxxxx','reblockone')],
 		},
-		'  regexp		xxxxx after' => {
-			wo => [zci('  regexp		xxxxx','woblockone')],
-			re => [zci('	xxxxx after','reblockone')],
+		'  regexp		xXXXx aFTEr  ' => {
+			wo => [zci('  regexp		xXXXx','woblockone')],
+			re => [zci('	xXXXx aFTEr  ','reblockone')],
 		},
 	);
 	

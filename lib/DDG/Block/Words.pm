@@ -63,6 +63,7 @@ sub request {
 		my $start = $cnt == 1 ? 1 : 0;
 		my $end = $cnt == $max ? 1 : 0;
 		for my $word (@{$request->triggers->{$pos}}) {
+			$word = lc($word);
 			if (my $plugin =
 				$start && defined $self->words_plugins->{before}->{$word} ? $self->words_plugins->{before}->{$word} :
 				$end && defined $self->words_plugins->{after}->{$word} ? $self->words_plugins->{after}->{$word} :
