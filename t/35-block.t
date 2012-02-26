@@ -14,11 +14,12 @@ use DDG::Request;
 use DDG::ZeroClickInfo;
 
 sub zci {
-	my ( $answer, $answer_type, $is_cached ) = @_;
+	my ( $answer, $answer_type, $is_cached, %extra_attributes ) = @_;
 	DDG::ZeroClickInfo->new(
 		answer => $answer,
 		answer_type => $answer_type,
 		is_cached => $is_cached ? 1 : 0,
+		%extra_attributes,
 	);
 }
 
