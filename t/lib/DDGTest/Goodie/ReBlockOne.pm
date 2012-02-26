@@ -2,7 +2,7 @@ package DDGTest::Goodie::ReBlockOne;
 
 use DDG::Goodie;
 
-regexp qr{regexp\s(.*)};
+regexp qr/regexp\s(.*)/i;
 
 handle matches => sub { return join('|',@_) };
 

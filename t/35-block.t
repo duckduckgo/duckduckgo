@@ -56,7 +56,7 @@ BEGIN {
 			wo => [zci('whatever around three around whatever','woblockthree')],
 			re => [],
 		},
-		'whatever ArouND' => {
+		'whatever !ArouND' => {
 			wo => [zci('whatever','woblockone')],
 			re => [],
 		},
@@ -64,8 +64,8 @@ BEGIN {
 			wo => [],
 			re => [zci('xxxxx xxxxx','reblockone')],
 		},
-		'  regexp		xXXXx aFTEr  ' => {
-			wo => [zci('  regexp		xXXXx','woblockone')],
+		'  rEGExp		xXXXx aFTEr  ' => {
+			wo => [zci('  rEGExp		xXXXx','woblockone')],
 			re => [zci('	xXXXx aFTEr  ','reblockone')],
 		},
 	);

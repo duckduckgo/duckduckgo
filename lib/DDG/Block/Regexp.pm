@@ -23,7 +23,7 @@ sub request {
 		for my $trigger (@{$triggers}) {
 			for my $attr (keys %{$trigger}) {
 				for (@{$trigger->{$attr}}) {
-					if ( my @matches = $request->$attr =~ m/$_/i ) {
+					if ( my @matches = $request->$attr =~ m/$_/ ) {
 						push @results, $plugin->handle_request_matches($request,@matches);
 						return @results if $self->return_one && @results;
 					}

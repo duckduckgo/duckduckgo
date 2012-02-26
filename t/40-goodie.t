@@ -27,7 +27,7 @@ my $re = DDGTest::Goodie::Regexp->new( block => undef );
 isa_ok($re,'DDGTest::Goodie::Regexp');
 
 is_deeply(DDGTest::Goodie::Regexp->all_regexps_by_type,{
-	query_raw => [qr{aregexp (.*)}, qr{bregexp (.*) (.*)}, qr{cregexp (.*)}]
+	query_raw => [qr/aregexp (.*)/i, qr/bregexp (.*) (.*)/i, qr/cregexp (.*)/i]
 },'Checking resulting all_regexps_by_type of DDGTest::Goodie::Regexp',);
 
 is_deeply(DDGTest::Goodie::Regexp->all_words_by_type,{},'Checking DDGTest::Goodie::Regexp has no words',);
