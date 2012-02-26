@@ -47,13 +47,19 @@ sub apply_keywords {
 			if (grep { $_ eq $handler } @request_attributes) {
 				*{"${target}::handle_request_matches"} = sub {
 					my ( $self, $request ) = @_;
-					my @result = $code->($request->$handler);
+					my @result;
+					for ($request->$handler) {
+						@result = $code->($_);
+					}
 					return @result ? $result_handler->($self,@result) : ();
 				};
 			} elsif ($handler eq 'request') {
 				*{"${target}::handle_request_matches"} = sub {
 					my ( $self, $request ) = @_;
-					my @result = $code->($request);
+					my @result;
+					for ($request) {
+						@result = $code->($_);
+					}
 					return @result ? $result_handler->($self,@result) : ();
 				};
 			} elsif ($handler eq 'remainder' || $handler eq 'remainder_lc') {
@@ -61,14 +67,20 @@ sub apply_keywords {
 				*{"${target}::handle_request_matches"} = sub {
 					my ( $self, $request, $pos ) = @_;
 					my $remainder = $request->generate_remainder($pos);
-					my @result = $code->($handler eq 'remainder' ? $remainder : lc($remainder));
+					my @result;
+					for ($handler eq 'remainder' ? $remainder : lc($remainder)) {
+						@result = $code->($_);
+					}
 					return @result ? $result_handler->($self, @result) : ();
 				};
 			} elsif ($handler eq 'matches') {
 				croak "You must be using regexps matching for matches handler" if !$block or $block eq 'words';
 				*{"${target}::handle_request_matches"} = sub {
 					my ( $self, $request, @matches ) = @_;
-					my @result = $code->(@matches);
+					my @result;
+					for ($request->query_raw) {
+						@result = $code->(@matches);
+					}
 					return @result ? $result_handler->($self,@result) : ();
 				};
 			} elsif ($handler eq 'all') {

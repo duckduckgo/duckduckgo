@@ -107,6 +107,12 @@ sub generate_remainder {
 	} elsif ( $max % 2 ? $pos == $max-1 : $pos == $max ) {
 		$remainder = join('',@query_raw_parts[0..$pos-1]);
 		$remainder =~ s/\s$//;
+	} else {
+		my $left_remainder = join('',@query_raw_parts[0..$pos-1]);
+		my $right_remainder = join('',@query_raw_parts[$pos+1..$max]);
+		$left_remainder =~ s/\s$//;
+		$right_remainder =~ s/^\s//;
+		$remainder = $left_remainder.' '.$right_remainder;
 	}
 	return $remainder;
 }

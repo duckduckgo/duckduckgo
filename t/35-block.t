@@ -35,14 +35,24 @@ BEGIN {
 	my $words_block = DDG::Block::Words->new({
 		plugins => [qw(
 			DDGTest::Goodie::WoBlockOne
+			DDGTest::Goodie::WoBlockTwo
+			DDGTest::Goodie::WoBlockThree
 		)],
 	});
 
 	isa_ok($words_block,'DDG::Block::Words');
 
 	my @queries = (
-		'around whatever' => {
-			wo => [zci('whatever','woblockone')],
+		'around two' => {
+			wo => [zci('two','woblockone')],
+			re => [],
+		},
+		'whatever around two around whatever' => {
+			wo => [zci('whatever around around whatever','woblocktwo')],
+			re => [],
+		},
+		'        whatever around three around whatever           ' => {
+			wo => [zci('whatever around three around whatever','woblockthree')],
 			re => [],
 		},
 		'whatever around' => {
@@ -53,9 +63,9 @@ BEGIN {
 			wo => [],
 			re => [zci('xxxxx xxxxx','reblockone')],
 		},
-		'  regexp		xxxxx before' => {
+		'  regexp		xxxxx after' => {
 			wo => [zci('  regexp		xxxxx','woblockone')],
-			re => [zci('	xxxxx before','reblockone')],
+			re => [zci('	xxxxx after','reblockone')],
 		},
 	);
 	

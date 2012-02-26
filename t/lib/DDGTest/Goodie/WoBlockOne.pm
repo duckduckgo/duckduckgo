@@ -8,6 +8,6 @@ words before => 'before';
 
 words after => 'after';
 
-handle remainder => sub { shift; };
+handle remainder => sub { $_ };
 
 1;

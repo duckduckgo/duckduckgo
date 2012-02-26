@@ -58,7 +58,7 @@ sub request {
 	my @results;
 	my $cnt = 0;
 	my $max = scalar keys %{$request->triggers};
-	for my $pos (keys %{$request->triggers}) {
+	for my $pos (sort { $a <=> $b } keys %{$request->triggers}) {
 		$cnt++;
 		my $start = $cnt == 1 ? 1 : 0;
 		my $end = $cnt == $max ? 1 : 0;
