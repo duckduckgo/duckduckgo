@@ -14,29 +14,29 @@ sub words_plugins { shift->_words_plugins }
 
 sub _build__words_plugins {
 	my ( $self ) = @_;
-	my %before;
+	my %start;
 	my %any;
-	my %after;
+	my %end;
 	for (reverse @{$self->plugin_objs}) {
 		my $triggers = $_->[0];
 		my $plugin = $_->[1];
 		for (@{$triggers}) {
 			my $trigger = $_;
 			croak "trigger must be a hash on ".(ref $plugin) unless ref $trigger eq 'HASH';
-			if (defined $trigger->{before}) {
-				for (@{$trigger->{before}}) {
-					$before{$_} = $plugin;
+			if (defined $trigger->{start}) {
+				for (@{$trigger->{start}}) {
+					$start{$_} = $plugin;
 				}
 			}
-			if (defined $trigger->{after}) {
-				for (@{$trigger->{after}}) {
-					$after{$_} = $plugin;
+			if (defined $trigger->{end}) {
+				for (@{$trigger->{end}}) {
+					$end{$_} = $plugin;
 				}
 			}
-			if (defined $trigger->{around}) {
-				for (@{$trigger->{around}}) {
-					$before{$_} = $plugin;
-					$after{$_} = $plugin;
+			if (defined $trigger->{startend}) {
+				for (@{$trigger->{startend}}) {
+					$start{$_} = $plugin;
+					$end{$_} = $plugin;
 				}
 			}
 			if (defined $trigger->{any}) {
@@ -47,8 +47,8 @@ sub _build__words_plugins {
 		}
 	}
 	return {
-		before => \%before,
-		after => \%after,
+		start => \%start,
+		end => \%end,
 		any => \%any,
 	};
 }
@@ -64,8 +64,8 @@ sub request {
 		my $end = $cnt == $max ? 1 : 0;
 		for my $word (@{$request->triggers->{$pos}}) {
 			if (my $plugin =
-				$start && defined $self->words_plugins->{before}->{$word} ? $self->words_plugins->{before}->{$word} :
-				$end && defined $self->words_plugins->{after}->{$word} ? $self->words_plugins->{after}->{$word} :
+				$start && defined $self->words_plugins->{start}->{$word} ? $self->words_plugins->{start}->{$word} :
+				$end && defined $self->words_plugins->{end}->{$word} ? $self->words_plugins->{end}->{$word} :
 				defined $self->words_plugins->{any}->{$word} ? $self->words_plugins->{any}->{$word} : undef) {				
 				push @results, $plugin->handle_request_matches($request,$pos);
 				return @results if $self->return_one && @results;
