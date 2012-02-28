@@ -75,8 +75,6 @@ sub request {
 	return @results;
 }
 
-sub get_triggers_of_plugin { shift; shift->all_words_by_type }
-
 sub empty_trigger { croak "empty triggers are not supported by ".__PACKAGE__ }
 
 sub BUILD {

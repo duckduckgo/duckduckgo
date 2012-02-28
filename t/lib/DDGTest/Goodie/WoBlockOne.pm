@@ -2,11 +2,11 @@ package DDGTest::Goodie::WoBlockOne;
 
 use DDG::Goodie;
 
-words around => 'around';
+triggers startend => 'around';
 
-words before => 'before';
+triggers start => 'before';
 
-words after => 'after';
+triggers end => 'after';
 
 handle remainder => sub { $_ };
 

@@ -2,7 +2,7 @@ package DDGTest::Goodie::WoBlockThree;
 
 use DDG::Goodie;
 
-words any => 'three';
+triggers any => 'three';
 
 handle query => sub { $_ };
 

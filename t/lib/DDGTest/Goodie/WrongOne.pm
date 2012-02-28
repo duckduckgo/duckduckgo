@@ -4,6 +4,6 @@ use DDG::Goodie;
 
 handle sub { 'should anyway crash' };
 
-words around => 'foo';
+triggers startend => 'foo';
 
 1;

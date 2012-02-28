@@ -37,13 +37,7 @@ sub apply_keywords {
 				$code = shift;
 				croak "We need a CODEREF for the handler" unless ref $code eq 'CODE';
 			}
-			my $block = $target->can('has_words')
-				? $target->has_words
-					? 'words'
-					: $target->has_regexps
-						? 'regexp'
-						: croak "Please define words or regexp before you define a handler"
-				: '';
+			croak "Please define triggers before you define a handler" unless $target->has_triggers;
 			if (grep { $_ eq $handler } @request_attributes) {
 				*{"${target}::handle_request_matches"} = sub {
 					my ( $self, $request ) = @_;
@@ -63,7 +57,7 @@ sub apply_keywords {
 					return @result ? $result_handler->($self,@result) : ();
 				};
 			} elsif ($handler eq 'remainder' || $handler eq 'remainder_lc') {
-				croak "You must be using words matching for remainder handler" if !$block or $block eq 'regexp';
+				croak "You must be using words matching for remainder handler" unless $target->triggers_block_type eq 'Words';
 				*{"${target}::handle_request_matches"} = sub {
 					my ( $self, $request, $pos ) = @_;
 					my $remainder = $request->generate_remainder($pos);
@@ -74,7 +68,7 @@ sub apply_keywords {
 					return @result ? $result_handler->($self, @result) : ();
 				};
 			} elsif ($handler eq 'matches') {
-				croak "You must be using regexps matching for matches handler" if !$block or $block eq 'words';
+				croak "You must be using regexps matching for matches handler" unless $target->triggers_block_type eq 'Regexp';
 				*{"${target}::handle_request_matches"} = sub {
 					my ( $self, $request, @matches ) = @_;
 					my @result;

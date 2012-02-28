@@ -2,7 +2,7 @@ package DDGTest::Goodie::WoBlockTwo;
 
 use DDG::Goodie;
 
-words any => 'two';
+triggers any => 'two';
 
 handle remainder => sub { $_ };
 

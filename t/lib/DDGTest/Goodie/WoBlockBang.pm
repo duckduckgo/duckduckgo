@@ -3,7 +3,7 @@ package DDGTest::Goodie::WoBlockBang;
 
 use DDG::Goodie;
 
-words any =>
+triggers any =>
 	'!wikipedia',
 	'!yahoo',
 	'!bang';

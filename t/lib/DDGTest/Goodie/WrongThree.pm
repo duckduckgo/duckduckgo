@@ -2,7 +2,7 @@ package DDGTest::Goodie::WrongThree;
 
 use DDG::Goodie;
 
-words around => 'foo';
+triggers startend => 'foo';
 
 handle matches => sub { 'should anyway crash' };
 

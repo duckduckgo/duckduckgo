@@ -2,10 +2,10 @@ package DDGTest::Goodie::Regexp;
 
 use DDG::Goodie;
 
-regexp qr/aregexp (.*)/i;
+triggers qr/aregexp (.*)/i;
 
-regexp qr/bregexp (.*) (.*)/i, qr/cregexp (.*)/i;
+triggers qr/bregexp (.*) (.*)/i, qr/cregexp (.*)/i;
 
-handle matches => sub { return join('||JOINED||',@_) };
+handle matches => sub { return join('|',@_) };
 
 1;

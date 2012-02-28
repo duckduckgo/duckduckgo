@@ -6,7 +6,6 @@ use Class::Load ':all';
 
 requires qw(
 	request
-	get_triggers_of_plugin
 );
 
 has plugins => (
@@ -66,6 +65,8 @@ sub _build__plugin_objs {
 	}
 	return \@plugin_objs;
 }
+
+sub get_triggers_of_plugin { shift; shift->get_triggers }
 
 sub parse_trigger { shift; shift; }
 

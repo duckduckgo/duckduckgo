@@ -2,9 +2,9 @@ package DDGTest::Goodie::WrongTwo;
 
 use DDG::Goodie;
 
-words around => 'foo';
+triggers startend => 'foo';
 
-regexp qr{(.*)};
+triggers qr{(.*)};
 
 handle sub { 'should anyway crash' };
 

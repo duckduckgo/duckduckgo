@@ -14,34 +14,28 @@ my $goodie = DDGTest::Goodie::Words->new( block => undef );
 
 isa_ok($goodie,'DDGTest::Goodie::Words');
 
-is_deeply(DDGTest::Goodie::Words->all_words_by_type,{
-	around => [ "foo", "foofoo", "afoo", "afoofoo" ],
-	before => [ "bar", "baz", "buu", "abar", "abaz" ],
-},'Checking resulting all_words_by_type of DDGTest::Goodie::Words',);
-
-is_deeply(DDGTest::Goodie::Words->all_regexps_by_type,{},'Checking DDGTest::Goodie::Words has no regexps',);
-ok(DDGTest::Goodie::Words->has_words,'Checking DDGTest::Goodie::Words has_words');
+is_deeply(DDGTest::Goodie::Words->get_triggers,{
+	startend => [ "foo", "foofoo", "afoo", "afoofoo" ],
+	start => [ "bar", "baz", "buu", "abar", "abaz" ],
+},'Checking resulting get_triggers of DDGTest::Goodie::Words');
 
 my $re = DDGTest::Goodie::Regexp->new( block => undef );
 
 isa_ok($re,'DDGTest::Goodie::Regexp');
 
-is_deeply(DDGTest::Goodie::Regexp->all_regexps_by_type,{
+is_deeply(DDGTest::Goodie::Regexp->get_triggers,{
 	query_raw => [qr/aregexp (.*)/i, qr/bregexp (.*) (.*)/i, qr/cregexp (.*)/i]
-},'Checking resulting all_regexps_by_type of DDGTest::Goodie::Regexp',);
-
-is_deeply(DDGTest::Goodie::Regexp->all_words_by_type,{},'Checking DDGTest::Goodie::Regexp has no words',);
-ok(!DDGTest::Goodie::Regexp->has_words,'Checking DDGTest::Goodie::Regexp not has_words');
+},'Checking resulting get_triggers of DDGTest::Goodie::Regexp',);
 
 eval q{
 	use DDGTest::Goodie::WrongOne;
 };
-like($@, qr/Please define words or regexp before you define a handler/, 'Checking DDGTest::Goodie::WrongOne for crashing proper');
+like($@, qr/Please define triggers before you define a handler/, 'Checking DDGTest::Goodie::WrongOne for crashing proper');
 
 eval q{
 	use DDGTest::Goodie::WrongTwo;
 };
-like($@, qr/you can only do regexp or words/, 'Checking DDGTest::Goodie::WrongTwo for crashing proper');
+like($@, qr/you cant add trigger types of the other block-type/, 'Checking DDGTest::Goodie::WrongTwo for crashing proper');
 
 eval q{
 	use DDGTest::Goodie::WrongThree;

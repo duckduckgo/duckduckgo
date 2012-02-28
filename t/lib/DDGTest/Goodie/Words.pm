@@ -2,18 +2,18 @@ package DDGTest::Goodie::Words;
 
 use DDG::Goodie;
 
-words around => 'foo';
+triggers startend => 'foo';
 
-words before => 'bar', 'baz';
-words before => 'buu';
+triggers start => 'bar', 'baz';
+triggers start => 'buu';
 
-words around => 'foofoo';
+triggers startend => 'foofoo';
 
-words sub {
-	before => [qw(abar abaz)],
+triggers sub {
+	start => [qw(abar abaz)],
 };
 
-words around => sub { 'afoo', 'afoofoo' };
+triggers startend => sub { 'afoo', 'afoofoo' };
 
 handle remainder => sub { shift; };
 

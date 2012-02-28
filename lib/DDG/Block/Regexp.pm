@@ -34,6 +34,4 @@ sub request {
 	return @results;
 }
 
-sub get_triggers_of_plugin { shift; shift->all_regexps_by_type }
-
 1;
