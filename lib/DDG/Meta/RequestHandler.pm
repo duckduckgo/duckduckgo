@@ -5,7 +5,7 @@ use warnings;
 use Carp;
 require Moo::Role;
 
-my @request_attributes = qw(
+my @request_scalar_attributes = qw(
 
 	query_raw
 	query_nowhitespace
@@ -13,9 +13,15 @@ my @request_attributes = qw(
 	query
 	query_lc
 	query_clean
-	words
 	wordcount
-	triggers
+
+);
+
+my @request_array_attributes = qw(
+
+	words
+	query_parts
+	query_raw_parts
 
 );
 
@@ -38,12 +44,21 @@ sub apply_keywords {
 				croak "We need a CODEREF for the handler" unless ref $code eq 'CODE';
 			}
 			croak "Please define triggers before you define a handler" unless $target->has_triggers;
-			if (grep { $_ eq $handler } @request_attributes) {
+			if (grep { $_ eq $handler } @request_scalar_attributes) {
 				*{"${target}::handle_request_matches"} = sub {
 					my ( $self, $request ) = @_;
 					my @result;
 					for ($request->$handler) {
 						@result = $code->($_);
+					}
+					return @result ? $result_handler->($self,@result) : ();
+				};
+			} elsif (grep { $_ eq $handler } @request_array_attributes) {
+				*{"${target}::handle_request_matches"} = sub {
+					my ( $self, $request ) = @_;
+					my @result;
+					for ($request->$default_handler) {
+						@result = $code->(@{$request->$handler});
 					}
 					return @result ? $result_handler->($self,@result) : ();
 				};

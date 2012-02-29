@@ -39,6 +39,7 @@ BEGIN {
 			DDGTest::Goodie::WoBlockOne
 			DDGTest::Goodie::WoBlockTwo
 			DDGTest::Goodie::WoBlockThree
+			DDGTest::Goodie::WoBlockArr
 		)],
 	});
 
@@ -76,6 +77,10 @@ BEGIN {
 		'  rEGExp		xXXXx aFTEr  ' => {
 			wo => [zci('  rEGExp		xXXXx','woblockone')],
 			re => [zci('	xXXXx aFTEr  ','reblockone')],
+		},
+		'  a    or     b   or        c  ' => {
+			wo => [zci('a|or|b|or|c','woblockarr')],
+			re => [],
 		},
 	);
 	
