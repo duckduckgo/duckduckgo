@@ -63,6 +63,10 @@ sub import {
 				my $answer = undef;
 				( $answer ) = $words_block->request($request) if $words_block;
 				( $answer ) = $words_block->request($request) if $regexp_block && !$answer;
+				if (ref $zci->answer eq 'Regexp') {
+					like($answer->answer,$zci->answer,'Regexp check for '.$query);
+					$zci->{answer} = $answer->answer;
+				}
 				is_deeply($answer,$zci,'Testing query '.$query);
 			}
 		};
