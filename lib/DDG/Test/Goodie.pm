@@ -64,8 +64,12 @@ sub import {
 				( $answer ) = $words_block->request($request) if $words_block;
 				( $answer ) = $words_block->request($request) if $regexp_block && !$answer;
 				if (ref $zci->answer eq 'Regexp') {
-					like($answer->answer,$zci->answer,'Regexp check for '.$query);
+					like($answer->answer,$zci->answer,'Regexp check against text for '.$query);
 					$zci->{answer} = $answer->answer;
+				}
+				if (ref $zci->html eq 'Regexp') {
+					like($answer->html,$zci->html,'Regexp check against html for '.$query);
+					$zci->{html} = $answer->html;
 				}
 				is_deeply($answer,$zci,'Testing query '.$query);
 			}
