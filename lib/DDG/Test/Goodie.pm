@@ -63,15 +63,23 @@ sub import {
 				my $answer = undef;
 				( $answer ) = $words_block->request($request) if $words_block;
 				( $answer ) = $words_block->request($request) if $regexp_block && !$answer;
-				if (ref $zci->answer eq 'Regexp') {
-					like($answer->answer,$zci->answer,'Regexp check against text for '.$query);
-					$zci->{answer} = $answer->answer;
+				if ( defined $zci ) {
+					if ($answer) {
+						if (ref $zci->answer eq 'Regexp') {
+							like($answer->answer,$zci->answer,'Regexp check against text for '.$query);
+							$zci->{answer} = $answer->answer;
+						}
+						if (ref $zci->html eq 'Regexp') {
+							like($answer->html,$zci->html,'Regexp check against html for '.$query);
+							$zci->{html} = $answer->html;
+						}
+						is_deeply($answer,$zci,'Testing query '.$query);
+					} else {
+						fail('Expected result but dont get one on '.$query);
+					}
+				} else {
+					is($answer,$zci,'Checking for not matching on '.$query);
 				}
-				if (ref $zci->html eq 'Regexp') {
-					like($answer->html,$zci->html,'Regexp check against html for '.$query);
-					$zci->{html} = $answer->html;
-				}
-				is_deeply($answer,$zci,'Testing query '.$query);
 			}
 		};
 	}
