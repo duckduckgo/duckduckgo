@@ -6,6 +6,8 @@ use Carp;
 
 use DDG::Meta::RequestHandler;
 use DDG::Meta::ZeroClickInfo;
+use DDG::Meta::ZeroClickInfoSpice;
+use DDG::Meta::ShareDir;
 use DDG::Meta::Block;
 require Moo::Role;
 
@@ -25,14 +27,26 @@ sub apply_goodie_keywords {
 	DDG::Meta::ZeroClickInfo->apply_keywords($target);
 	DDG::Meta::Block->apply_keywords($target);
 	Moo::Role->apply_role_to_package($target,'DDG::Block::Blockable');
-	DDG::Meta::RequestHandler->apply_keywords($target,sub { shift->zci_new( answer => @_ ) });
+	DDG::Meta::RequestHandler->apply_keywords($target,sub {
+		shift->zci_new(
+			scalar @_ == 1 && ref $_[0] eq 'HASH' ? $_[0] :
+				@_ % 2 ? ( answer => @_ ) : ()
+		);
+	});
 }
 
 sub apply_spice_keywords {
 	my ( $class, $target ) = @_;
+	DDG::Meta::ZeroClickInfoSpice->apply_keywords($target);
+	DDG::Meta::ShareDir->apply_keywords($target);
 	DDG::Meta::Block->apply_keywords($target);
 	Moo::Role->apply_role_to_package($target,'DDG::Block::Blockable');
-	DDG::Meta::RequestHandler->apply_keywords($target,sub { 'TODO'; });
+	DDG::Meta::RequestHandler->apply_keywords($target,sub {
+		shift->spice_new(
+			scalar @_ == 1 && ref $_[0] eq 'HASH' ? $_[0] :
+				@_ % 2 ? ( js => @_ ) : ()
+		);
+	});
 }
 
 1;

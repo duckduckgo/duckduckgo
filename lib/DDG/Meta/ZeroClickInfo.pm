@@ -26,7 +26,7 @@ sub check_zeroclickinfo_key {
 	if (grep { $key eq $_ } zeroclickinfo_attributes) {
 		return $key;
 	} else {
-		croak $key." is not supported on ZeroClickInfo";
+		croak $key." is not supported on DDG::ZeroClickInfo";
 	}
 }
 
@@ -51,9 +51,7 @@ sub apply_keywords {
 
 		*{"${target}::zci_new"} = sub {
 			shift;
-			ref $_[0] eq 'HASH' ? 
-				DDG::ZeroClickInfo->new(%zci_params, %{$_[0]}) :
-				DDG::ZeroClickInfo->new(%zci_params, @_)
+			DDG::ZeroClickInfo->new( %zci_params, ref $_[0] eq 'HASH' ? %{$_[0]} : @_ );
 		};
 		*{"${target}::zci"} = sub {
 			if (ref $_[0] eq 'HASH') {
