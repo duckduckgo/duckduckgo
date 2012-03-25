@@ -26,6 +26,13 @@ sub apply_keywords {
 
 	my $basedir = $moddata->root->parent;
 
+	# If the module was found in $root/t/lib/,
+	# we need to go up another level, as $basedir needs to be $root,
+	# not $root/t
+	if ( -e $basedir->parent->subdir('t') ) {
+		$basedir = $basedir->parent;
+	}
+
 	if ( -e $basedir->subdir('lib') and -e $basedir->subdir('share') ) {
 		$share = dir($basedir->subdir('share'),$share_path);
 	} else {
