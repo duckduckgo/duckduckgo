@@ -23,7 +23,7 @@ sub import {
 				DDG::ZeroClickInfo::Spice->new(%spice_params, @_, call => $call )
 		};
 
-		*{"${target}::zci"} = sub {
+		*{"${target}::spice"} = sub {
 			if (ref $_[0] eq 'HASH') {
 				for (keys %{$_[0]}) {
 					$spice_params{$_} = $_[0]->{$_};
