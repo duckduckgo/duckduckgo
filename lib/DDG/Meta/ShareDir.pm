@@ -5,6 +5,7 @@ use warnings;
 use Carp;
 use Module::Data;
 use Path::Class;
+use Package::Stash;
 use File::ShareDir ':ALL';
 
 my %applied;
@@ -30,15 +31,11 @@ sub apply_keywords {
 		$share = dir(module_dir($target));
 	}
 
-	{
-		no strict "refs";
-
-		*{"${target}::module_share_dir"} = sub { dir('share',$share_path) };
-		*{"${target}::share"} = sub {
+	my $stash = Package::Stash->new($target);
+	$stash->add_symbol('&module_share_dir', sub { dir('share',$share_path) });
+	$stash->add_symbol('&share', sub {
 			@_ ? -d dir($share,@_) ? $share->subdir(@_) : $share->file(@_) : $share
-		};
-	}
-
+	});
 }
 
 1;
