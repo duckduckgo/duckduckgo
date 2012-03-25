@@ -3,12 +3,9 @@ package DDG::Test::Goodie;
 use strict;
 use warnings;
 use Carp;
-use DDG::Request;
-use DDG::ZeroClickInfo;
 use Test::More;
-use Class::Load ':all';
-use DDG::Block::Words;
-use DDG::Block::Regexp;
+use DDG::Test;
+use DDG::ZeroClickInfo;
 
 sub import {
 	my ( $class, %params ) = @_;
@@ -40,48 +37,24 @@ sub import {
 			}
 		};
 
-		*{"${target}::ddg_goodie_test"} = sub {
-			my $plugins_ref = shift;
-			my @plugins = @{$plugins_ref};
-			my @regexp; my @words;
-			for (@plugins) {
-				load_class($_);
-				if ($_->triggers_block_type eq 'Words') {
-					push @words, $_;
-				} elsif ($_->triggers_block_type eq 'Regexp') {
-					push @regexp, $_;
-				} else {
-					croak "Unknown plugin type";
+		*{"${target}::ddg_goodie_test"} = sub { block_test(sub {
+			my $query = shift;
+			my $answer = shift;
+			my $zci = shift;
+			if ($answer) {
+				if (ref $zci->answer eq 'Regexp') {
+					like($answer->answer,$zci->answer,'Regexp check against text for '.$query);
+					$zci->{answer} = $answer->answer;
 				}
-			}
-			my $words_block = @words ? DDG::Block::Words->new( plugins => [@words]) : undef;
-			my $regexp_block = @regexp ? DDG::Block::Regexp->new( plugins => [@regexp]) : undef;
-			while (@_) {
-				my $query = shift;
-				my $zci = shift;
-				my $request = DDG::Request->new({ query_raw => $query });
-				my $answer = undef;
-				( $answer ) = $words_block->request($request) if $words_block;
-				( $answer ) = $words_block->request($request) if $regexp_block && !$answer;
-				if ( defined $zci ) {
-					if ($answer) {
-						if (ref $zci->answer eq 'Regexp') {
-							like($answer->answer,$zci->answer,'Regexp check against text for '.$query);
-							$zci->{answer} = $answer->answer;
-						}
-						if (ref $zci->html eq 'Regexp') {
-							like($answer->html,$zci->html,'Regexp check against html for '.$query);
-							$zci->{html} = $answer->html;
-						}
-						is_deeply($answer,$zci,'Testing query '.$query);
-					} else {
-						fail('Expected result but dont get one on '.$query);
-					}
-				} else {
-					is($answer,$zci,'Checking for not matching on '.$query);
+				if (ref $zci->html eq 'Regexp') {
+					like($answer->html,$zci->html,'Regexp check against html for '.$query);
+					$zci->{html} = $answer->html;
 				}
+				is_deeply($answer,$zci,'Testing query '.$query);
+			} else {
+				fail('Expected result but dont get one on '.$query);
 			}
-		};
+		},@_)};
 	}
 
 }

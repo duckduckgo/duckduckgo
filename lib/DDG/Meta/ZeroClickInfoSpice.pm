@@ -6,9 +6,10 @@ use Carp;
 use DDG::ZeroClickInfo::Spice;
 
 sub zeroclickinfospice_attributes {qw(
-	js
-	js_include
+	call
+	caller
 	is_cached
+	ttl
 )}
 
 sub check_zeroclickinfospice_key {
@@ -34,7 +35,9 @@ sub apply_keywords {
 	my $answer_type = lc(join(' ',@parts));
 	
 	{
-		my %zcispice_params = ();
+		my %zcispice_params = (
+			caller => $target,
+		);
 		no strict "refs";
 
 		*{"${target}::spice_new"} = sub {

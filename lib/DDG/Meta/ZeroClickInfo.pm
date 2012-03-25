@@ -19,6 +19,7 @@ sub zeroclickinfo_attributes {qw(
 	definition_url
 	type
 	is_cached
+	ttl
 )}
 
 sub check_zeroclickinfo_key {

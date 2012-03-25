@@ -30,7 +30,7 @@ sub apply_goodie_keywords {
 	DDG::Meta::RequestHandler->apply_keywords($target,sub {
 		shift->zci_new(
 			scalar @_ == 1 && ref $_[0] eq 'HASH' ? $_[0] :
-				@_ % 2 ? ( answer => @_ ) : ()
+				@_ % 2 ? ( answer => @_ ) : @_
 		);
 	});
 }
@@ -44,7 +44,7 @@ sub apply_spice_keywords {
 	DDG::Meta::RequestHandler->apply_keywords($target,sub {
 		shift->spice_new(
 			scalar @_ == 1 && ref $_[0] eq 'HASH' ? $_[0] :
-				@_ % 2 ? ( js => @_ ) : ()
+				@_ % 2 ? ( call => @_ ) : @_
 		);
 	});
 }

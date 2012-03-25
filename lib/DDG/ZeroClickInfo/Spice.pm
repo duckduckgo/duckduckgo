@@ -2,24 +2,19 @@ package DDG::ZeroClickInfo::Spice;
 
 use Moo;
 
-has js => (
+has call => (
 	is => 'ro',
 	required => 1,
 );
 
-has js_root => (
+has caller => (
 	is => 'ro',
 	required => 1,
-);
-
-has js_includes => (
-	is => 'ro',
-	default => sub {[]},
 );
 
 has is_cached => (
 	is => 'ro',
-	default => sub { 0 },
+	default => sub { 1 },
 );
 
 1;

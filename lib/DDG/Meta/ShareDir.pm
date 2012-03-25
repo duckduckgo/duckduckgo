@@ -34,7 +34,9 @@ sub apply_keywords {
 		no strict "refs";
 
 		*{"${target}::module_share_dir"} = sub { dir('share',$share_path) };
-		*{"${target}::share"} = sub { $share };
+		*{"${target}::share"} = sub {
+			@_ ? -d dir($share,@_) ? $share->subdir(@_) : $share->file(@_) : $share
+		};
 	}
 
 }
