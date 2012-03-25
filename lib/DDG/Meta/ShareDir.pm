@@ -14,7 +14,7 @@ sub apply_keywords {
 	my ( $class, $target ) = @_;
 	
 	return if exists $applied{$target};
-	$applied{$target} = undef;	
+	$applied{$target} = undef;
 
 	my @parts = split('::',$target);
 	shift @parts;
@@ -24,9 +24,10 @@ sub apply_keywords {
 
 	my $share;
 
-	if ( -e $moddata->root->parent->subdir('lib') ) {
-		return unless -e $moddata->root->parent->subdir('share'); 
-		$share = dir($moddata->root->parent->subdir('share'),$share_path);
+	my $basedir = $moddata->root->parent;
+
+	if ( -e $basedir->subdir('lib') and -e $basedir->subdir('share') ) {
+		$share = dir($basedir->subdir('share'),$share_path);
 	} else {
 		$share = dir(module_dir($target));
 	}
