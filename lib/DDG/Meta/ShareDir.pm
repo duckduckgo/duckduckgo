@@ -22,27 +22,34 @@ sub apply_keywords {
 
 	my $moddata = Module::Data->new($target);
 
-	my $share;
-
-	my $basedir = $moddata->root->parent;
-
 	# If the module was found in $root/t/lib/,
 	# we need to go up another level, as $basedir needs to be $root,
 	# not $root/t
-	if ( -e $basedir->parent->subdir('t') ) {
-		$basedir = $basedir->parent;
-	}
+	my $share;
+	my $share_code = sub {
 
-	if ( -e $basedir->subdir('lib') and -e $basedir->subdir('share') ) {
-		$share = dir($basedir->subdir('share'),$share_path);
-	} else {
-		$share = dir(module_dir($target));
-	}
+		my $basedir = $moddata->root->parent;
+
+		if ( -e $basedir->parent->subdir('t') ) {
+			$basedir = $basedir->parent;
+		}
+
+		if ( -e $basedir->subdir('lib') and -e $basedir->subdir('share') ) {
+			return dir($basedir->subdir('share'),$share_path);
+		} else {
+			return dir(module_dir($target));
+		}
+
+	};
 
 	my $stash = Package::Stash->new($target);
 	$stash->add_symbol('&module_share_dir', sub { dir('share',$share_path) });
 	$stash->add_symbol('&share', sub {
-			@_ ? -d dir($share,@_) ? $share->subdir(@_) : $share->file(@_) : $share
+			$share = $share_code->() unless defined $share;
+			@_ ? -d dir($share,@_)
+				? $share->subdir(@_)
+				: $share->file(@_)
+			: $share
 	});
 }
 
