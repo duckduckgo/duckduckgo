@@ -32,8 +32,7 @@ sub apply_goodie_keywords {
 			scalar @_ == 1 && ref $_[0] eq 'HASH' ? $_[0] :
 				@_ % 2 ? ( answer => @_ ) : @_
 		);
-	});
-	Moo::Role->apply_role_to_package($target,'DDG::IsGoodie');
+	},'DDG::IsGoodie');
 }
 
 sub apply_spice_keywords {
@@ -46,8 +45,7 @@ sub apply_spice_keywords {
 			scalar @_ == 1 && ref $_[0] eq 'HASH' ? $_[0] :
 				@_ % 2 ? ( call => @_ ) : @_
 		);
-	});
-	Moo::Role->apply_role_to_package($target,'DDG::IsSpice');
+	},'DDG::IsSpice');
 }
 
 1;
