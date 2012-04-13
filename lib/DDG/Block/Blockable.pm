@@ -4,6 +4,9 @@ use Moo::Role;
 
 requires qw(
 	get_triggers
+	has_triggers
+	triggers_block_type
+	triggers
 );
 
 has block => (

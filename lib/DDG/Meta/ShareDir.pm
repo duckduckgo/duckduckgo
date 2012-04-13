@@ -8,6 +8,8 @@ use Path::Class;
 use Package::Stash;
 use File::ShareDir ':ALL';
 
+require Moo::Role;
+
 my %applied;
 
 sub apply_keywords {
@@ -45,12 +47,18 @@ sub apply_keywords {
 	my $stash = Package::Stash->new($target);
 	$stash->add_symbol('&module_share_dir', sub { dir('share',$share_path) });
 	$stash->add_symbol('&share', sub {
-			$share = $share_code->() unless defined $share;
-			@_ ? -d dir($share,@_)
-				? $share->subdir(@_)
-				: $share->file(@_)
-			: $share
+		$share = $share_code->() unless defined $share;
+		@_ ? -d dir($share,@_)
+			? $share->subdir(@_)
+			: $share->file(@_)
+		: $share
 	});
+
+	#
+	# apply role
+	#
+
+	Moo::Role->apply_role_to_package($target,'DDG::HasShareDir');
 }
 
 1;

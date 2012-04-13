@@ -3,8 +3,10 @@ package DDG::Meta::Block;
 use strict;
 use warnings;
 use Carp;
-use Hash::Util qw( lock_keys legal_keys );
 use DDG::Block::Blockable::Triggers;
+use Package::Stash;
+
+require Moo::Role;
 
 sub apply_keywords {
 	my ( $class, $target ) = @_;
@@ -12,19 +14,22 @@ sub apply_keywords {
 	#
 	# triggers
 	#
-	
-	{
-		my $triggers;
-		no strict "refs";
 
-		*{"${target}::triggers_block_type"} = sub { $triggers->block_type };
-		*{"${target}::get_triggers"} = sub { $triggers->get };
-		*{"${target}::has_triggers"} = sub { $triggers ? 1 : 0 };
-		*{"${target}::triggers"} = sub {
-			$triggers = DDG::Block::Blockable::Triggers->new unless $triggers;
-			$triggers->add(@_)
-		};
-	}
+	my $triggers;
+	my $stash = Package::Stash->new($target);
+	$stash->add_symbol('&triggers_block_type',sub { $triggers->block_type });
+	$stash->add_symbol('&get_triggers',sub { $triggers->get });
+	$stash->add_symbol('&has_triggers',sub { $triggers ? 1 : 0 });
+	$stash->add_symbol('&triggers',sub {
+		$triggers = DDG::Block::Blockable::Triggers->new unless $triggers;
+		$triggers->add(@_)
+	});
+
+	#
+	# apply role
+	#
+
+	Moo::Role->apply_role_to_package($target,'DDG::Block::Blockable');
 
 }
 

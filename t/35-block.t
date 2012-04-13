@@ -13,6 +13,8 @@ use DDG::Block::Words;
 use DDG::Request;
 use DDG::ZeroClickInfo;
 
+use Scalar::Util qw( refaddr );
+
 sub zci {
 	my ( $answer, $answer_type, $is_cached, %extra_attributes ) = @_;
 	DDG::ZeroClickInfo->new(
@@ -25,22 +27,54 @@ sub zci {
 
 BEGIN {
 
+	my $re_plugins = [qw(
+		DDGTest::Goodie::ReBlockOne
+	)];
+	my $before_rp = 0;
+	my $after_rp = 0;
+
 	my $re_block = DDG::Block::Regexp->new({
-		plugins => [qw(
-			DDGTest::Goodie::ReBlockOne
-		)],
+		plugins => $re_plugins,
+		before_build => sub {
+			my ( $self, $class ) = @_;
+			ok($class eq $re_plugins->[$before_rp],'$class should be '.$re_plugins->[$before_rp]);
+			$before_rp++;
+			ok($class eq $_,'Checking $_ parameter is equal to $_[1]');
+		},
+		after_build => sub {
+			my ( $self, $plugin ) = @_;
+			ok(ref $plugin eq $re_plugins->[$after_rp],'$plugin should be ref '.$re_plugins->[$after_rp]);
+			$after_rp++;
+			ok(refaddr $plugin == refaddr $_,'Checking $_ parameter is equal to $_[1]');
+		},
 	});
 
 	isa_ok($re_block,'DDG::Block::Regexp');
 
+	my $words_plugins = [qw(
+		DDGTest::Goodie::WoBlockBang
+		DDGTest::Goodie::WoBlockOne
+		DDGTest::Goodie::WoBlockTwo
+		DDGTest::Goodie::WoBlockThree
+		DDGTest::Goodie::WoBlockArr
+	)];
+	my $before_wp = 0;
+	my $after_wp = 0;
+
 	my $words_block = DDG::Block::Words->new({
-		plugins => [qw(
-			DDGTest::Goodie::WoBlockBang
-			DDGTest::Goodie::WoBlockOne
-			DDGTest::Goodie::WoBlockTwo
-			DDGTest::Goodie::WoBlockThree
-			DDGTest::Goodie::WoBlockArr
-		)],
+		plugins => $words_plugins,
+		before_build => sub {
+			my ( $self, $class ) = @_;
+			ok($class eq $words_plugins->[$before_wp],'$class should be '.$words_plugins->[$before_wp]);
+			$before_wp++;
+			ok($class eq $_,'Checking $_ parameter is equal to $_[1]');
+		},
+		after_build => sub {
+			my ( $self, $plugin ) = @_;
+			ok(ref $plugin eq $words_plugins->[$after_wp],'$plugin should be ref '.$words_plugins->[$after_wp]);
+			$after_wp++;
+			ok(refaddr $plugin == refaddr $_,'Checking $_ parameter is equal to $_[1]');
+		},
 	});
 
 	isa_ok($words_block,'DDG::Block::Words');

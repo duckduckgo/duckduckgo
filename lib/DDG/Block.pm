@@ -23,6 +23,18 @@ has return_one => (
 	default => sub { 1 },
 );
 
+has before_build => (
+	#isa => 'CodeRef',
+	is => 'ro',
+	predicate => 'has_before_build',
+);
+
+has after_build => (
+	#isa => 'CodeRef',
+	is => 'ro',
+	predicate => 'has_after_build',
+);
+
 has _plugin_objs => (
 	# like ArrayRef[ArrayRef[$trigger,DDG::Block::Plugin]]',
 	is => 'ro',
@@ -50,7 +62,17 @@ sub _build__plugin_objs {
 		} else {
 			load_class($class);
 			$args{block} = $self;
+			if ($self->has_before_build) {
+				for ($class) {
+					$self->before_build->($self,$class);
+				}
+			}
 			$plugin = $class->new(\%args);
+		}
+		if ($self->has_after_build) {
+			for ($plugin) {
+				$self->after_build->($self,$plugin);
+			}
 		}
 		my @triggers = $self->get_triggers_of_plugin($plugin);
 		@triggers = $self->empty_trigger unless @triggers;
