@@ -61,7 +61,7 @@ sub apply_keywords {
 			}
 		}
 		$params{'call'} = [@call] if @call;
-		DDG::ZeroClickInfo::Spice->new(%zcispice_params, ref $_[0] eq 'HASH' ? %{$_[0]} : @_)
+		DDG::ZeroClickInfo::Spice->new(%params)
 	});
 	$stash->add_symbol('&spice',sub {
 		if (ref $_[0] eq 'HASH') {

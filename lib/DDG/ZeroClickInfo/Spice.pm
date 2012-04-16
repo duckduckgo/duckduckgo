@@ -84,6 +84,7 @@ has nginx_conf => (
 
 sub _build_nginx_conf {
 	my ( $self ) = @_;
+	return "" unless $self->has_to;
 	my $to = $self->to;
 	my $callback = $self->callback;
 	$to =~ s/{{callback}}/$callback/g;

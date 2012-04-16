@@ -41,7 +41,7 @@ sub apply_spice_keywords {
 	DDG::Meta::ShareDir->apply_keywords($target);
 	DDG::Meta::Block->apply_keywords($target);
 	DDG::Meta::RequestHandler->apply_keywords($target,sub {
-		shift->spice_new(@_);
+		shift->spice_new(@_) if @_;
 	},'DDG::IsSpice');
 }
 
