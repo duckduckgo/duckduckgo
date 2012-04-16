@@ -2,6 +2,7 @@ package DDG::ZeroClickInfo::Spice;
 
 use Moo;
 use URI;
+use URI::Encode qw(uri_encode uri_decode);
 
 has call => (
 	is => 'ro',
@@ -53,6 +54,28 @@ sub _build_path {
 	return '/js/'.join('/',map { s/([a-z])([A-Z])/$1_$2/; lc; } @parts).'/';
 }
 
+has callback => (
+	is => 'ro',
+	lazy => 1,
+	builder => '_build_callback',
+);
+
+sub _build_callback {
+	my ( $self ) = @_;
+	return join('_',map { s/([a-z])([A-Z])/$1_$2/; lc; } split('::',$self->caller));
+}
+
+has call_path => (
+	is => 'ro',
+	lazy => 1,
+	builder => '_build_call_path',
+);
+
+sub _build_call_path {
+	my ( $self ) = @_;
+	return $self->path.join('/',map { uri_encode($_,1) } @{$self->call});
+}
+
 has nginx_conf => (
 	is => 'ro',
 	lazy => 1,
@@ -61,6 +84,9 @@ has nginx_conf => (
 
 sub _build_nginx_conf {
 	my ( $self ) = @_;
+	my $to = $self->to;
+	my $callback = $self->callback;
+	$to =~ s/{{callback}}/$callback/g;
 	my $uri = URI->new($self->to);
 	my $host = $uri->host;
 	my $scheme = $uri->scheme;

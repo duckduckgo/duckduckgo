@@ -33,11 +33,14 @@ my $zci_spice = DDG::ZeroClickInfo::Spice->new(
 	from => '([^/]+)/(?:([^/]+)/(?:([^/]+)|)|)',
 	to => 'http://api.alternativeto.net/software/$1/?$2&$3&count=6&callback=nrat',
 	caller => 'DDGTest::Spice::SomeThing',
+	call => ['a##a','b  b','c#??c'],
 );
 
 isa_ok($zci_spice,'DDG::ZeroClickInfo::Spice');
 
 is($zci_spice->path,'/js/spice/some_thing/','Checking for proper path');
+is($zci_spice->callback,'ddgtest_spice_some_thing','Checking for proper callback');
+is($zci_spice->call_path,'/js/spice/some_thing/a%23%23a/b%20%20b/c%23%3F%3Fc','Checking for proper call path');
 is($zci_spice->nginx_conf,<<'__END_OF_CONF__','Checking for proper nginx.conf snippet');
 
 location ^~ /js/spice/some_thing/ {

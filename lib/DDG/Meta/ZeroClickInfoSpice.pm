@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Carp;
 use DDG::ZeroClickInfo::Spice;
+use Package::Stash;
 
 sub zeroclickinfospice_attributes {qw(
 	call
@@ -35,32 +36,46 @@ sub apply_keywords {
 	shift @parts;
 	shift @parts;
 	my $answer_type = lc(join(' ',@parts));
-	
-	{
-		my %zcispice_params = (
-			caller => $target,
-		);
-		no strict "refs";
 
-		*{"${target}::call_self"} = sub { undef };
-		*{"${target}::spice_new"} = sub {
-			shift;
-			DDG::ZeroClickInfo::Spice->new(%zcispice_params, ref $_[0] eq 'HASH' ? %{$_[0]} : @_)
-		};
-		*{"${target}::spice"} = sub {
-			if (ref $_[0] eq 'HASH') {
-				for (keys %{$_[0]}) {
-					$zcispice_params{check_zeroclickinfospice_key($_)} = $_[0]->{$_};
-				}
+	my %zcispice_params = (
+		caller => $target,
+	);
+
+	my $stash = Package::Stash->new($target);
+	$stash->add_symbol('&call_self',sub { undef });
+	$stash->add_symbol('&spice_new',sub {
+		shift;
+		my @call;
+		my %params = %zcispice_params;
+		for (@_) {
+			if (ref $_ eq 'HASH') {
+				for my $k (keys %{$_}) {
+					$params{$k} = $_->{$k};
+				};
+			} elsif (ref $_ eq 'DDG::ZeroClickInfo::Spice') {
+				return $_;
+			} elsif (!defined $_) {
+				# do nothing
 			} else {
-				while (@_) {
-					my $key = shift;
-					my $value = shift;
-					$zcispice_params{check_zeroclickinfospice_key($key)} = $value;
-				}
+				push @call, $_;
 			}
-		};
-	}
+		}
+		$params{'call'} = [@call] if @call;
+		DDG::ZeroClickInfo::Spice->new(%zcispice_params, ref $_[0] eq 'HASH' ? %{$_[0]} : @_)
+	});
+	$stash->add_symbol('&spice',sub {
+		if (ref $_[0] eq 'HASH') {
+			for (keys %{$_[0]}) {
+				$zcispice_params{check_zeroclickinfospice_key($_)} = $_[0]->{$_};
+			}
+		} else {
+			while (@_) {
+				my $key = shift;
+				my $value = shift;
+				$zcispice_params{check_zeroclickinfospice_key($key)} = $value;
+			}
+		}
+	});
 
 }
 
