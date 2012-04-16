@@ -53,11 +53,12 @@ sub apply_keywords {
 
 	my $stash = Package::Stash->new($target);
 	$stash->add_symbol('&module_share_dir', sub {
-		$share_code->() unless defined $share;
+		$share = $share_code->() unless defined $share;
 		$share;
 	});
 	$stash->add_symbol('&share', sub {
-		$share_code->() unless defined $share;
+		$share = $share_code->() unless defined $share;
+		return unless $share;
 		@_ ? -d dir($share,@_)
 			? $share->subdir(@_)
 			: $share->file(@_)
