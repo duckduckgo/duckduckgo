@@ -88,6 +88,20 @@ sub _build__plugin_objs {
 	return \@plugin_objs;
 }
 
+has only_plugin_objs => (
+	is => 'ro',
+	lazy => 1,
+	builder => '_build_only_plugin_objs',
+);
+sub _build_only_plugin_objs {
+	my ( $self ) = @_;
+	my @plugins;
+	for (@{$self->_plugin_objs}) {
+		push @plugins, $_->[1];
+	} 
+	return \@plugins;
+}
+
 sub get_triggers_of_plugin { shift; shift->get_triggers }
 
 sub parse_trigger { shift; shift; }
