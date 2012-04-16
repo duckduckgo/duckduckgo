@@ -36,18 +36,28 @@ sub apply_keywords {
 			$basedir = $basedir->parent;
 		}
 
+		my $dir;
 		if ( -e $basedir->subdir('lib') and -e $basedir->subdir('share') ) {
-			return dir($basedir->subdir('share'),$share_path);
+			$dir = dir($basedir->subdir('share'),$share_path);
+			return $dir if -d $dir;
 		} else {
-			return dir(module_dir($target));
+			eval {
+				$dir = module_dir($target);
+				return $dir;
+			}
 		}
+
+		return "";
 
 	};
 
 	my $stash = Package::Stash->new($target);
-	$stash->add_symbol('&module_share_dir', sub { dir('share',$share_path) });
+	$stash->add_symbol('&module_share_dir', sub {
+		$share_code->() unless defined $share;
+		$share;
+	});
 	$stash->add_symbol('&share', sub {
-		$share = $share_code->() unless defined $share;
+		$share_code->() unless defined $share;
 		@_ ? -d dir($share,@_)
 			? $share->subdir(@_)
 			: $share->file(@_)

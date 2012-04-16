@@ -10,6 +10,8 @@ sub zeroclickinfospice_attributes {qw(
 	caller
 	is_cached
 	ttl
+	from
+	to
 )}
 
 sub check_zeroclickinfospice_key {
@@ -40,6 +42,7 @@ sub apply_keywords {
 		);
 		no strict "refs";
 
+		*{"${target}::call_self"} = sub { undef };
 		*{"${target}::spice_new"} = sub {
 			shift;
 			DDG::ZeroClickInfo::Spice->new(%zcispice_params, ref $_[0] eq 'HASH' ? %{$_[0]} : @_)
