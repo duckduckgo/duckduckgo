@@ -39,8 +39,10 @@ sub apply_keywords {
 		my $dir = dir($basedir,$share_path);
 		$share = $dir if -d $dir;
 	} else {
-		my $dir = module_dir($target);
-		$share = dir($dir) if -d $dir;
+		eval {
+			my $dir = module_dir($target);
+			$share = dir($dir) if -d $dir;
+		}
 	}
 
 	if ($share) {
