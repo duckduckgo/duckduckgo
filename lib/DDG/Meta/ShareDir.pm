@@ -2,7 +2,7 @@ package DDG::Meta::ShareDir;
 
 use strict;
 use warnings;
-use Carp;
+use Carp qw( croak );
 use Module::Data;
 use Path::Class;
 use Package::Stash;
@@ -20,56 +20,46 @@ sub apply_keywords {
 
 	my @parts = split('::',$target);
 	shift @parts;
+	unshift @parts, 'share';
 	my $share_path = join('/',map { s/([a-z])([A-Z])/$1_$2/; lc; } @parts);
 
 	my $moddata = Module::Data->new($target);
+	my $basedir = $moddata->root->parent;
 
-	# If the module was found in $root/t/lib/,
+	my $share;
+
+	# kent\n: If the module was found in $root/t/lib/,
 	# we need to go up another level, as $basedir needs to be $root,
 	# not $root/t
-	my $share;
-	my $share_code = sub {
+	if ( -e $basedir->parent->subdir('t') ) {
+		$basedir = $basedir->parent;
+	}
 
-		my $basedir = $moddata->root->parent;
+	if ( -e $basedir->subdir('lib') and -e $basedir->subdir('share') ) {
+		my $dir = dir($basedir,$share_path);
+		$share = $dir if -d $dir;
+	} else {
+		my $dir = module_dir($target);
+		$share = dir($dir) if -d $dir;
+	}
 
-		if ( -e $basedir->parent->subdir('t') ) {
-			$basedir = $basedir->parent;
-		}
+	if ($share) {
+		my $stash = Package::Stash->new($target);
+		$stash->add_symbol('&module_share_dir', sub { $share_path });
+		$stash->add_symbol('&share', sub {
+			@_ ? -d dir($share,@_)
+				? $share->subdir(@_)
+				: $share->file(@_)
+			: $share
+		});
 
-		my $dir;
-		if ( -e $basedir->subdir('lib') and -e $basedir->subdir('share') ) {
-			$dir = dir($basedir->subdir('share'),$share_path);
-			return $dir if -d $dir;
-		} else {
-			eval {
-				$dir = module_dir($target);
-				return $dir;
-			}
-		}
+		#
+		# apply role
+		#
 
-		return "";
+		Moo::Role->apply_role_to_package($target,'DDG::HasShareDir');
+	}
 
-	};
-
-	my $stash = Package::Stash->new($target);
-	$stash->add_symbol('&module_share_dir', sub {
-		$share = $share_code->() unless defined $share;
-		$share;
-	});
-	$stash->add_symbol('&share', sub {
-		$share = $share_code->() unless defined $share;
-		return unless $share;
-		@_ ? -d dir($share,@_)
-			? $share->subdir(@_)
-			: $share->file(@_)
-		: $share
-	});
-
-	#
-	# apply role
-	#
-
-	Moo::Role->apply_role_to_package($target,'DDG::HasShareDir');
 }
 
 1;
