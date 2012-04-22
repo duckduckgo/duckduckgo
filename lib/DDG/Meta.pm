@@ -17,6 +17,7 @@ sub apply_base_to_package {
 	eval qq{
 		package $target;
 		use Moo;
+		use strict;
 		use Data::Printer;
 		use utf8::all;
 	};
