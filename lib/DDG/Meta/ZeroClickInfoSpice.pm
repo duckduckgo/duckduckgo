@@ -5,9 +5,12 @@ use warnings;
 use Carp;
 use DDG::ZeroClickInfo::Spice;
 use Package::Stash;
+use URI::Encode qw(uri_encode uri_decode);
+use IO::All;
 
 sub zeroclickinfospice_attributes {qw(
 	call
+	call_type
 	caller
 	is_cached
 	ttl
@@ -41,10 +44,16 @@ sub apply_keywords {
 
 	my %zcispice_params = (
 		caller => $target,
+		call_type => 'include',
+		call => '',
 	);
 
 	my $stash = Package::Stash->new($target);
-	$stash->add_symbol('&call_self',sub { undef });
+	$stash->add_symbol('&call',sub {
+		return DDG::ZeroClickInfo::Spice->new(
+			%zcispice_params,
+		);
+	});
 	$stash->add_symbol('&spice_new',sub {
 		shift;
 		my @call;
@@ -64,11 +73,20 @@ sub apply_keywords {
 				push @call, $_;
 			}
 		}
-		$params{'call'} = [@call] if @call;
+		if (@call) {
+			if ($params{'call_type'} eq 'include') {
+				$params{'call'} = $target->path.join('/',map { uri_encode($_,1) } @call);
+			} elsif (scalar @call == 1) {
+				$params{'call'} = $call[0];
+			} else {
+				croak "DDG::ZeroClickInfo::Spice can't handle more then one value in return list on non include call_type";
+			}
+		}
 		DDG::ZeroClickInfo::Spice->new(%params)
 	});
 	$stash->add_symbol('&spice_from',sub { $zcispice_params{'from'} });
 	$stash->add_symbol('&spice_to',sub { $zcispice_params{'to'} });
+	$stash->add_symbol('&spice_call_type',sub { $zcispice_params{'call_type'} });
 	$stash->add_symbol('&spice',sub {
 		if (ref $_[0] eq 'HASH') {
 			for (keys %{$_[0]}) {
@@ -84,6 +102,20 @@ sub apply_keywords {
 	});
 	$stash->add_symbol('&callback',sub { $callback });
 	$stash->add_symbol('&path',sub { $path });
+	my $spice_js;
+	$stash->add_symbol('&spice_js',sub {
+		return $spice_js if defined $spice_js;
+		my ( $self ) = @_;
+		$spice_js = "";
+		if ($target->can('module_share_dir') && (my $spice_js_file = $target->can('share')->('spice.js'))) {
+			$spice_js .= io($spice_js_file)->slurp;
+			$spice_js .= "\n";
+		}
+		if ($target->spice_call_type eq 'self') {
+			$spice_js .= $target->callback."();";
+		}
+		return $spice_js;
+	});
 	my $nginx_conf;
 	$stash->add_symbol('&nginx_conf',sub {
 		return $nginx_conf if defined $nginx_conf;
