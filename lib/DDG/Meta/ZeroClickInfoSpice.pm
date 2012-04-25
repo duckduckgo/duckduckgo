@@ -45,13 +45,16 @@ sub apply_keywords {
 	my %zcispice_params = (
 		caller => $target,
 		call_type => 'include',
-		call => '',
+		call => $path,
 	);
 
 	my $stash = Package::Stash->new($target);
 	$stash->add_symbol('&call',sub {
+		my %params = %zcispice_params;
+		delete $params{'from'};
+		delete $params{'to'};
 		return DDG::ZeroClickInfo::Spice->new(
-			%zcispice_params,
+			%params,
 		);
 	});
 	$stash->add_symbol('&spice_new',sub {
