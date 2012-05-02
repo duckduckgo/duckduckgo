@@ -21,7 +21,7 @@ sub apply_keywords {
 	my @parts = split('::',$target);
 	shift @parts;
 	unshift @parts, 'share';
-	my $share_path = join('/',map { s/([a-z])([A-Z])/$1_$2/; lc; } @parts);
+	my $share_path = join('/',map { s/([a-z])([A-Z])/$1_$2/g; lc; } @parts);
 
 	my $moddata = Module::Data->new($target);
 	my $basedir = $moddata->root->parent;
