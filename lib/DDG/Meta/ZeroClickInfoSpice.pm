@@ -36,9 +36,9 @@ sub apply_keywords {
 	$applied{$target} = undef;
 
 	my @parts = split('::',$target);
-	my $callback = join('_',map { s/([a-z])([A-Z])/$1_$2/; lc; } @parts);
+	my $callback = join('_',map { s/([a-z])([A-Z])/$1_$2/g; lc; } @parts);
 	shift @parts;
-	my $path = '/js/'.join('/',map { s/([a-z])([A-Z])/$1_$2/; lc; } @parts).'/';
+	my $path = '/js/'.join('/',map { s/([a-z])([A-Z])/$1_$2/g; lc; } @parts).'/';
 	shift @parts;
 	my $answer_type = lc(join(' ',@parts));
 
