@@ -11,16 +11,23 @@ use DDG::Meta::ShareDir;
 use DDG::Meta::Block;
 require Moo::Role;
 
+require Moo;
+require Data::Printer;
+require utf8::all;
+
 sub apply_base_to_package {
 	my ( $class, $target ) = @_;
-	
-	eval qq{
+
+	my $sub = eval qq{
 		package $target;
-		use Moo;
-		use strict;
-		use Data::Printer;
-		use utf8::all;
+		sub {
+			Moo->import;
+			Data::Printer->import;
+			utf8::all->import;
+		}
 	};
+	$sub->();
+
 }
 
 sub apply_goodie_keywords {
