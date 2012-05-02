@@ -17,4 +17,6 @@ triggers startend => sub { 'afoo', 'afoofoo' };
 
 handle remainder => sub { shift; };
 
+sub nginx_conf { "bla" }
+
 1;

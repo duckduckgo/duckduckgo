@@ -120,7 +120,9 @@ sub apply_keywords {
 		return $spice_js;
 	});
 	my $nginx_conf;
-	$stash->add_symbol('&nginx_conf',sub {
+	$stash->add_symbol('&get_nginx_conf',sub {
+		my $nginx_conf_func = $stash->get_symbol('&nginx_conf');
+		return $nginx_conf_func->(@_) if $nginx_conf_func;
 		return $nginx_conf if defined $nginx_conf;
 		my ( $self ) = @_;
 		return "" unless defined $zcispice_params{'to'};
