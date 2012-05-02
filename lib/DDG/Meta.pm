@@ -13,7 +13,6 @@ require Moo::Role;
 
 require Moo;
 require Data::Printer;
-require utf8::all;
 
 sub apply_base_to_package {
 	my ( $class, $target ) = @_;
@@ -23,7 +22,6 @@ sub apply_base_to_package {
 		sub {
 			Moo->import;
 			Data::Printer->import;
-			utf8::all->import;
 		}
 	};
 	$sub->();
