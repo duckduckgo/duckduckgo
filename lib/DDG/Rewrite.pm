@@ -47,13 +47,12 @@ sub _build_nginx_conf {
 	my $scheme = $uri->scheme;
 	my $uri_path = $self->parsed_to;
 	$uri_path =~ s!$scheme://$host!!;
+	my $wrap_jsonp_callback = $self->has_callback && $self->wrap_jsonp_callback;
 	my $cfg = "location ^~ ".$self->path." {\n";
-	$cfg .= "\techo_before_body '".$self->callback."(';\n"
-		if $self->has_callback && $self->wrap_jsonp_callback;
+	$cfg .= "\techo_before_body '".$self->callback."(';\n" if $wrap_jsonp_callback;
 	$cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")." ".$uri_path." break;\n";
 	$cfg .= "\tproxy_pass ".$scheme."://".$host."/;\n";
-	$cfg .= "\techo_after_body ');';\n"
-		if $self->has_callback && $self->wrap_jsonp_callback;
+	$cfg .= "\techo_after_body ');';\n" if $wrap_jsonp_callback;
 	$cfg .= "}\n";
 	return $cfg;
 }
