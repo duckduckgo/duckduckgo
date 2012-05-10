@@ -11,7 +11,7 @@ use DDG::Rewrite;
 
 eval {
 	DDG::Rewrite->new(
-		path => '/js/test',
+		path => '/js/test/',
 		to => 'http://some.api/$1&cb={{callback}}',
 	);
 };
@@ -20,7 +20,7 @@ like($@,qr/Missing callback attribute for {{callback}}/,'Seeking proper error on
 delete $ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY} if defined $ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY};
 
 my $missing_rewrite = DDG::Rewrite->new(
-	path => '/js/test',
+	path => '/js/test/',
 	from => '([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|)',
 	to => 'http://some.api/$1/?a=$2&b=$3&cb={{callback}}&ak={{ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY}}}',
 	callback => 'buh',
@@ -33,7 +33,7 @@ is_deeply($missing_rewrite->missing_envs,['DDGTEST_DDG_REWRITE_TEST_API_KEY'],'C
 $ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY} = 1;
 
 my $rewrite = DDG::Rewrite->new(
-	path => '/js/test',
+	path => '/js/test/',
 	from => '([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|)',
 	to => 'http://some.api/$1/?a=$2&b=$3&cb={{callback}}&ak={{ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY}}}',
 	callback => 'test',
@@ -43,9 +43,9 @@ my $rewrite = DDG::Rewrite->new(
 isa_ok($rewrite,'DDG::Rewrite');
 
 is($rewrite->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
-is($rewrite->nginx_conf,'location ^~ /js/test {
+is($rewrite->nginx_conf,'location ^~ /js/test/ {
 	echo_before_body \'test(\';
-	rewrite ^/js/test([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|) /$1/?a=$2&b=$3&cb=test&ak=1 break;
+	rewrite ^/js/test/([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|) /$1/?a=$2&b=$3&cb=test&ak=1 break;
 	proxy_pass http://some.api/;
 	echo_after_body \');\';
 }
