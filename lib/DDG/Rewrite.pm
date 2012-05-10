@@ -69,8 +69,6 @@ has _parsed_to => (
 );
 sub parsed_to { shift->_parsed_to }
 
-use Data::Dumper;
-
 sub BUILD {
 	my ( $self ) = @_;
 	my $to = $self->to;
