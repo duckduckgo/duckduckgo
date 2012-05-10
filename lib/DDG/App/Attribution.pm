@@ -5,9 +5,13 @@ use MooX qw(
 );
 
 use Module::Runtime qw( use_module );
+use lib ();
+use Path::Class;
 
 sub BUILD {
 	my ( $self ) = @_;
+	my $curdir = dir('lib')->absolute;
+	lib->import($curdir->stringify);
 	if (@ARGV) {
 		for (@ARGV) {
 			use_module($_);
