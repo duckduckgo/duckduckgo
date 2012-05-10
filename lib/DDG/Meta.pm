@@ -9,23 +9,16 @@ use DDG::Meta::ZeroClickInfo;
 use DDG::Meta::ZeroClickInfoSpice;
 use DDG::Meta::ShareDir;
 use DDG::Meta::Block;
-require Moo::Role;
+use	DDG::Meta::Attribution;
 
-require Moo;
-require Data::Printer;
+use MooX ();
 
 sub apply_base_to_package {
 	my ( $class, $target ) = @_;
 
-	my $sub = eval qq{
-		package $target;
-		sub {
-			Moo->import;
-			Data::Printer->import;
-		}
-	};
-	$sub->();
-
+	MooX->import::into($target, qw(
+		+Data::Printer
+	));
 }
 
 sub apply_goodie_keywords {
@@ -33,6 +26,7 @@ sub apply_goodie_keywords {
 	DDG::Meta::ZeroClickInfo->apply_keywords($target);
 	DDG::Meta::ShareDir->apply_keywords($target);
 	DDG::Meta::Block->apply_keywords($target);
+	DDG::Meta::Attribution->apply_keywords($target);
 	DDG::Meta::RequestHandler->apply_keywords($target,sub {
 		shift->zci_new(
 			scalar @_ == 1 && ref $_[0] eq 'HASH' ? $_[0] :
@@ -46,6 +40,7 @@ sub apply_spice_keywords {
 	DDG::Meta::ZeroClickInfoSpice->apply_keywords($target);
 	DDG::Meta::ShareDir->apply_keywords($target);
 	DDG::Meta::Block->apply_keywords($target);
+	DDG::Meta::Attribution->apply_keywords($target);
 	DDG::Meta::RequestHandler->apply_keywords($target,sub {
 		shift->spice_new(@_);
 	},'DDG::IsSpice');

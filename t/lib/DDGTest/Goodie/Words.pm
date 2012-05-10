@@ -17,4 +17,8 @@ triggers startend => sub { 'afoo', 'afoofoo' };
 
 handle remainder => sub { shift; };
 
+attribution
+	email => 'god@universe.org',
+	github => 'github';
+
 1;

@@ -1,0 +1,41 @@
+#!/usr/bin/env perl
+# PODNAME: duckpan
+# ABSTRACT: Command line tool for using the DuckPAN of DuckDuckGo
+
+$|=1;
+
+use DDG::App::Attribution;
+DDG::App::Attribution->new_with_options;
+
+__END__
+
+=head1 SYNPOSIS
+
+  ddg_attribution DDG::Goodie::DuckDuckGo
+
+=head1 DESCRIPTION
+
+=head1 SEE ALSO
+
+L<https://duckduckgo.com>
+
+L<https://github.com/duckduckgo>
+
+L<https://dukgo.com>
+
+L<http://duckpan.org>
+
+=head1 SUPPORT
+
+IRC
+
+  Join us on #duckduckgo on irc.freenode.net
+
+Repository
+
+  https://github.com/duckduckgo/duckduckgo
+  Pull request and additional contributors are welcome
+ 
+Issue Tracker
+
+  https://github.com/duckduckgo/duckduckgo/issues
