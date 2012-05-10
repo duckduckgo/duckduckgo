@@ -37,6 +37,7 @@ my $rewrite = DDG::Rewrite->new(
 	from => '([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|)',
 	to => 'http://some.api/$1/?a=$2&b=$3&cb={{callback}}&ak={{ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY}}}',
 	callback => 'test',
+	proxy_cache_valid => '418 1d',
 	wrap_jsonp_callback => 1,
 );
 
@@ -47,7 +48,22 @@ is($rewrite->nginx_conf,'location ^~ /js/test/ {
 	echo_before_body \'test(\';
 	rewrite ^/js/test/([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|) /$1/?a=$2&b=$3&cb=test&ak=1 break;
 	proxy_pass http://some.api/;
+	proxy_cache_valid 418 1d;
 	echo_after_body \');\';
+}
+','Checking generated nginx.conf');
+
+my $minrewrite = DDG::Rewrite->new(
+	path => '/js/test/',
+	to => 'http://some.api/$1',
+);
+
+isa_ok($minrewrite,'DDG::Rewrite');
+
+is($minrewrite->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
+is($minrewrite->nginx_conf,'location ^~ /js/test/ {
+	rewrite ^/js/test/(.*) /$1 break;
+	proxy_pass http://some.api/;
 }
 ','Checking generated nginx.conf');
 

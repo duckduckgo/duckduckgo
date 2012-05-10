@@ -52,6 +52,7 @@ sub _build_nginx_conf {
 	$cfg .= "\techo_before_body '".$self->callback."(';\n" if $wrap_jsonp_callback;
 	$cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")." ".$uri_path." break;\n";
 	$cfg .= "\tproxy_pass ".$scheme."://".$host."/;\n";
+	$cfg .= "\tproxy_cache_valid ".$self->proxy_cache_valid.";\n" if $self->has_proxy_cache_valid;
 	$cfg .= "\techo_after_body ');';\n" if $wrap_jsonp_callback;
 	$cfg .= "}\n";
 	return $cfg;
