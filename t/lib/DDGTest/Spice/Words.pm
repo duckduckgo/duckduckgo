@@ -19,4 +19,8 @@ handle remainder => sub { shift; };
 
 sub nginx_conf { "bla" }
 
+attribution
+	facebook => 'duckduckgo',
+	email => 'hulk@avengers.com';
+
 1;

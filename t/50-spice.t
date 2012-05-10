@@ -21,6 +21,10 @@ is_deeply(DDGTest::Spice::Words->get_triggers,{
 	start => [ "bar", "baz", "buu", "abar", "abaz" ],
 },'Checking resulting get_triggers of DDGTest::Spice::Words');
 
+is_deeply(DDGTest::Spice::Words->get_attributions,[
+	'https://facebook.com/duckduckgo', 'mailto:hulk@avengers.com'
+],'Checking resulting get_attributions of DDGTest::Goodie::Words');
+
 is(DDGTest::Spice::Words->get_nginx_conf,"bla","Checking nginx_conf override");
 
 my $re = DDGTest::Spice::Regexp->new( block => undef );
