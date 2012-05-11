@@ -42,6 +42,9 @@ sub apply_keywords {
 		}
 		return \@attribution_links;
 	});
+	$stash->add_symbol('&get_attributions_html', sub {
+		# TODO
+	});
 	$stash->add_symbol('&attribution', sub {
 		while (@_) {
 			my $type = shift;
