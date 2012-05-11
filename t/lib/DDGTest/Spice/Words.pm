@@ -15,6 +15,8 @@ triggers sub {
 
 triggers startend => sub { 'afoo', 'afoofoo' };
 
+spice to => 'http://some.api/';
+
 handle remainder => sub { shift; };
 
 sub nginx_conf { "bla" }

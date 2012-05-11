@@ -28,6 +28,8 @@ is_deeply(DDGTest::Spice::Words->get_attributions,[
 ],'Checking resulting get_attributions of DDGTest::Spice::Words');
 
 is(DDGTest::Spice::Words->get_nginx_conf,"bla","Checking nginx_conf override");
+is(DDGTest::Spice::Words->path,'/js/spice/words/','Checking for proper path');
+is(DDGTest::Spice::Words->callback,'ddgtest_spice_words','Checking for proper callback');
 
 my $re = DDGTest::Spice::Regexp->new( block => undef );
 
@@ -37,23 +39,18 @@ is_deeply(DDGTest::Spice::Regexp->get_triggers,{
 	query_raw => [qr/aregexp (.*)/i, qr/bregexp (.*) (.*)/i, qr/cregexp (.*)/i]
 },'Checking resulting get_triggers of DDGTest::Spice::Regexp',);
 
+is(DDGTest::Spice::Regexp->get_nginx_conf,'location ^~ /js/spice/regexp/ {
+	rewrite ^/js/spice/regexp/(.*) / break;
+	proxy_pass http://some.api/;
+}
+',"Checking standard nginx_conf");
+
 my $zci_spice = DDG::ZeroClickInfo::Spice->new(
 	caller => 'DDGTest::Spice::SomeThing',
-	call => ['a##a','b  b','c#??c'],
+	call => '/js/spice/some_thing/a%23%23a/b%20%20b/c%23%3F%3Fc',
 );
 
 isa_ok($zci_spice,'DDG::ZeroClickInfo::Spice');
-
-#is($zci_spice->caller->path,'/js/spice/some_thing/','Checking for proper path');
-#is($zci_spice->caller->callback,'ddgtest_spice_some_thing','Checking for proper callback');
-#is($zci_spice->call_path,'/js/spice/some_thing/a%23%23a/b%20%20b/c%23%3F%3Fc','Checking for proper call path');
-#is($zci_spice->caller->nginx_conf,<<'__END_OF_CONF__','Checking for proper nginx.conf snippet');
-
-#location ^~ /js/spice/some_thing/ {
-#  rewrite ^/js/spice/some_thing/([^/]+)/(?:([^/]+)/(?:([^/]+)|)|) /software/$1/?$2&$3&count=6&callback=nrat break;
-#  proxy_pass http://api.alternativeto.net/;
-#}
-
-#__END_OF_CONF__
+is($zci_spice->call,'/js/spice/some_thing/a%23%23a/b%20%20b/c%23%3F%3Fc','Checking for proper call path');
 
 done_testing;

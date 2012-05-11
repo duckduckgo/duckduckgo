@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Carp;
 use DDG::ZeroClickInfo::Spice;
+use DDG::Rewrite;
 use Package::Stash;
 use URI::Encode qw(uri_encode uri_decode);
 use IO::All;
@@ -16,6 +17,8 @@ sub zeroclickinfospice_attributes {qw(
 	ttl
 	from
 	to
+	wrap_jsonp_callback
+	proxy_cache_valid
 )}
 
 sub check_zeroclickinfospice_key {
@@ -46,6 +49,7 @@ sub apply_keywords {
 		caller => $target,
 		call_type => 'include',
 		call => $path,
+		wrap_jsonp_callback => 0,
 	);
 
 	my $stash = Package::Stash->new($target);
@@ -53,6 +57,7 @@ sub apply_keywords {
 		my %params = %zcispice_params;
 		delete $params{'from'};
 		delete $params{'to'};
+		delete $params{'wrap_jsonp_callback'};
 		return DDG::ZeroClickInfo::Spice->new(
 			%params,
 		);
@@ -87,9 +92,11 @@ sub apply_keywords {
 		}
 		DDG::ZeroClickInfo::Spice->new(%params)
 	});
+	### SHOULD GET DEPRECATED vvvv ###
 	$stash->add_symbol('&spice_from',sub { $zcispice_params{'from'} });
 	$stash->add_symbol('&spice_to',sub { $zcispice_params{'to'} });
 	$stash->add_symbol('&spice_call_type',sub { $zcispice_params{'call_type'} });
+	###                       ^^^^ ###
 	$stash->add_symbol('&spice',sub {
 		if (ref $_[0] eq 'HASH') {
 			for (keys %{$_[0]}) {
@@ -119,32 +126,33 @@ sub apply_keywords {
 		}
 		return $spice_js;
 	});
-	my $nginx_conf;
+	my $rewrite;
+	$stash->add_symbol('&has_rewrite',sub {
+		defined $zcispice_params{'to'};
+	});
+	$stash->add_symbol('&rewrite',sub {
+		unless (defined $rewrite) {
+			if ($target->has_rewrite) {
+				$rewrite = DDG::Rewrite->new(
+					to => $zcispice_params{'to'},
+					defined $zcispice_params{'from'} ? ( from => $zcispice_params{'from'}) : (),
+					defined $zcispice_params{'proxy_cache_valid'} ? ( proxy_cache_valid => $zcispice_params{'proxy_cache_valid'} ) : (),
+					callback => $callback,
+					path => $path,
+					wrap_jsonp_callback => $zcispice_params{'wrap_jsonp_callback'},
+				);
+			} else {
+				$rewrite = "";
+			}
+		}
+		return $rewrite;
+	});
 	$stash->add_symbol('&get_nginx_conf',sub {
 		my $nginx_conf_func = $stash->get_symbol('&nginx_conf');
 		return $nginx_conf_func->(@_) if $nginx_conf_func;
-		return $nginx_conf if defined $nginx_conf;
-		my ( $self ) = @_;
-		return "" unless defined $zcispice_params{'to'};
-		my $to = $zcispice_params{'to'};
-		$to =~ s/{{callback}}/$callback/g;
-		my $uri = URI->new($to);
-		my $host = $uri->host;
-		my $scheme = $uri->scheme;
-		my $uri_path = $to;
-		$uri_path =~ s!$scheme://$host!!;
-		my $from = defined $zcispice_params{'from'} ? $zcispice_params{'from'} : "(.*)";
-		$nginx_conf = <<"__END_OF_CONF__";
-
-location ^~ $path {
-  rewrite ^$path$from $uri_path break;
-  proxy_pass $scheme://$host/;
-}
-
-__END_OF_CONF__
-		return $nginx_conf;
+		return "" unless $target->has_rewrite;
+		return $target->rewrite->nginx_conf;
 	});
-
 }
 
 1;
