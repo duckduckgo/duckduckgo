@@ -18,8 +18,10 @@ sub BUILD {
 			my @attributions = @{$_->get_attributions};
 			if (@attributions) {
 				print "\nAttributions for ".$_.":\n\n";
-				for (@attributions) {
-					print " - ".$_."\n";
+				while (@attributions) {
+					my $key = shift @attributions;
+					my $value = shift @attributions;
+					print " - ".$key." (".$value.")\n";
 				}
 			} else {
 				print "\nNo attributions for ".$_."\n\n";

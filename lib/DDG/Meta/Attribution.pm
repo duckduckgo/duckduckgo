@@ -8,11 +8,11 @@ use Package::Stash;
 require Moo::Role;
 
 my %supported_types = (
-	email => "mailto:{{a}}",
-	twitter => "https://twitter.com/{{a}}",
-	web => "{{a}}",
-	github => "https://github.com/{{a}}",
-	facebook => "https://facebook.com/{{a}}",
+	email => [ 'mailto:{{a}}', '{{b}}' ],
+	twitter => [ 'https://twitter.com/{{a}}', '@{{b}}' ],
+	web => [ '{{a}}', '{{b}}' ],
+	github => [ 'https://github.com/{{a}}', '{{b}}' ],
+	facebook => [ 'https://facebook.com/{{a}}', '{{b}}' ],
 );
 
 my %applied;
@@ -32,9 +32,13 @@ sub apply_keywords {
 		for (@attributions) {
 			my $type = shift @{$_};
 			my $value = shift @{$_};
-			my $link = $supported_types{$type};
-			$link =~ s/{{a}}/$value/;
-			push @attribution_links, $link;
+			my ( $a, $b ) = ref $value eq 'ARRAY' ? ( $value->[0], $value->[1] ) : ( $value, $value );
+			my ( $link, $val ) = @{$supported_types{$type}};
+			$link =~ s/{{a}}/$a/;
+			$link =~ s/{{b}}/$b/;
+			$val =~ s/{{a}}/$a/;
+			$val =~ s/{{b}}/$b/;
+			push @attribution_links, $link, $val;
 		}
 		return \@attribution_links;
 	});

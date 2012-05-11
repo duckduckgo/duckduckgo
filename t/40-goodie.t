@@ -20,7 +20,8 @@ is_deeply(DDGTest::Goodie::Words->get_triggers,{
 },'Checking resulting get_triggers of DDGTest::Goodie::Words');
 
 is_deeply(DDGTest::Goodie::Words->get_attributions,[
-	'mailto:god@universe.org', 'https://github.com/github'
+	'mailto:god@universe.org', 'god@universe.org',
+	'https://github.com/github', 'github',
 ],'Checking resulting get_attributions of DDGTest::Goodie::Words');
 
 my $re = DDGTest::Goodie::Regexp->new( block => undef );

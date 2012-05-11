@@ -20,7 +20,8 @@ handle remainder => sub { shift; };
 sub nginx_conf { "bla" }
 
 attribution
-	facebook => 'duckduckgo',
-	email => 'hulk@avengers.com';
+	facebook => [ duckduckgo => 'DuckDuckGo' ],
+	twitter => 'duckduckgo',
+	email => [ 'hulk@avengers.com', 'Hulk of the Avengers' ];
 
 1;
