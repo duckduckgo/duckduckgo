@@ -58,6 +58,7 @@ sub apply_keywords {
 		delete $params{'from'};
 		delete $params{'to'};
 		delete $params{'wrap_jsonp_callback'};
+		delete $params{'proxy_cache_valid'};
 		return DDG::ZeroClickInfo::Spice->new(
 			%params,
 		);
