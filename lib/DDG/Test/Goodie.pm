@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp;
 use Test::More;
-use DDG::Test;
+use DDG::Test::Block;
 use DDG::ZeroClickInfo;
 use Package::Stash;
 
@@ -20,7 +20,7 @@ sub import {
 		ref $_[0] eq 'HASH' ? 
 			DDG::ZeroClickInfo->new(%zci_params, %{$_[0]}, answer => $answer ) :
 			DDG::ZeroClickInfo->new(%zci_params, @_, answer => $answer )
-	};
+	});
 
 	$stash->add_symbol('&zci', sub {
 		if (ref $_[0] eq 'HASH') {
