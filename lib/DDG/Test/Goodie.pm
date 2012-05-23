@@ -6,6 +6,7 @@ use Carp;
 use Test::More;
 use DDG::Test;
 use DDG::ZeroClickInfo;
+use Package::Stash;
 
 sub import {
 	my ( $class, %params ) = @_;
