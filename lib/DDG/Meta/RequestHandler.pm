@@ -74,8 +74,8 @@ sub apply_keywords {
 		} elsif ($handler eq 'remainder' || $handler eq 'remainder_lc') {
 			croak "You must be using words matching for remainder handler" unless $target->triggers_block_type eq 'Words';
 			$stash->add_symbol('&handle_request_matches',sub {
-				my ( $self, $request, $pos ) = @_;
-				my $remainder = $request->generate_remainder($pos);
+				my ( $self, $request, $from_pos, $to_pos ) = @_;
+				my $remainder = $request->generate_remainder($from_pos,$to_pos);
 				my @result;
 				for ($handler eq 'remainder' ? $remainder : lc($remainder)) {
 					@result = $code->($_);

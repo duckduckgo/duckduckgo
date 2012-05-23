@@ -92,24 +92,27 @@ sub generate_triggers {
 		push @parts, lc($_) for @dashparts;
 		my $joined = join('', @dashparts);
 		push @parts, lc($joined);
+		my $space_joined = join(' ', @dashparts);
+		push @parts, lc($space_joined);
 	}
 	return @parts;
 }
 
 sub generate_remainder {
-	my ( $self, $pos ) = @_;
+	my ( $self, $from_pos, $to_pos ) = @_;
+	$to_pos = $from_pos unless defined $to_pos;
 	my @query_raw_parts = @{$self->query_raw_parts};
 	my $max = scalar @query_raw_parts-1;
 	my $remainder = '';
-	if ( $pos < $max && ( $pos == 0 || ( $pos == 2 && $query_raw_parts[0] eq '' ) ) ) {
-		$remainder = join('',@query_raw_parts[$pos+1..$max]);
+	if ( $to_pos < $max && ( $from_pos == 0 || ( $from_pos == 2 && $query_raw_parts[0] eq '' ) ) ) {
+		$remainder = join('',@query_raw_parts[$to_pos+1..$max]);
 		$remainder =~ s/^\s//;
-	} elsif ( $max % 2 ? $pos == $max-1 : $pos == $max ) {
-		$remainder = join('',@query_raw_parts[0..$pos-1]);
+	} elsif ( $max % 2 ? $to_pos == $max-1 : $to_pos == $max ) {
+		$remainder = join('',@query_raw_parts[0..$from_pos-1]);
 		$remainder =~ s/\s$//;
 	} else {
-		my $left_remainder = join('',@query_raw_parts[0..$pos-1]);
-		my $right_remainder = join('',@query_raw_parts[$pos+1..$max]);
+		my $left_remainder = join('',@query_raw_parts[0..$from_pos-1]);
+		my $right_remainder = join('',@query_raw_parts[$to_pos+1..$max]);
 		$left_remainder =~ s/\s$//;
 		$right_remainder =~ s/^\s//;
 		$remainder = $left_remainder.' '.$right_remainder;

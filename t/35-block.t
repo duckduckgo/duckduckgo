@@ -92,6 +92,34 @@ BEGIN {
 			wo => [zci('bla blub','woblockbang')],
 			re => [],
 		},
+		'!h-ow   to   do a   search   engine' => {
+			wo => [zci('a   search   engine','woblocktwo')],
+			re => [],
+		},
+		' how  to   ' => {
+			wo => [],
+			re => [],
+		},
+		'  !how to  do a   search   engine?   ' => {
+			wo => [zci('a   search   engine?   ','woblocktwo')],
+			re => [],
+		},
+		'  how-to  do? a   search   engine?   ' => {
+			wo => [zci('a   search   engine?   ','woblocktwo')],
+			re => [],
+		},
+		'  !how--to--do a   search   engine?   ' => {
+			wo => [zci('a   search   engine?   ','woblocktwo')],
+			re => [],
+		},
+		'  duckduckgo for the win   ' => {
+			wo => [zci('  duckduckgo','woblocktwo')],
+			re => [],
+		},
+		'  duckduckgo for-the-win' => {
+			wo => [zci('  duckduckgo','woblocktwo')],
+			re => [],
+		},
 		'whatever around two around whatever' => {
 			wo => [zci('whatever around around whatever','woblocktwo')],
 			re => [],
