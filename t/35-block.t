@@ -100,7 +100,7 @@ BEGIN {
 			wo => [],
 			re => [],
 		},
-		'  !how to  do a   search   engine?   ' => {
+		'  !How to  Do a   search   engine?   ' => {
 			wo => [zci('a   search   engine?   ','woblocktwo')],
 			re => [],
 		},
@@ -108,8 +108,12 @@ BEGIN {
 			wo => [zci('a   search   engine?   ','woblocktwo')],
 			re => [],
 		},
-		'  !how--to--do a   search   engine?   ' => {
+		'  !how--TO--do a   search   engine?   ' => {
 			wo => [zci('a   search   engine?   ','woblocktwo')],
+			re => [],
+		},
+		'  really bLACk  mAGIc my code!!  ' => {
+			wo => [zci('  really my code!!  ','woblocktwo')],
 			re => [],
 		},
 		'  duckduckgo for the win   ' => {
