@@ -39,7 +39,7 @@ BEGIN {
 			words                     => [qw( bang test-test )],
 			triggers                  => {
 				0 => [qw( !bang bang )],
-				2 => [qw( test test-test testtest )],
+				2 => ["test", "test test", "test-test", "testtest"],
 			},
 		},
 		'other !bang test'                => {
