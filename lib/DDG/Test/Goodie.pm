@@ -41,7 +41,6 @@ sub import {
 			my $answer = shift;
 			my $zci = shift;
 			if ($answer) {
-				fail('Doesnt expected result but get one on '.$query) unless defined $zci;
 				if (ref $zci->answer eq 'Regexp') {
 					like($answer->answer,$zci->answer,'Regexp check against text for '.$query);
 					$zci->{answer} = $answer->answer;
