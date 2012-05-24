@@ -24,7 +24,8 @@ sub _set_beginword_word_plugin {
 
 sub _set_word_plugin {
 	my ( $self, $type, $key, $word, $plugin ) = @_;
-	my $word_count = split(/\s+/,$word);
+	my @split_word = split(/\s+/,$word);
+	my $word_count = scalar @split_word;
 	$self->_words_plugins->{$type}->{$key} = {} unless defined $self->_words_plugins->{$type}->{$key};
 	if ($word_count eq 1) {
 		$self->_words_plugins->{$type}->{$key}->{1} = $plugin;
