@@ -22,6 +22,7 @@ sub nginx_conf { "bla" }
 attribution
 	facebook => [ duckduckgo => 'DuckDuckGo' ],
 	twitter => 'duckduckgo',
-	email => [ 'hulk@avengers.com', 'Hulk of the Avengers' ];
+	email => [ 'hulk@avengers.com', 'Hulk of the Avengers' ],
+	cpan => 'GETTY';
 
 1;

@@ -25,6 +25,7 @@ is_deeply(DDGTest::Spice::Words->get_attributions,[
 	'https://facebook.com/duckduckgo', 'DuckDuckGo',
 	'https://twitter.com/duckduckgo', '@duckduckgo',
 	'mailto:hulk@avengers.com', 'Hulk of the Avengers',
+	'https://metacpan.org/author/GETTY', 'GETTY',
 ],'Checking resulting get_attributions of DDGTest::Spice::Words');
 
 is(DDGTest::Spice::Words->get_nginx_conf,"bla","Checking nginx_conf override");

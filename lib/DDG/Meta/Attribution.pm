@@ -13,6 +13,7 @@ my %supported_types = (
 	web => [ '{{a}}', '{{b}}' ],
 	github => [ 'https://github.com/{{a}}', '{{b}}' ],
 	facebook => [ 'https://facebook.com/{{a}}', '{{b}}' ],
+	cpan => [ 'https://metacpan.org/author/{{a}}', '{{a}}' ],
 );
 
 my %applied;
