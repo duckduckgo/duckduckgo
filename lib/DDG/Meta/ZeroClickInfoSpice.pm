@@ -1,4 +1,7 @@
 package DDG::Meta::ZeroClickInfoSpice;
+{
+  $DDG::Meta::ZeroClickInfoSpice::VERSION = '0.041';
+}
 
 use strict;
 use warnings;
@@ -19,6 +22,7 @@ sub zeroclickinfospice_attributes {qw(
 	to
 	wrap_jsonp_callback
 	proxy_cache_valid
+	proxy_ssl_session_reuse
 )}
 
 sub check_zeroclickinfospice_key {
@@ -59,6 +63,7 @@ sub apply_keywords {
 		delete $params{'to'};
 		delete $params{'wrap_jsonp_callback'};
 		delete $params{'proxy_cache_valid'};
+		delete $params{'proxy_ssl_session_reuse'};
 		return DDG::ZeroClickInfo::Spice->new(
 			%params,
 		);
@@ -138,6 +143,7 @@ sub apply_keywords {
 					to => $zcispice_params{'to'},
 					defined $zcispice_params{'from'} ? ( from => $zcispice_params{'from'}) : (),
 					defined $zcispice_params{'proxy_cache_valid'} ? ( proxy_cache_valid => $zcispice_params{'proxy_cache_valid'} ) : (),
+					defined $zcispice_params{'proxy_ssl_session_reuse'} ? ( proxy_ssl_session_reuse => $zcispice_params{'proxy_ssl_session_reuse'} ) : (),
 					callback => $callback,
 					path => $path,
 					wrap_jsonp_callback => $zcispice_params{'wrap_jsonp_callback'},

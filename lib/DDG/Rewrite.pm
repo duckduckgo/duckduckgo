@@ -1,4 +1,7 @@
 package DDG::Rewrite;
+{
+  $DDG::Rewrite::VERSION = '0.041';
+}
 
 use Moo;
 use Carp qw( croak );
@@ -34,6 +37,11 @@ has proxy_cache_valid => (
 	predicate => 'has_proxy_cache_valid',
 );
 
+has proxy_ssl_session_reuse => (
+	is => 'ro',
+	predicate => 'has_proxy_ssl_session_reuse',
+);
+
 has nginx_conf => (
 	is => 'ro',
 	lazy => 1,
@@ -53,6 +61,7 @@ sub _build_nginx_conf {
 	$cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")." ".$uri_path." break;\n";
 	$cfg .= "\tproxy_pass ".$scheme."://".$host."/;\n";
 	$cfg .= "\tproxy_cache_valid ".$self->proxy_cache_valid.";\n" if $self->has_proxy_cache_valid;
+	$cfg .= "\tproxy_ssl_session_reuse ".$self->proxy_ssl_session_reuse.";\n" if $self->has_proxy_ssl_session_reuse;
 	$cfg .= "\techo_after_body ');';\n" if $wrap_jsonp_callback;
 	$cfg .= "}\n";
 	return $cfg;
