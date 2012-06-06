@@ -1,6 +1,6 @@
 package DDG::Rewrite;
 {
-  $DDG::Rewrite::VERSION = '0.041';
+  $DDG::Rewrite::VERSION = '0.042';
 }
 
 use Moo;

@@ -1,6 +1,6 @@
 package DDG::Meta::ZeroClickInfoSpice;
 {
-  $DDG::Meta::ZeroClickInfoSpice::VERSION = '0.041';
+  $DDG::Meta::ZeroClickInfoSpice::VERSION = '0.042';
 }
 
 use strict;
