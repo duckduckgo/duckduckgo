@@ -3,6 +3,9 @@ package DDG;
 
 use strict;
 use warnings;
+
+our $VERSION ||= '9.999';
+
 use File::ShareDir::ProjectDistDir;
 
 use Exporter 'import';
