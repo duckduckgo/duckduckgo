@@ -32,6 +32,11 @@ has wrap_jsonp_callback => (
 	default => sub { 0 },
 );
 
+has wrap_string_callback => (
+    is => 'ro',
+    default => sub { 0 },
+);
+
 has proxy_cache_valid => (
 	is => 'ro',
 	predicate => 'has_proxy_cache_valid',
@@ -50,19 +55,27 @@ has nginx_conf => (
 
 sub _build_nginx_conf {
 	my ( $self ) = @_;
+
 	my $uri = URI->new($self->parsed_to);
 	my $host = $uri->host;
 	my $scheme = $uri->scheme;
 	my $uri_path = $self->parsed_to;
 	$uri_path =~ s!$scheme://$host!!;
+
+    # wrap various other things into jsonp
+    croak "Cannot use wrap_jsonp_callback and wrap_string callback at the same time!" if $self->wrap_jsonp_callback && $self->wrap_string_callback;
 	my $wrap_jsonp_callback = $self->has_callback && $self->wrap_jsonp_callback;
+	my $wrap_string_callback = $self->has_callback && $self->wrap_string_callback;
+
 	my $cfg = "location ^~ ".$self->path." {\n";
 	$cfg .= "\techo_before_body '".$self->callback."(';\n" if $wrap_jsonp_callback;
+	$cfg .= "\techo_before_body '".$self->callback.qq|("';\n| if $wrap_string_callback;
 	$cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")." ".$uri_path." break;\n";
 	$cfg .= "\tproxy_pass ".$scheme."://".$host."/;\n";
 	$cfg .= "\tproxy_cache_valid ".$self->proxy_cache_valid.";\n" if $self->has_proxy_cache_valid;
 	$cfg .= "\tproxy_ssl_session_reuse ".$self->proxy_ssl_session_reuse.";\n" if $self->has_proxy_ssl_session_reuse;
 	$cfg .= "\techo_after_body ');';\n" if $wrap_jsonp_callback;
+	$cfg .= "\techo_after_body '\");'\n" if $wrap_string_callback;
 	$cfg .= "}\n";
 	return $cfg;
 }

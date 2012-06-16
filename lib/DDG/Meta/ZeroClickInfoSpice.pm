@@ -21,6 +21,7 @@ sub zeroclickinfospice_attributes {qw(
 	from
 	to
 	wrap_jsonp_callback
+    wrap_string_callback
 	proxy_cache_valid
 	proxy_ssl_session_reuse
 )}
@@ -54,6 +55,7 @@ sub apply_keywords {
 		call_type => 'include',
 		call => $path,
 		wrap_jsonp_callback => 0,
+		wrap_string_callback => 0,
 	);
 
 	my $stash = Package::Stash->new($target);
@@ -62,6 +64,7 @@ sub apply_keywords {
 		delete $params{'from'};
 		delete $params{'to'};
 		delete $params{'wrap_jsonp_callback'};
+		delete $params{'wrap_string_callback'};
 		delete $params{'proxy_cache_valid'};
 		delete $params{'proxy_ssl_session_reuse'};
 		return DDG::ZeroClickInfo::Spice->new(
@@ -147,6 +150,7 @@ sub apply_keywords {
 					callback => $callback,
 					path => $path,
 					wrap_jsonp_callback => $zcispice_params{'wrap_jsonp_callback'},
+					wrap_string_callback => $zcispice_params{'wrap_string_callback'},
 				);
 			} else {
 				$rewrite = "";
