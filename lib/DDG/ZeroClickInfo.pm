@@ -42,8 +42,9 @@ has ttl => (
 	predicate => 'has_ttl',
 );
 
+1;
+
 =head1 SEE ALSO
 
 L<WWW::DuckDuckGo::ZeroClickInfo>
 
-1;

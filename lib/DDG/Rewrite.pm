@@ -1,7 +1,4 @@
 package DDG::Rewrite;
-{
-  $DDG::Rewrite::VERSION = '0.042';
-}
 
 use Moo;
 use Carp qw( croak );
