@@ -6,6 +6,12 @@ use Carp;
 use DDG::Meta;
 require Moo::Role;
 
+=head1 DESCRIPTION
+
+This is the Spice Meta class. It injects all the keywords used for ZeroClickInfo Spice.
+
+=cut
+
 sub import {
 	my ( $class, %params ) = @_;
 	my $target = caller;

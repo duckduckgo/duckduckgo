@@ -1,5 +1,12 @@
 package DDG::Block;
 
+=head1 DESCRIPTION
+
+This is the base class for the so called Block concept. Its mission is to allow a list of plugins to get used based on specific
+trigger types. As an extend you can see L<DDG::Block::Regexp> and L<DDG::Block::Words>.
+
+=cut
+
 use Moo::Role;
 use Carp;
 use Class::Load ':all';
@@ -7,6 +14,16 @@ use Class::Load ':all';
 requires qw(
 	request
 );
+
+=head1 ATTRIBUTES
+
+=head2 plugins
+
+The list of the plugins used for this block, its an array with a list of strings or hashes. A string defines a class which just
+gets regular instantiated via new, if you define a hash the parameter given in this hash are given to the instantiation process
+of the class defined by the key "class" inside the hash.
+
+=cut
 
 has plugins => (
 	#isa => 'ArrayRef[Str|HashRef]',
@@ -17,11 +34,24 @@ has plugins => (
 
 sub _build_plugins { die (ref shift)." requires plugins" }
 
+=head2 return_one
+
+This attribute defines if the block should stop if there is a hit which gives a result. By default this is on.
+
+=cut
+
 has return_one => (
 	#isa => 'Bool',
 	is => 'ro',
 	default => sub { 1 },
 );
+
+=head2 return_one
+
+A coderef that is executed before the build of the plugins. It gets the block object as first and the class name to instantiate
+as second parameter.
+
+=cut
 
 has before_build => (
 	#isa => 'CodeRef',
