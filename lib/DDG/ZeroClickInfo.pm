@@ -1,4 +1,5 @@
 package DDG::ZeroClickInfo;
+# ABSTRACT: DuckDuckGo server side used ZeroClickInfo class
 
 =head1 SYNOPSIS
 
@@ -10,7 +11,7 @@ package DDG::ZeroClickInfo;
 
 =head1 DESCRIPTION
 
-This is the extension of the WWW::DuckDuckGo::ZeroClickInfo class, how it is used on the server side of DuckDuckGo.
+This is the extension of the L<WWW::DuckDuckGo::ZeroClickInfo> class, how it is used on the server side of DuckDuckGo.
 It adds attributes to the ZeroClickInfo class which are not required for the "output" part of it.
 
 =cut
@@ -18,9 +19,7 @@ It adds attributes to the ZeroClickInfo class which are not required for the "ou
 use Moo;
 extends qw( WWW::DuckDuckGo::ZeroClickInfo );
 
-=head1 ATTRIBUTES
-
-=head2 is_cached
+=attr is_cached
 
 This attribute sets if the ZeroClickInfo should get cached on the caching layer of DuckDuckGo
 
@@ -31,7 +30,7 @@ has is_cached => (
 	default => sub { 0 },
 );
 
-=head2 ttl
+=attr ttl
 
 The TTL defines how long this data should get cached
 
@@ -48,3 +47,4 @@ has ttl => (
 
 L<WWW::DuckDuckGo::ZeroClickInfo>
 
+=cut

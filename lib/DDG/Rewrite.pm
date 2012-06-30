@@ -1,4 +1,20 @@
 package DDG::Rewrite;
+# ABSTRACT: A (mostly spice related) Rewrite definition in our system
+
+=head1 SYNOPSIS
+
+  my $zci = DDG::ZeroClickInfo->new(
+    answer => "I'm a little teapot!",
+    is_cached => 1,
+    ttl => 500,
+  );
+
+=head1 DESCRIPTION
+
+This is the extension of the WWW::DuckDuckGo::ZeroClickInfo class, how it is used on the server side of DuckDuckGo.
+It adds attributes to the ZeroClickInfo class which are not required for the "output" part of it.
+
+=cut
 
 use Moo;
 use Carp qw( croak );
@@ -55,8 +71,10 @@ sub _build_nginx_conf {
 
 	my $uri = URI->new($self->parsed_to);
 	my $host = $uri->host;
+	my $port = $uri->port;
 	my $scheme = $uri->scheme;
 	my $uri_path = $self->parsed_to;
+	$uri_path =~ s!$scheme://$host:$port!!;
 	$uri_path =~ s!$scheme://$host!!;
 
     # wrap various other things into jsonp
@@ -68,7 +86,7 @@ sub _build_nginx_conf {
 	$cfg .= "\techo_before_body '".$self->callback."(';\n" if $wrap_jsonp_callback;
 	$cfg .= "\techo_before_body '".$self->callback.qq|("';\n| if $wrap_string_callback;
 	$cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")." ".$uri_path." break;\n";
-	$cfg .= "\tproxy_pass ".$scheme."://".$host."/;\n";
+	$cfg .= "\tproxy_pass ".$scheme."://".$host.":".$port."/;\n";
 	$cfg .= "\tproxy_cache_valid ".$self->proxy_cache_valid.";\n" if $self->has_proxy_cache_valid;
 	$cfg .= "\tproxy_ssl_session_reuse ".$self->proxy_ssl_session_reuse.";\n" if $self->has_proxy_ssl_session_reuse;
 	$cfg .= "\techo_after_body ');';\n" if $wrap_jsonp_callback;
