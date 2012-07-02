@@ -1,7 +1,4 @@
 package DDG::Meta::ZeroClickInfoSpice;
-{
-  $DDG::Meta::ZeroClickInfoSpice::VERSION = '0.042';
-}
 
 use strict;
 use warnings;
@@ -16,14 +13,13 @@ sub zeroclickinfospice_attributes {qw(
 	call
 	call_type
 	caller
-	is_cached
-	ttl
 	from
+	is_cached
+	proxy_cache_valid
+	proxy_ssl_session_reuse
 	to
 	wrap_jsonp_callback
     wrap_string_callback
-	proxy_cache_valid
-	proxy_ssl_session_reuse
 )}
 
 sub check_zeroclickinfospice_key {

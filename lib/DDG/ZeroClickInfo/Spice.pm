@@ -1,6 +1,7 @@
 package DDG::ZeroClickInfo::Spice;
 
 use Moo;
+with 'DDG::IsControllable';
 
 has call => (
 	is => 'ro',
@@ -15,11 +16,6 @@ has call_type => (
 has caller => (
 	is => 'ro',
 	required => 1,
-);
-
-has is_cached => (
-	is => 'ro',
-	default => sub { 1 },
 );
 
 # LEGACY
