@@ -1,4 +1,5 @@
 package DDG::IsControllable;
+# ABSTRACT: Role for data managed inside the DuckDuckGo infrastructure
 
 use Moo::Role;
 
@@ -16,5 +17,12 @@ has ttl => (
 	is => 'ro',
 	predicate => 'has_ttl',
 );
+
+=head1 DESCRIPTION
+
+This role is used for classes which should be cacheable or marked as safe or
+unsafe for kids.
+
+=cut
 
 1;

@@ -1,14 +1,15 @@
 package DDG::Goodie;
+# ABSTRACT: Goodie package for easy keywords
 
 use strict;
 use warnings;
 use Carp;
 use DDG::Meta;
-require Moo::Role;
 
 =head1 DESCRIPTION
 
 This is the Goodie Meta class. It injects all the keywords used for ZeroClickInfo Goodies.
+For more information see L<DDG::Meta>.
 
 =cut
 

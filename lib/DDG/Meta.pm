@@ -1,4 +1,5 @@
 package DDG::Meta;
+# ABSTRACT: Main meta layer implementation factory
 
 use strict;
 use warnings;
@@ -14,6 +15,29 @@ use	DDG::Meta::Helper;
 
 use MooX ();
 
+=head1 SYNOPSIS
+
+  DDG::Meta->apply_base_to_package("DDG::Goodie::MyGoodie");
+  DDG::Meta->apply_goodie_keywords("DDG::Goodie::MyGoodie");
+
+=head1 DESCRIPTION
+
+This package gathers all the functions to apply the meta
+layers used in DuckDuckGo. We try to apply easy keywords for
+the package developer, so that its most easy for the beginners
+to generate good plugins. This on the other side makes it
+right now hard to see what magic happens behind the curtains.
+L<DDG::Meta> functions shows up what is required to be some
+specific plugin on the DuckDuckGo module system.
+
+=method apply_base_to_package
+
+This function applies to the given target classname L<Moo> and L<Data::Printer>
+as if they were used directly inside the given classname. This is achieved
+with L<Import::Into> in combination with L<MooX>.
+
+=cut
+
 sub apply_base_to_package {
 	my ( $class, $target ) = @_;
 
@@ -21,6 +45,20 @@ sub apply_base_to_package {
 		+Data::Printer
 	));
 }
+
+=method apply_goodie_keywords
+
+This function applies a huge amount of keywords of other meta classes into
+the package of the given target classname. Please see:
+
+L<DDG::Meta::ZeroClickInfo>, L<DDG::Meta::ShareDir>, L<DDG::Meta::Block>,
+L<DDG::Meta::Attribution>, L<DDG::Meta::Helper>, L<DDG::Meta::Helper>,
+L<DDG::Meta::RequestHandler>
+
+The goodie request handler is supposed to give back an array of 
+L<DDG::ZeroClickInfo> objects or an empty array for nothing.
+
+=cut
 
 sub apply_goodie_keywords {
 	my ( $class, $target ) = @_;
@@ -36,6 +74,20 @@ sub apply_goodie_keywords {
 		);
 	},'DDG::IsGoodie');
 }
+
+=method apply_spice_keywords
+
+This function applies a huge amount of keywords of other meta classes into
+the package of the given target classname. Please see:
+
+L<DDG::Meta::ZeroClickInfoSpice>, L<DDG::Meta::ShareDir>, L<DDG::Meta::Block>,
+L<DDG::Meta::Attribution>, L<DDG::Meta::Helper>, L<DDG::Meta::Helper>,
+L<DDG::Meta::RequestHandler>
+
+The spice request handler is supposed to give back an array of 
+L<DDG::ZeroClickInfo::Spice> objects or an empty array for nothing.
+
+=cut
 
 sub apply_spice_keywords {
 	my ( $class, $target ) = @_;
