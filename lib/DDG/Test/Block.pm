@@ -17,6 +17,14 @@ sub import {
 
 	my $stash = Package::Stash->new($target);
 
+=keyword block_test
+
+This exported function is used by L<DDG::Test::Spice> and L<DDG::Test::Goodie>
+to get easier access to test a plugin with a block. Please see there for more
+informations.
+
+=cut
+
 	$stash->add_symbol('&block_test',sub {
 		my $result_callback = shift;
 		my $plugins_ref = shift;

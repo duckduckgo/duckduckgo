@@ -17,20 +17,7 @@ On your goodie for example:
 
 =head1 DESCRIPTION
 
-This meta class installs the functions B<html_enc> and B<uri_esc>.
-
-=keyword html_enc
-
-encodes entities to safely post random data on HTML output.
-
-=keyword uri_esc
-
-Encodes entities to safely use it in URLs for links in the Goodie, for
-example.
-
-B<Warning>: Do not forget that the return value from a spice will
-automatically get url encoded for the path. It is not required to url encode
-values there, this will just lead to double encoding!
+This meta class installs the some helper functions.
 
 =cut
 
@@ -44,7 +31,25 @@ sub apply_keywords {
 
 	my $stash = Package::Stash->new($target);
 
+=keyword html_enc
+
+encodes entities to safely post random data on HTML output.
+
+=cut
+
 	$stash->add_symbol('&html_enc', sub { map { encode_entities($_) } @_ });
+
+=keyword uri_esc
+
+Encodes entities to safely use it in URLs for links in the Goodie, for
+example.
+
+B<Warning>: Do not forget that the return value from a spice will
+automatically get url encoded for the path. It is not required to url encode
+values there, this will just lead to double encoding!
+
+=cut
+
 	$stash->add_symbol('&uri_esc', sub { map { uri_escape($_) } @_ });
 
 }

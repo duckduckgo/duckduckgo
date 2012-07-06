@@ -9,10 +9,27 @@ use DDG::Test::Block;
 use DDG::ZeroClickInfo;
 use Package::Stash;
 
+=head1 DESCRIPTION
+
+Installs functions for testing Goodies.
+
+B<Warning>: Be aware that you only use this module inside your test files in B<t/>.
+
+=cut
+
 sub import {
 	my ( $class, %params ) = @_;
 	my $target = caller;
 	my $stash = Package::Stash->new($target);
+
+=keyword test_zci
+
+Easy function to generate a ZeroClickInfo for the test. See
+L</ddg_goodie_test>.
+
+You can predefined parameters via L</zci>.
+
+=cut
 
 	my %zci_params;
 
@@ -22,6 +39,15 @@ sub import {
 			DDG::ZeroClickInfo->new(%zci_params, %{$_[0]}, answer => $answer ) :
 			DDG::ZeroClickInfo->new(%zci_params, @_, answer => $answer )
 	});
+
+=keyword zci
+
+You can predefine ZeroClickInfo parameters for usage in L</test_zci>.
+
+This function can be used several times to change specific defaults on the
+fly.
+
+=cut
 
 	$stash->add_symbol('&zci', sub {
 		if (ref $_[0] eq 'HASH') {
@@ -36,6 +62,16 @@ sub import {
 			}
 		}
 	});
+
+=keyword ddg_goodie_test
+
+  ddg_goodie_test(
+    [qw( DDG::Goodie::MyGoodie )],
+    'mygooodie data' => test_zci('data', html => '<div>data</div>'),
+    'mygooodie data2' => test_zci('data2', html => '<div>data2</div>'),
+  );
+
+=cut
 
 	$stash->add_symbol('&ddg_goodie_test', sub { block_test(sub {
 			my $query = shift;
