@@ -60,6 +60,7 @@ isa_ok($zci_spice,'DDG::ZeroClickInfo::Spice');
 is($zci_spice->call,'/js/spice/some_thing/a%23%23a/b%20%20b/c%23%3F%3Fc','Checking for proper call path');
 
 ddg_spice_test(
+	# DDGTest::Spice::Flashtest
 	[qw(
 		DDGTest::Spice::Data
 	)],
@@ -69,6 +70,11 @@ ddg_spice_test(
 		call_type => 'include',
 		caller => 'DDGTest::Spice::Data'
 	),
+	# 'flash version' => test_spice( 
+	# 	'/js/spice/flashtest',
+	# 	call_type => 'self',
+	# 	caller => 'DDGTest::Spice::Flashtest'
+	# ),
 );
 
 done_testing;
