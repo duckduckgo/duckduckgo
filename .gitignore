@@ -1,3 +1,4 @@
 DDG-*
 .build
 .*.sw*
+*.tmp

@@ -36,7 +36,7 @@ This is the only required attribute. It is the query in the most raw form. If
 the query is given over special ways (like coming out of a hard url like
 L<https://duckduckgo.com/Star_Trek_Voyager>), then those most get converted to
 the text that is normally shown on the query line then, before given to
-L<query_raw>.
+L</query_raw>.
 
 =cut
 
@@ -53,12 +53,12 @@ my $non_alphanumeric_ascii = qr{[\x00-\x1f\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x81\x
 
 =attr query_raw_parts
 
-This attribute gets generated out of the L<query_raw>, which gets split into
+This attribute gets generated out of the L</query_raw>, which gets split into
 all whitespace and non-whitespace content. For example the query:
 
   DDG::Request->new( query_raw => "A++    B++" );
 
-would give you the following arrayref on L<query_raw_parts>:
+would give you the following arrayref on L</query_raw_parts>:
 
   [
     'A++',
@@ -72,7 +72,7 @@ whitespace content. So if you have the query:
 
   DDG::Request->new( query_raw => "  A++    B++  " );
 
-leads to this L<query_raw_parts> to fulfill this:
+leads to this L</query_raw_parts> to fulfill this:
 
   [
     '',
@@ -99,7 +99,7 @@ sub _build_query_raw_parts {
 =attr query_parts
 
 This functions filters out the whitespace parts and empty parts of
-L<query_raw_parts>. Also it cuts down all part which would exceed making the
+L</query_raw_parts>. Also it cuts down all part which would exceed making the
 query more then 100 non whitespace characters.
 
 =cut
@@ -121,7 +121,7 @@ sub _build_query_parts {
 
 =attr query_parts_lc
 
-This takes the arrayref of L<query_parts> and makes a lowercase arrayref
+This takes the arrayref of L</query_parts> and makes a lowercase arrayref
 version of it.
 
 =cut
@@ -144,8 +144,8 @@ Triggers generate a hashref construction which makes it very easy to parse a
 query very effective through the accessing it word by word and so just
 analyzing against as less combinations as possible.
 
-It uses L<query_raw_parts> for this, but ignores the whitespace parts. Then it
-passes every part through L<generate_triggers> which gives back all possible
+It uses L</query_raw_parts> for this, but ignores the whitespace parts. Then it
+passes every part through L</generate_triggers> which gives back all possible
 variants of the specific given part.
 
 =cut
@@ -170,7 +170,7 @@ sub _build_triggers {
 
 =method generate_triggers
 
-This function takes a part of L<query_raw_parts> and generates all possible
+This function takes a part of L</query_raw_parts> and generates all possible
 variants of it, also doing some magic with dash given words to give both
 single or combined without dash or only with space. For specific analyze what
 triggers are generated out of a part please read the function.
@@ -201,7 +201,7 @@ sub generate_triggers {
 
 =method generate_remainder
 
-The method takes 2 index positions of L<query_raw_parts> to give out the other
+The method takes 2 index positions of L</query_raw_parts> to give out the other
 parts of the query which is ot between them, so removes those parts and
 generates out of the rest again a string which can be given to a plugin for
 example.
@@ -235,7 +235,7 @@ sub generate_remainder {
 
 =attr query
 
-Takes L<query_parts> and join them with one space.
+Takes L</query_parts> and join them with one space.
 
 =cut
 
@@ -250,7 +250,7 @@ sub _build_query {
 
 =attr query_lc
 
-Takes L<query> and lowercases it.
+Takes L</query> and lowercases it.
 
 =cut
 
@@ -265,7 +265,7 @@ sub _build_query_lc {
 
 =attr query_nowhitespace
 
-Takes L<query> and removes all whitespaces.
+Takes L</query> and removes all whitespaces.
 
 =cut
 
@@ -283,7 +283,7 @@ sub _build_query_nowhitespace {
 
 =attr query_nowhitespace_nodash
 
-Takes L<query> and removes all whitespaces and dashes.
+Takes L</query> and removes all whitespaces and dashes.
 
 =cut
 
@@ -301,7 +301,7 @@ sub _build_query_nowhitespace_nodash {
 
 =attr query_clean
 
-Takes L<query_lc> and removes all whitespaces and all non alphanumeric ascii.
+Takes L</query_lc> and removes all whitespaces and all non alphanumeric ascii.
 
 =cut
 
@@ -320,7 +320,7 @@ sub _build_query_clean {
 
 =attr words
 
-Takes L<query_clean> and generates an arrayref of the non-whitespace parts.
+Takes L</query_clean> and generates an arrayref of the non-whitespace parts.
 
 =cut
 
@@ -336,9 +336,9 @@ sub _build_words {
 	]
 }
 
-=attr words
+=attr wordcount
 
-Is the count of the elements in L<words>
+Is the count of the elements in L</words>
 
 =cut
 
