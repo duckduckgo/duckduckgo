@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Carp;
 use DDG::ZeroClickInfo::Spice;
+use DDG::ZeroClickInfo::Spice::Data;
 use DDG::Rewrite;
 use Package::Stash;
 use URI::Encode qw(uri_encode uri_decode);
@@ -55,6 +56,7 @@ sub apply_keywords {
 	);
 
 	my $stash = Package::Stash->new($target);
+
 	$stash->add_symbol('&call',sub {
 		my %params = %zcispice_params;
 		delete $params{'from'};
@@ -67,10 +69,12 @@ sub apply_keywords {
 			%params,
 		);
 	});
+
 	$stash->add_symbol('&spice_new',sub {
 		shift;
 		my @call;
 		my %params = %zcispice_params;
+		my $data;
 		delete $params{'from'};
 		delete $params{'to'};
 		for (@_) {
@@ -78,6 +82,12 @@ sub apply_keywords {
 				for my $k (keys %{$_}) {
 					$params{$k} = $_->{$k};
 				};
+			} elsif (ref $_ eq 'DDG::ZeroClickInfo::Spice::Data') {
+				if ($data) {
+					$data->add_data($_);
+				} else {
+					$data = $_;
+				}
 			} elsif (ref $_ eq 'DDG::ZeroClickInfo::Spice') {
 				return $_;
 			} elsif (!defined $_) {
@@ -86,6 +96,7 @@ sub apply_keywords {
 				push @call, $_;
 			}
 		}
+		$params{'call_data'} = $data->data if $data;
 		if (@call) {
 			if ($params{'call_type'} eq 'include') {
 				$params{'call'} = $target->path.join('/',map { uri_encode($_,1) } @call);
@@ -97,11 +108,7 @@ sub apply_keywords {
 		}
 		DDG::ZeroClickInfo::Spice->new(%params)
 	});
-	### SHOULD GET DEPRECATED vvvv ###
-	$stash->add_symbol('&spice_from',sub { $zcispice_params{'from'} });
-	$stash->add_symbol('&spice_to',sub { $zcispice_params{'to'} });
-	$stash->add_symbol('&spice_call_type',sub { $zcispice_params{'call_type'} });
-	###                       ^^^^ ###
+
 	$stash->add_symbol('&spice',sub {
 		if (ref $_[0] eq 'HASH') {
 			for (keys %{$_[0]}) {
@@ -115,9 +122,19 @@ sub apply_keywords {
 			}
 		}
 	});
+
 	$stash->add_symbol('&callback',sub { $callback });
+
 	$stash->add_symbol('&path',sub { $path });
+
 	my $spice_js;
+
+	$stash->add_symbol('&data',sub {
+		unshift @_, %{$_[0]} if ref $_[0] eq 'HASH';
+		my ( %data ) = @_;
+		return DDG::ZeroClickInfo::Spice::Data->new( data => \%data );
+	});
+
 	$stash->add_symbol('&spice_js',sub {
 		return $spice_js if defined $spice_js;
 		my ( $self ) = @_;
@@ -131,10 +148,12 @@ sub apply_keywords {
 		}
 		return $spice_js;
 	});
+
 	my $rewrite;
 	$stash->add_symbol('&has_rewrite',sub {
 		defined $zcispice_params{'to'};
 	});
+
 	$stash->add_symbol('&rewrite',sub {
 		unless (defined $rewrite) {
 			if ($target->has_rewrite) {
@@ -154,12 +173,20 @@ sub apply_keywords {
 		}
 		return $rewrite;
 	});
+
 	$stash->add_symbol('&get_nginx_conf',sub {
 		my $nginx_conf_func = $stash->get_symbol('&nginx_conf');
 		return $nginx_conf_func->(@_) if $nginx_conf_func;
 		return "" unless $target->has_rewrite;
 		return $target->rewrite->nginx_conf;
 	});
+
+	### SHOULD GET DEPRECATED vvvv ###
+	$stash->add_symbol('&spice_from',sub { $zcispice_params{'from'} });
+	$stash->add_symbol('&spice_to',sub { $zcispice_params{'to'} });
+	$stash->add_symbol('&spice_call_type',sub { $zcispice_params{'call_type'} });
+	###                       ^^^^ ###
+
 }
 
 1;

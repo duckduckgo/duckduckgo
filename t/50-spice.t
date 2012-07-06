@@ -7,8 +7,13 @@ use Test::More;
 use FindBin qw($Bin);
 use lib "$Bin/lib";
 
+use DDG::Request;
+
+use DDG::Test::Spice;
+
 use DDGTest::Spice::Words;
 use DDGTest::Spice::Regexp;
+use DDGTest::Spice::Data;
 
 use DDG::ZeroClickInfo::Spice;
 
@@ -53,5 +58,17 @@ my $zci_spice = DDG::ZeroClickInfo::Spice->new(
 
 isa_ok($zci_spice,'DDG::ZeroClickInfo::Spice');
 is($zci_spice->call,'/js/spice/some_thing/a%23%23a/b%20%20b/c%23%3F%3Fc','Checking for proper call path');
+
+ddg_spice_test(
+	[qw(
+		DDGTest::Spice::Data
+	)],
+	'data test' => test_spice( 
+		'/js/spice/data/test',
+		call_data => { otherkey => 'value', key => 'finalvalue' },
+		call_type => 'include',
+		caller => 'DDGTest::Spice::Data'
+	),
+);
 
 done_testing;

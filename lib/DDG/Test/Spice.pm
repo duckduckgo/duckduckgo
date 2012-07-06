@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Carp;
 use Test::More;
-use DDG::Test;
+use DDG::Test::Block;
 use DDG::ZeroClickInfo::Spice;
 use Package::Stash;
 

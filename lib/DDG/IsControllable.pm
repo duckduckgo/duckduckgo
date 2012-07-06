@@ -8,8 +8,6 @@ use Moo::Role;
 This role is used for classes which should be cacheable or marked as safe or
 unsafe for kids.
 
-=cut
-
 =attr is_cached
 
 Defines if the data should get cached. Default on for spice, default off for

@@ -16,8 +16,9 @@ This is the main request class which reflects a query and all parameter that
 are relevant for plugins to work with the request. It does not reflect a web
 request itself to DuckDuckGo, for this we have internal classes. The request
 class is the abstracted level all services can independently work with, on any
-medium, so also on the API, or via console based tests without web
-environment. This class is also base for run on a L<DDG::Block>.
+medium, so also on the L<API|http://duckduckgo.com/api.html>, or via console
+based tests without web environment. This class is also base for run on a
+L<DDG::Block>.
 
 Beside the information of the query itself, a L<DDG::Request> can also contain
 the language, the region and the geo location (which is calculated out of the

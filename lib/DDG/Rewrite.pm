@@ -5,6 +5,25 @@ use Moo;
 use Carp qw( croak );
 use URI;
 
+sub BUILD {
+	my ( $self ) = @_;
+	my $to = $self->to;
+	my $callback = $self->has_callback ? $self->callback : "";
+	croak "Missing callback attribute for {{callback}} in to" if ($to =~ s/{{callback}}/$callback/g && !$self->has_callback);
+	my @missing_envs;
+	for ($to =~ m/{{ENV{(\w+)}}}/g) {
+		if (defined $ENV{$1}) {
+			my $val = $ENV{$1};
+			$to =~ s/{{ENV{$1}}}/$val/g;
+		} else {
+			push @missing_envs, $1;
+			$to =~ s/{{ENV{$1}}}//g;
+		}
+	}
+	$self->_missing_envs(\@missing_envs) if @missing_envs;
+	$self->_parsed_to($to);
+}
+
 =head1 SYNOPSIS
 
   my $rewrite = DDG::Rewrite->new(
@@ -33,7 +52,7 @@ use URI;
 This class is used to contain a definition for a rewrite in our system. So far its specific
 designed for the problems we face towards spice redirects, but the definition is used in
 the L<App::DuckPAN> test server. In the production system we use those definitions to
-generate an B<nginx> config.
+generate an L<nginx|http://duckduckgo.com/?q=nginx> config.
 
 =cut
 
@@ -122,24 +141,5 @@ has _parsed_to => (
 	is => 'rw',
 );
 sub parsed_to { shift->_parsed_to }
-
-sub BUILD {
-	my ( $self ) = @_;
-	my $to = $self->to;
-	my $callback = $self->has_callback ? $self->callback : "";
-	croak "Missing callback attribute for {{callback}} in to" if ($to =~ s/{{callback}}/$callback/g && !$self->has_callback);
-	my @missing_envs;
-	for ($to =~ m/{{ENV{(\w+)}}}/g) {
-		if (defined $ENV{$1}) {
-			my $val = $ENV{$1};
-			$to =~ s/{{ENV{$1}}}/$val/g;
-		} else {
-			push @missing_envs, $1;
-			$to =~ s/{{ENV{$1}}}//g;
-		}
-	}
-	$self->_missing_envs(\@missing_envs) if @missing_envs;
-	$self->_parsed_to($to);
-}
 
 1;

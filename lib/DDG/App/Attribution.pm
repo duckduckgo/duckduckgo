@@ -9,12 +9,6 @@ use Module::Runtime qw( use_module );
 use lib ();
 use Path::Class;
 
-option 'html' => (
-	is => 'ro',
-	default => sub { 0 },
-	negativable => 1,
-);
-
 sub BUILD {
 	my ( $self ) = @_;
 	my $curdir = dir('lib')->absolute;
@@ -41,5 +35,11 @@ sub BUILD {
 	}
 	print "\n";
 }
+
+option 'html' => (
+	is => 'ro',
+	default => sub { 0 },
+	negativable => 1,
+);
 
 1;

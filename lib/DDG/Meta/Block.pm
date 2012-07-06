@@ -1,16 +1,32 @@
 package DDG::Meta::Block;
+# ABSTRACT: Inject keywords to make a L<DDG::Block::Blockable> plugin
 
 use strict;
 use warnings;
 use Carp;
 use DDG::Block::Blockable::Triggers;
 use Package::Stash;
-
 require Moo::Role;
+
+=head1 DESCRIPTION
+
+
+=cut
+
+my %applied;
+
+=method apply_keywords
+
+Uses a given classname to install the described keywords.
+
+=cut
 
 sub apply_keywords {
 	my ( $class, $target ) = @_;
-	
+
+	return if exists $applied{$target};
+	$applied{$target} = undef;
+
 	#
 	# triggers
 	#

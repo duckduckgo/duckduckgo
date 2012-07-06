@@ -7,7 +7,7 @@ requires qw(
 	handle_request_matches
 );
 
-=head1
+=head1 DESCRIPTION
 
 This role is for plugins which are Spice. They need to implement a
 B<handle_request_matches> function.

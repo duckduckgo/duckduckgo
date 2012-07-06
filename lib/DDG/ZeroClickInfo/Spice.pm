@@ -4,7 +4,6 @@ package DDG::ZeroClickInfo::Spice;
 use Moo;
 with 'DDG::IsControllable';
 
-
 =head1 SYNOPSIS
 
   my $zci_spice = DDG::ZeroClickInfo::Spice->new(
@@ -35,6 +34,11 @@ has call => (
 has call_type => (
 	is => 'ro',
 	predicate => 'has_call_type',
+);
+
+has call_data => (
+	is => 'ro',
+	predicate => 'has_call_data',
 );
 
 =attr caller

@@ -9,6 +9,11 @@ requires qw(
 	request
 );
 
+sub BUILD {
+	my ( $self ) = @_;
+	$self->_plugin_objs;
+}
+
 =head1 SYNOPSIS
 
   package DDG::Block::MyType;
@@ -49,11 +54,11 @@ This is the L<Moo::Role> of the so called Block concept. Its mission is to
 allow a list of plugins to get used based on specific trigger types. As an
 extend you can see L<DDG::Block::Regexp> and L<DDG::Block::Words>.
 
-A class with B<DDG::Block> needs a B<request> function to handle a
-B<DDG::Request>. It gets as only parameter the request object and needs to
+A class with L<DDG::Block> needs a B<request> function to handle a
+L<DDG::Request>. It gets as only parameter the request object and needs to
 return a list of results or an empty list. Dont forget that returning B<undef>
 on the request function means something depending of the context the
-B<DDG::Block> is used.
+L<DDG::Block> is used.
 
 =attr plugins
 
@@ -117,10 +122,10 @@ has after_build => (
 
 This private attribute contains an array with an arrayref of trigger and 
 plugin, its the main point where all subclasses of Blocks fetches the plugin
-=> triggers definition. Do never set this attribute yourself, or you are
+=E<gt> triggers definition. Do never set this attribute yourself, or you are
 doomed ;). The generation of this array also instantiates the plugins, which
 makes it an important point for the general handling plugins who needs
-L<after_build> and L<before_build>. It gets triggered on instantiation of the
+L</after_build> and L</before_build>. It gets triggered on instantiation of the
 Block.
 
 The function goes through all plugin class names given on the setup of the blog
@@ -183,7 +188,7 @@ sub _build__plugin_objs {
 =attr only_plugin_objs
 
 This read-only attribute contains an arrayref of all plugins in a row. This can be used to iterate over all objects
-more easy then using B<plugin_objs>. It gets generated only on usage and takes B<plugin_objs> as source.
+more easy then using L</plugin_objs>. It gets generated only on usage and takes L</plugin_objs> as source.
 
 =cut
 
@@ -203,7 +208,7 @@ sub _build_only_plugin_objs {
 
 =method get_triggers_of_plugin
 
-This method will get called to find all the triggers given by a specific plugin. If your Block subclass requires
+Get called to find all the triggers given by a specific plugin. If your Block subclass requires
 a special handling here, then it can be overloaded and just behave like you require. It gets the object of the
 plugin as first parameter.
 
@@ -213,7 +218,7 @@ sub get_triggers_of_plugin { shift; shift->get_triggers }
 
 =method parse_trigger
 
-This method gets called for every single trigger of a plugin to parse out and sort out. By default it doesnt do
+Gets called for every single trigger of a plugin to parse out and sort out. By default it doesnt do
 anything, but as the other functions you can overload this behaviour.
 
 =cut
@@ -222,17 +227,12 @@ sub parse_trigger { shift; shift; }
 
 =method empty_trigger
 
-This method gets called, if the plugin doesnt deliver any trigger, here you can wrap this to your own specific
+Ggets called, if the plugin doesnt deliver any trigger, here you can wrap this to your own specific
 definition. Its so far only used in the L<DDG::Block::Words>, to disallow empty triggers totally. By default
 it returns B<undef>.
 
 =cut
 
 sub empty_trigger { return undef }
-
-sub BUILD {
-	my ( $self ) = @_;
-	$self->_plugin_objs;
-}
 
 1;
