@@ -1,4 +1,5 @@
 package DDG::App::Attribution;
+# ABSTRACT: Application class for reading the attributions of a package
 
 use MooX qw(
 	Options

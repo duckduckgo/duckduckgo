@@ -1,4 +1,5 @@
 package DDG::Block::Blockable::Triggers;
+# ABSTRACT: A package which reflects the triggers of a blockable plugin.
 
 use Moo;
 use Carp;

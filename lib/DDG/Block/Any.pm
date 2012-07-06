@@ -1,4 +1,5 @@
 package DDG::Block::Any;
+# ABSTRACT: EXPERIMENTAL
 
 use Moo;
 use Carp;

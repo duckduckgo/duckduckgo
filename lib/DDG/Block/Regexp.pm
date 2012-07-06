@@ -1,7 +1,18 @@
 package DDG::Block::Regexp;
+# ABSTRACT: Block implementation to handle regexp based plugins
 
 use Moo;
 with qw( DDG::Block );
+
+=head1 DESCRIPTION
+
+=method parse_trigger
+
+This function of L<DDG::Block> is overloaded to be sure the triggers given
+are precompiled, through setting them to a scalar. Also a string given will
+get converted to a regexp.
+
+=cut
 
 sub parse_trigger {
 	my ( $self, $triggers ) = @_;
@@ -13,6 +24,11 @@ sub parse_trigger {
 	}
 	return $triggers;
 }
+
+=method request
+
+
+=cut
 
 sub request {
 	my ( $self, $request ) = @_;

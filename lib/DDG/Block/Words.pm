@@ -1,8 +1,43 @@
 package DDG::Block::Words;
+# ABSTRACT: Block implementation to handle words based plugins
 
 use Moo;
 use Carp;
 with qw( DDG::Block );
+
+sub BUILD {
+	my ( $self ) = @_;
+	for (reverse @{$self->plugin_objs}) {
+		my $triggers = $_->[0];
+		my $plugin = $_->[1];
+		for (@{$triggers}) {
+			my $trigger = $_;
+			croak "trigger must be a hash on ".(ref $plugin) unless ref $trigger eq 'HASH';
+			if (defined $trigger->{start}) {
+				$self->_set_start_word_plugin($_,$plugin) for (@{$trigger->{start}});
+			}
+			if (defined $trigger->{end}) {
+				$self->_set_end_word_plugin($_,$plugin) for (@{$trigger->{end}});
+			}
+			if (defined $trigger->{startend}) {
+				$self->_set_start_word_plugin($_,$plugin) for (@{$trigger->{startend}});
+				$self->_set_end_word_plugin($_,$plugin) for (@{$trigger->{startend}});
+			}
+			if (defined $trigger->{any}) {
+				$self->_set_any_word_plugin($_,$plugin) for (@{$trigger->{any}});
+			}
+		}
+	}
+}
+
+=head1 DESCRIPTION
+
+...
+
+On construction it fills up its own cache in L<words_plugins> by analyzing the
+given plugins and their triggers.
+
+=cut
 
 sub _set_start_word_plugin { shift->_set_beginword_word_plugin('start',@_) }
 sub _set_any_word_plugin { shift->_set_beginword_word_plugin('any',@_) }
@@ -35,6 +70,13 @@ sub _set_word_plugin {
 	}
 }
 
+=attr words_plugins
+
+This private attribute is a cache for grouping the plugins into B<start>,
+B<end> and B<any> based plugins.
+
+=cut
+
 has _words_plugins => (
 	# like HashRef[HashRef[DDG::Block::Plugin]]',
 	is => 'ro',
@@ -48,6 +90,10 @@ sub _build__words_plugins {{
 	end => {},
 	any => {},
 }}
+
+=method request
+
+=cut
 
 sub request {
 	my ( $self, $request ) = @_;
@@ -101,31 +147,16 @@ sub request {
 	return @results;
 }
 
-sub empty_trigger { croak "empty triggers are not supported by ".__PACKAGE__ }
+=method empty_trigger
 
-sub BUILD {
-	my ( $self ) = @_;
-	for (reverse @{$self->plugin_objs}) {
-		my $triggers = $_->[0];
-		my $plugin = $_->[1];
-		for (@{$triggers}) {
-			my $trigger = $_;
-			croak "trigger must be a hash on ".(ref $plugin) unless ref $trigger eq 'HASH';
-			if (defined $trigger->{start}) {
-				$self->_set_start_word_plugin($_,$plugin) for (@{$trigger->{start}});
-			}
-			if (defined $trigger->{end}) {
-				$self->_set_end_word_plugin($_,$plugin) for (@{$trigger->{end}});
-			}
-			if (defined $trigger->{startend}) {
-				$self->_set_start_word_plugin($_,$plugin) for (@{$trigger->{startend}});
-				$self->_set_end_word_plugin($_,$plugin) for (@{$trigger->{startend}});
-			}
-			if (defined $trigger->{any}) {
-				$self->_set_any_word_plugin($_,$plugin) for (@{$trigger->{any}});
-			}
-		}
-	}
-}
+Overloading this method from L<DDG::Block> assures that we dont allow any
+plugin which as no triggers. Words plugins are all triggered via keywords
+against a hash, which means there is no order relevance, which makes a
+triggerless plugin just totally unclear, if it now needs to get started
+before the hash compare or after (or not).
+
+=cut
+
+sub empty_trigger { croak "empty triggers are not supported by ".__PACKAGE__ }
 
 1;
