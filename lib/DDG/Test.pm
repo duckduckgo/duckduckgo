@@ -1,4 +1,5 @@
 package DDG::Test;
+# ABSTRACT: TODO
 
 use strict;
 use warnings;

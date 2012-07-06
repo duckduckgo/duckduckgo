@@ -45,18 +45,23 @@ or
 
 =head1 DESCRIPTION
 
-This is the L<Moo::Role> of the so called Block concept. Its mission is to allow a list of plugins to get used based on specific
-trigger types. As an extend you can see L<DDG::Block::Regexp> and L<DDG::Block::Words>.
+This is the L<Moo::Role> of the so called Block concept. Its mission is to
+allow a list of plugins to get used based on specific trigger types. As an
+extend you can see L<DDG::Block::Regexp> and L<DDG::Block::Words>.
 
-A class with B<DDG::Block> needs a B<request> function to handle a B<DDG::Request>. It gets as only parameter the request
-object and needs to return a list of results or an empty list. Dont forget that returning B<undef> on the request
-function means something depending of the context the B<DDG::Block> is used.
+A class with B<DDG::Block> needs a B<request> function to handle a
+B<DDG::Request>. It gets as only parameter the request object and needs to
+return a list of results or an empty list. Dont forget that returning B<undef>
+on the request function means something depending of the context the
+B<DDG::Block> is used.
 
 =attr plugins
 
-The list of the plugins used for this block, its an array with a list of strings or hashes. A string defines a class which just
-gets regular instantiated via new, if you define a hash the parameter given in this hash are given to the instantiation process
-of the class defined by the key "class" inside the hash.
+The list of the plugins used for this block, its an array with a list of
+strings or hashes. A string defines a class which just gets regular
+instantiated via new, if you define a hash the parameter given in this hash
+are given to the instantiation process of the class defined by the key "class"
+inside the hash.
 
 =cut
 
@@ -71,7 +76,8 @@ sub _build_plugins { die (ref shift)." requires plugins" }
 
 =attr return_one
 
-This attribute defines if the block should stop if there is a hit which gives a result. By default this is on.
+This attribute defines if the block should stop if there is a hit which gives
+a result. By default this is on.
 
 =cut
 
@@ -83,8 +89,8 @@ has return_one => (
 
 =attr before_build
 
-A coderef that is executed before the build of the plugins. It gets the block object as first and the class name to instantiate
-as second parameter.
+A coderef that is executed before the build of the plugins. It gets the block
+object as first and the class name to instantiate as second parameter.
 
 =cut
 
@@ -96,8 +102,8 @@ has before_build => (
 
 =attr after_build
 
-A coderef that is executed before the build of the plugins. It gets the block object as first and the object of the plugin
-as second parameter.
+A coderef that is executed before the build of the plugins. It gets the block
+object as first and the object of the plugin as second parameter.
 
 =cut
 
@@ -107,12 +113,15 @@ has after_build => (
 	predicate => 'has_after_build',
 );
 
-=attr _plugin_objs B<private>
+=attr plugin_objs
 
-This private attribute contains an array with an arrayref of trigger and plugin, its the main point where all subclasses
-of Blocks fetches the trigger => plugin definition. Do never set this attribute yourself, or you are doomed ;). The
-generation of this array also instantiates the plugins, which makes it an important point for the general handling
-plugins who needs B<after_build> and B<before_build>. It gets triggered on instantiation of the Block.
+This private attribute contains an array with an arrayref of trigger and 
+plugin, its the main point where all subclasses of Blocks fetches the plugin
+=> triggers definition. Do never set this attribute yourself, or you are
+doomed ;). The generation of this array also instantiates the plugins, which
+makes it an important point for the general handling plugins who needs
+L<after_build> and L<before_build>. It gets triggered on instantiation of the
+Block.
 
 The function goes through all plugin class names given on the setup of the blog
 
@@ -213,7 +222,7 @@ sub parse_trigger { shift; shift; }
 
 =method empty_trigger
 
-This method gets called, if the plugin doesnt deliver any plugin, here you can wrap this to your own specific
+This method gets called, if the plugin doesnt deliver any trigger, here you can wrap this to your own specific
 definition. Its so far only used in the L<DDG::Block::Words>, to disallow empty triggers totally. By default
 it returns B<undef>.
 

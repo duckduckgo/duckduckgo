@@ -32,9 +32,9 @@ specific plugin on the DuckDuckGo module system.
 
 =method apply_base_to_package
 
-This function applies to the given target classname L<Moo> and L<Data::Printer>
-as if they were used directly inside the given classname. This is achieved
-with L<Import::Into> in combination with L<MooX>.
+This function applies to the given target classname L<Moo> and
+L<Data::Printer> as if they were used directly inside the given classname.
+This is achieved with L<Import::Into> in combination with L<MooX>.
 
 =cut
 

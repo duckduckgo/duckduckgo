@@ -1,4 +1,5 @@
 package DDG::Test::Goodie;
+# ABSTRACT: Adds keywords to easily test Goodie plugins.
 
 use strict;
 use warnings;

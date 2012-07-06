@@ -1,4 +1,5 @@
 package DDG::Test::Block;
+# ABSTRACT: Adds a function to easily test L<DDG::Block>.
 
 use strict;
 use warnings;

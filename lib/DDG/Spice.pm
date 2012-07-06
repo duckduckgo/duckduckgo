@@ -1,4 +1,5 @@
 package DDG::Spice;
+# ABSTRACT: Spice package for easy keywords
 
 use strict;
 use warnings;
@@ -8,7 +9,8 @@ require Moo::Role;
 
 =head1 DESCRIPTION
 
-This is the Spice Meta class. It injects all the keywords used for ZeroClickInfo Spice.
+This is the Spice Meta class. It injects all the keywords used for
+ZeroClickInfo Spice. For more information see L<DDG::Meta>.
 
 =cut
 

@@ -1,24 +1,41 @@
 package DDG::Rewrite;
 # ABSTRACT: A (mostly spice related) Rewrite definition in our system
 
-=head1 SYNOPSIS
-
-  my $zci = DDG::ZeroClickInfo->new(
-    answer => "I'm a little teapot!",
-    is_cached => 1,
-    ttl => 500,
-  );
-
-=head1 DESCRIPTION
-
-This is the extension of the WWW::DuckDuckGo::ZeroClickInfo class, how it is used on the server side of DuckDuckGo.
-It adds attributes to the ZeroClickInfo class which are not required for the "output" part of it.
-
-=cut
-
 use Moo;
 use Carp qw( croak );
 use URI;
+
+=head1 SYNOPSIS
+
+  my $rewrite = DDG::Rewrite->new(
+    path => '/js/test/',
+    to => 'http://some.api/$1',
+  );
+
+  print $rewrite->nginx_conf;
+
+  # location ^~ /js/test/ {
+  #   rewrite ^/js/test/(.*) /$1 break;
+  #   proxy_pass http://some.api:80/;
+  # }
+
+  my $missing_rewrite = DDG::Rewrite->new(
+    path => '/js/test/',
+    to => 'http://some.api/$1/?key={{ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY}}}',
+  );
+
+  if ($missing_rewrite->missing_envs) { ... }
+
+  # is false if $ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY} is not set
+
+=head1 DESCRIPTION
+
+This class is used to contain a definition for a rewrite in our system. So far its specific
+designed for the problems we face towards spice redirects, but the definition is used in
+the L<App::DuckPAN> test server. In the production system we use those definitions to
+generate an B<nginx> config.
+
+=cut
 
 has path => (
 	is => 'ro',

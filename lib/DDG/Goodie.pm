@@ -8,8 +8,8 @@ use DDG::Meta;
 
 =head1 DESCRIPTION
 
-This is the Goodie Meta class. It injects all the keywords used for ZeroClickInfo Goodies.
-For more information see L<DDG::Meta>.
+This is the Goodie Meta class. It injects all the keywords used for
+ZeroClickInfo Goodies. For more information see L<DDG::Meta>.
 
 =cut
 

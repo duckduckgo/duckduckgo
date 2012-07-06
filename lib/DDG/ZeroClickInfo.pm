@@ -1,5 +1,9 @@
 package DDG::ZeroClickInfo;
-# ABSTRACT: DuckDuckGo server side used ZeroClickInfo class
+# ABSTRACT: DuckDuckGo server side used ZeroClickInfo result class
+
+use Moo;
+extends qw( WWW::DuckDuckGo::ZeroClickInfo );
+with 'DDG::IsControllable';
 
 =head1 SYNOPSIS
 
@@ -11,14 +15,17 @@ package DDG::ZeroClickInfo;
 
 =head1 DESCRIPTION
 
-This is the extension of the L<WWW::DuckDuckGo::ZeroClickInfo> class, how it is used on the server side of DuckDuckGo.
-It adds attributes to the ZeroClickInfo class which are not required for the "output" part of it.
+This is the extension of the L<WWW::DuckDuckGo::ZeroClickInfo> class, how it
+is used on the server side of DuckDuckGo. It adds attributes to the
+ZeroClickInfo class which are not required for the client side usage.
+
+So far all required attributes get injected via L<DDG::IsControllable>.
 
 =cut
 
-use Moo;
-extends qw( WWW::DuckDuckGo::ZeroClickInfo );
-with 'DDG::IsControllable';
+
+
+
 
 =head1 SEE ALSO
 

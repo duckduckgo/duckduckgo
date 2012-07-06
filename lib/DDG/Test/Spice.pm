@@ -1,4 +1,5 @@
 package DDG::Test::Spice;
+# ABSTRACT: Adds keywords to easily test Spice plugins.
 
 use strict;
 use warnings;
