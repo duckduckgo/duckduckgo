@@ -24,10 +24,10 @@ sub import {
 
 =keyword test_zci
 
-Easy function to generate a ZeroClickInfo for the test. See
+Easy function to generate a L<DDG::ZeroClickInfo> for the test. See
 L</ddg_goodie_test>.
 
-You can predefined parameters via L</zci>.
+You can predefine parameters via L</zci>.
 
 =cut
 
@@ -42,7 +42,7 @@ You can predefined parameters via L</zci>.
 
 =keyword zci
 
-You can predefine ZeroClickInfo parameters for usage in L</test_zci>.
+You can predefine L<DDG::ZeroClickInfo> parameters for usage in L</test_zci>.
 
 This function can be used several times to change specific defaults on the
 fly.
@@ -64,6 +64,9 @@ fly.
 	});
 
 =keyword ddg_goodie_test
+
+With this function you can easily generate a small own L<DDG::Block> for
+testing your L<DDG::Goodie> alone or in combination with others.
 
   ddg_goodie_test(
     [qw( DDG::Goodie::MyGoodie )],

@@ -1,10 +1,17 @@
 package DDG::Meta::RequestHandler;
+# ABSTRACT: Functions for a request handler
 
 use strict;
 use warnings;
 use Carp;
 use Package::Stash;
 require Moo::Role;
+
+=head1 DESCRIPTION
+
+
+
+=cut
 
 my @request_scalar_attributes = qw(
 
@@ -44,6 +51,16 @@ sub apply_keywords {
 			croak "We need a CODEREF for the handler" unless ref $code eq 'CODE';
 		}
 		croak "Please define triggers before you define a handler" unless $target->has_triggers;
+
+=keyword handle_request_matches
+
+This package installs the function which is required to handle a request for a
+block. It will get fired when the triggers are matching.
+
+...
+
+=cut
+
 		if (grep { $_ eq $handler } @request_scalar_attributes) {
 			$stash->add_symbol('&handle_request_matches',sub {
 				my ( $self, $request ) = @_;

@@ -9,10 +9,30 @@ use DDG::Test::Block;
 use DDG::ZeroClickInfo::Spice;
 use Package::Stash;
 
+=head1 DESCRIPTION
+
+Installs functions for testing Spice.
+
+B<Warning>: Be aware that you only use this module inside your test files in B<t/>.
+
+=cut
+
 sub import {
 	my ( $class, %params ) = @_;
 	my $target = caller;
 	my $stash = Package::Stash->new($target);
+
+=keyword test_spice
+
+Easy function to generate a L<DDG::ZeroClickInfo::Spice> for the test. See
+L</ddg_spice_test>.
+
+You can predefine parameters via L</spice>.
+
+The first parameter gets treated as the
+L<call of the DDG::ZeroClickInfo::Spice|DDG::ZeroClickInfo::Spice/call>
+
+=cut
 
 	my %spice_params;
 
@@ -22,6 +42,16 @@ sub import {
 			? DDG::ZeroClickInfo::Spice->new(%spice_params, %{$_[0]}, call => $call )
 			: DDG::ZeroClickInfo::Spice->new(%spice_params, @_, call => $call )
 	});
+
+=keyword spice
+
+You can predefine L<DDG::ZeroClickInfo::Spice> parameters for usage in
+L</test_spice>.
+
+This function can be used several times to change specific defaults on the
+fly.
+
+=cut
 
 	$stash->add_symbol('&spice', sub {
 		if (ref $_[0] eq 'HASH') {
@@ -36,6 +66,19 @@ sub import {
 			}
 		}
 	});
+
+=keyword ddg_spice_test
+
+With this function you can easily generate a small own L<DDG::Block> for
+testing your L<DDG::Spice> alone or in combination with others.
+
+  ddg_spice_test(
+    [qw( DDG::Spice::MySpice )],
+    'myspice data' => test_spice('/js/spice/my_spice/data'),
+    'myspice data2' => test_spice('/js/spice/my_spice/data2'),
+  );
+
+=cut
 
 	$stash->add_symbol('&ddg_spice_test', sub { block_test(sub {
 		my $query = shift;

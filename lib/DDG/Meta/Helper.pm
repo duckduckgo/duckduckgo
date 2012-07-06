@@ -1,5 +1,5 @@
 package DDG::Meta::Helper;
-# ABSTRACT: Inject some helper keywords
+# ABSTRACT: Helper functions for easy access to important functions
 
 use strict;
 use warnings;
