@@ -11,6 +11,8 @@ BEGIN {
     use_ok('DDG::Block::Regexp');
     use_ok('DDG::Request');
     use_ok('DDG::ZeroClickInfo');
+    use_ok('DDG::Test::Goodie');
+    use_ok('DDG::Test::Spice');
 
 	# use_ok('DDG::Dir::Static');
 	# use_ok('DDG::File::Static');

@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# PODNAME: duckpan
+# PODNAME: ddg_attribution
 # ABSTRACT: Command line tool for using the DuckPAN of DuckDuckGo
 
 $|=1;

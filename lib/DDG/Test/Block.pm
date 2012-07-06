@@ -16,6 +16,7 @@ sub import {
 	my $target = caller;
 
 	my $stash = Package::Stash->new($target);
+
 	$stash->add_symbol('&block_test',sub {
 		my $result_callback = shift;
 		my $plugins_ref = shift;
