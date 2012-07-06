@@ -1,5 +1,5 @@
 package DDG::Meta;
-# ABSTRACT: Main meta layer implementation factory
+# ABSTRACT: Main meta layer implementation factory... dark side of the moon...
 
 use strict;
 use warnings;
