@@ -9,6 +9,7 @@ use Class::Load ':all';
 use DDG::Request;
 use DDG::Block::Words;
 use DDG::Block::Regexp;
+use DDG::Test::Location;
 use Package::Stash;
 
 sub import {
@@ -50,7 +51,10 @@ informations.
 				$request = $query;
 				$query = $request->query_raw;
 			} else {
-				$request = DDG::Request->new({ query_raw => $query });
+				$request = DDG::Request->new(
+					query_raw => $query,
+					location => test_location_by_env(),
+				);
 			}
 			my $answer = undef;
 			( $answer ) = $words_block->request($request) if $words_block;
