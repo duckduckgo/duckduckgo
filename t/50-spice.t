@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 use Test::More;
+use utf8;
 
 use FindBin qw($Bin);
 use lib "$Bin/lib";

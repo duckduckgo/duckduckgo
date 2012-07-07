@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 use Test::More;
-use utf8::all;
+use utf8;
 
 use DDG::Request;
 
