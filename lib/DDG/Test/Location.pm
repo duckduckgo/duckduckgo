@@ -15,6 +15,51 @@ B<Warning>: Be aware that you only use this module inside your test files in B<t
 
 =cut
 
+my %locations = (
+	'us' => {
+		country_code => 'US',
+		country_code3 => 'USA',
+		country_name => 'United States',
+		region => 'PA',
+		region_name => 'Pennsylvania',
+		city => 'Phoenixville',
+		postal_code => '19460',
+		latitude => '40.1246',
+		longitude => '-75.5385',
+		time_zone => 'America/New_York',
+		area_code => '610',
+		continent_code => 'NA',
+		metro_code => '504',
+	},
+	'de' => {
+		country_code => 'DE',
+		country_code3 => 'DEU',
+		country_name => 'Germany',
+		region => '07',
+		region_name => 'Nordrhein-Westfalen',
+		city => 'Mönchengladbach',
+		latitude => '51.2000',
+		longitude => '6.4333',
+		time_zone => 'Europe/Berlin',
+		area_code => '0',
+		continent_code => 'EU',
+		metro_code => '0',
+	},
+	'my' => {
+		country_code => 'MY',
+		country_code3 => 'MYS',
+		country_name => 'Malaysia',
+		region => '14',
+		region_name => 'Kuala Lumpur',
+		city => 'Kuala Lumpur',
+		latitude => '3.1667',
+		longitude => '101.7000',
+		area_code => '0',
+		continent_code => 'AS',
+		metro_code => '0',
+	},
+);
+
 sub import {
 	my ( $class, %params ) = @_;
 	my $target = caller;
@@ -26,51 +71,6 @@ Gives back an example L<DDG::Location> defined by the first parameter.
 Possible values are B<us>, B<de> and B<my>.
 
 =cut
-
-	my %locations = (
-		'us' => {
-			country_code => 'US',
-			country_code3 => 'USA',
-			country_name => 'United States',
-			region => 'PA',
-			region_name => 'Pennsylvania',
-			city => 'Phoenixville',
-			postal_code => '19460',
-			latitude => '40.1246',
-			longitude => '-75.5385',
-			time_zone => 'America/New_York',
-			area_code => '610',
-			continent_code => 'NA',
-			metro_code => '504',
-		},
-		'de' => {
-			country_code => 'DE',
-			country_code3 => 'DEU',
-			country_name => 'Germany',
-			region => '07',
-			region_name => 'Nordrhein-Westfalen',
-			city => 'Mönchengladbach',
-			latitude => '51.2000',
-			longitude => '6.4333',
-			time_zone => 'Europe/Berlin',
-			area_code => '0',
-			continent_code => 'EU',
-			metro_code => '0',
-		},
-		'my' => {
-			country_code => 'MY',
-			country_code3 => 'MYS',
-			country_name => 'Malaysia',
-			region => '14',
-			region_name => 'Kuala Lumpur',
-			city => 'Kuala Lumpur',
-			latitude => '3.1667',
-			longitude => '101.7000',
-			area_code => '0',
-			continent_code => 'AS',
-			metro_code => '0',
-		},
-	);
 
 	$stash->add_symbol('&test_location', sub {
 		my $location_key = shift;
