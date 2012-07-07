@@ -15,7 +15,6 @@ use DDG::Request;
 zci answer_type => 'location';
 
 my @location_tests = (
-	us => 'United States Pennsylvania Phoenixville',
 	de => 'Germany Nordrhein-Westfalen Mönchengladbach',
 	my => 'Malaysia Kuala Lumpur Kuala Lumpur',
 );

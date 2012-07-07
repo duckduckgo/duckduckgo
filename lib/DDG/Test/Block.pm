@@ -45,7 +45,6 @@ informations.
 		my $regexp_block = @regexp ? DDG::Block::Regexp->new( plugins => [@regexp]) : undef;
 		while (@_) {
 			my $query = shift;
-			my $target = shift;
 			my $request;
 			if (ref $query eq 'DDG::Request') {
 				$request = $query;
@@ -53,9 +52,10 @@ informations.
 			} else {
 				$request = DDG::Request->new(
 					query_raw => $query,
-					location => test_location_by_env(),
+					location => test_location('us'),
 				);
 			}
+			my $target = shift;
 			my $answer = undef;
 			( $answer ) = $words_block->request($request) if $words_block;
 			( $answer ) = $regexp_block->request($request) if $regexp_block && !$answer;
