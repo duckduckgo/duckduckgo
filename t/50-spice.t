@@ -63,12 +63,18 @@ ddg_spice_test(
 	# DDGTest::Spice::Flashtest
 	[qw(
 		DDGTest::Spice::Data
+		DDGTest::Spice::Regexp
 	)],
 	'data test' => test_spice( 
 		'/js/spice/data/test',
 		call_data => { otherkey => 'value', key => 'finalvalue' },
 		call_type => 'include',
 		caller => 'DDGTest::Spice::Data'
+	),
+	'bregexp test a' => test_spice( 
+		'/js/spice/regexp/test.a/DDG%3A%3ARequest',
+		call_type => 'include',
+		caller => 'DDGTest::Spice::Regexp'
 	),
 	# 'flash version' => test_spice( 
 	# 	'/js/spice/flashtest',

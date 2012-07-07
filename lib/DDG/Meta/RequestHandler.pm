@@ -40,6 +40,8 @@ sub apply_keywords {
 	
 	my $stash = Package::Stash->new($target);
 
+	$stash->add_symbol('$req',undef);
+
 	$stash->add_symbol('&handle',sub {
 		my $handler = shift;
 		my $code;
@@ -64,55 +66,67 @@ block. It will get fired when the triggers are matching.
 		if (grep { $_ eq $handler } @request_scalar_attributes) {
 			$stash->add_symbol('&handle_request_matches',sub {
 				my ( $self, $request ) = @_;
+				$stash->add_symbol('$req',\$request);
 				my @result;
 				for ($request->$handler) {
 					@result = $code->($_);
 				}
+				$stash->add_symbol('$req',undef);
 				return @result ? $result_handler->($self,@result) : ();
 			});
 		} elsif (grep { $_ eq $handler } @request_array_attributes) {
 			$stash->add_symbol('&handle_request_matches',sub {
 				my ( $self, $request ) = @_;
+				$stash->add_symbol('$req',\$request);
 				my @result;
 				for ($request->$default_handler) {
 					@result = $code->(@{$request->$handler});
 				}
+				$stash->add_symbol('$req',undef);
 				return @result ? $result_handler->($self,@result) : ();
 			});
 		} elsif ($handler eq 'request') {
 			$stash->add_symbol('&handle_request_matches',sub {
 				my ( $self, $request ) = @_;
+				$stash->add_symbol('$req',\$request);
 				my @result;
 				for ($request) {
 					@result = $code->($_);
 				}
+				$stash->add_symbol('$req',undef);
 				return @result ? $result_handler->($self,@result) : ();
 			});
 		} elsif ($handler eq 'remainder' || $handler eq 'remainder_lc') {
 			croak "You must be using words matching for remainder handler" unless $target->triggers_block_type eq 'Words';
 			$stash->add_symbol('&handle_request_matches',sub {
 				my ( $self, $request, $from_pos, $to_pos ) = @_;
+				$stash->add_symbol('$req',\$request);
 				my $remainder = $request->generate_remainder($from_pos,$to_pos);
 				my @result;
 				for ($handler eq 'remainder' ? $remainder : lc($remainder)) {
 					@result = $code->($_);
 				}
+				$stash->add_symbol('$req',undef);
 				return @result ? $result_handler->($self, @result) : ();
 			});
 		} elsif ($handler eq 'matches') {
 			croak "You must be using regexps matching for matches handler" unless $target->triggers_block_type eq 'Regexp';
 			$stash->add_symbol('&handle_request_matches',sub {
 				my ( $self, $request, @matches ) = @_;
+				$stash->add_symbol('$req',\$request);
 				my @result;
 				for ($request->query_raw) {
 					@result = $code->(@matches);
 				}
+				$stash->add_symbol('$req',undef);
 				return @result ? $result_handler->($self,@result) : ();
 			});
 		} elsif ($handler eq 'all') {
 			$stash->add_symbol('&handle_request_matches',sub {
 				my ( $self, $request, @matches_or_pos ) = @_;
+				$stash->add_symbol('$req',\$request);
 				my @result = $code->($self,$request,\@matches_or_pos);
+				$stash->add_symbol('$req',undef);
 				return @result ? $result_handler->($self,@result) : ();
 			});
 		} else {
