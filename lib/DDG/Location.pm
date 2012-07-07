@@ -18,7 +18,6 @@ sub new_from_geo_ip_record {
 
 has $_ => (
 	is => 'ro',
-	default => sub { '' },
 ) for (@geo_ip_record_attrs);
 
 has geo_ip_record => (
