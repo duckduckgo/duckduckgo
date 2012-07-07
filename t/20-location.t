@@ -17,6 +17,7 @@ zci answer_type => 'location';
 my @location_tests = (
 	de => 'Germany Nordrhein-Westfalen Mönchengladbach',
 	my => 'Malaysia Kuala Lumpur Kuala Lumpur',
+	in => 'India Delhi New Delhi',
 );
 
 while (@location_tests) {
