@@ -15,7 +15,7 @@ B<Warning>: Be aware that you only use this module inside your test files in B<t
 
 =cut
 
-my %locations = (
+our %locations = (
 	'us' => {
 		country_code => 'US',
 		country_code3 => 'USA',
@@ -82,7 +82,7 @@ sub import {
 =keyword test_location
 
 Gives back an example L<DDG::Location> defined by the first parameter.
-Possible values are B<us>, B<de> and B<my>.
+Possible values are B<us>, B<de>, B<in> and B<my>.
 
 =cut
 

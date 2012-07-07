@@ -9,11 +9,15 @@ my @geo_ip_record_attrs = qw( country_code country_code3 country_name region
 
 sub new_from_geo_ip_record {
 	my ( $class, $geo_ip_record ) = @_;
-	my %vars = map { $_ => $geo_ip_record->$_ if $geo_ip_record->$_ } @geo_ip_record_attrs;
-	return $class->new(
-		geo_ip_record => $geo_ip_record,
-		%vars,
-	);
+	if ($geo_ip_record) {
+		my %vars = map { $_ => $geo_ip_record->$_ if $geo_ip_record->$_ } @geo_ip_record_attrs;
+		return $class->new(
+			geo_ip_record => $geo_ip_record,
+			%vars,
+		);
+	} else {
+		return $class->new;
+	}
 }
 
 has $_ => (
