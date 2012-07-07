@@ -45,7 +45,13 @@ informations.
 		while (@_) {
 			my $query = shift;
 			my $target = shift;
-			my $request = DDG::Request->new({ query_raw => $query });
+			my $request;
+			if (ref $query eq 'DDG::Request') {
+				$request = $query;
+				$query = $request->query_raw;
+			} else {
+				$request = DDG::Request->new({ query_raw => $query });
+			}
 			my $answer = undef;
 			( $answer ) = $words_block->request($request) if $words_block;
 			( $answer ) = $regexp_block->request($request) if $regexp_block && !$answer;

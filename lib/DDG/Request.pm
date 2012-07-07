@@ -355,33 +355,18 @@ sub _build_wordcount { scalar @{shift->words} }
 #
 ###############################
 
-#
-# TODO
-#
-
-has lang => (
+# DDG::Language TODO
+has language => (
 	is => 'ro',
-	predicate => 'has_lang',
+	predicate => 'has_language',
 );
+sub lang { shift->language }
 
-has ip => (
+has location => (
+	#isa => 'DDG::Location',
 	is => 'ro',
-	predicate => 'has_ip',
+	predicate => 'has_location',
 );
-
-has geo_ip => (
-	is => 'ro',
-	predicate => 'has_geo_ip',
-);
-
-has _geo_ip_record => (
-	is => 'ro',
-	lazy => 1,
-	builder => '_build__geo_ip_record',
-);
-sub _build__geo_ip_record { $_[0]->geo_ip->record_by_name($_[0]->ip) }
-
-sub location { $_[0]->_geo_ip_record if $_[0]->has_location }
-sub has_location { $_[0]->has_ip && $_[0]->has_geo_ip }
+sub loc { shift->location }
 
 1;
