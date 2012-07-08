@@ -18,6 +18,9 @@ sub zeroclickinfo_attributes {qw(
 	definition_source
 	definition_url
 	type
+	is_cached
+	is_unsafe
+	ttl
 )}
 
 sub check_zeroclickinfo_key {

@@ -15,12 +15,14 @@ sub zeroclickinfospice_attributes {qw(
 	call_type
 	caller
 	from
-	is_cached
 	proxy_cache_valid
 	proxy_ssl_session_reuse
 	to
 	wrap_jsonp_callback
     wrap_string_callback
+	is_cached
+	is_unsafe
+	ttl
 )}
 
 sub check_zeroclickinfospice_key {
