@@ -40,6 +40,16 @@ my @request_array_attributes = qw(
 
 my $default_handler = 'query_raw';
 
+=method apply_keywords
+
+This function installs the L</handle> keyword. It requires for this the target
+package name, a result handler for handling the results of the plugins and
+optional a role which is applied after installing the keyword. This function
+is used in L<DDG::Meta> as part of all the meta for L<DDG::Goodie> and
+L<DDG::Spice>.
+
+=cut
+
 sub apply_keywords {
 	my ( $class, $target, $result_handler, $role ) = @_;
 	
@@ -67,6 +77,13 @@ get B<query_raw> on B<$_> and the array of the attribute on B<@_>.
 If you dont give any keyword and just give a coderef, then B<query_raw> is
 taken as keyword for the attribute.
 
+L<DDG::Block::Regexp> based plugins can use B<matches> to get the matches of
+the regexp as parameter on B<@_>.
+
+L<DDG::Block::Words> can use B<remainder> and B<remainder_lc> which gives back
+the parts of the query which are not hit by the trigger of the plugin. It is
+the most used handler.
+
 The following keywords can be used by all plugins, cause they are based on the
 L<DDG::Request> itself:
 
@@ -86,18 +103,11 @@ B<$req> which is set to the current L<DDG::Request> for the call to the
 coderef of the handler.
 
 You also get B<$loc> and B<$lang> which are always L<DDG::Location> and
-L<DDG::Language> objects, even if the L<DDG::Request> had none. If this case
-is, then all functions give back empty values of the objects. This way you
+L<DDG::Language> objects, even if the L<DDG::Request> had none. Given this
+case, then all functions give back empty values of the objects. This way you
 can directly work with those variable without getting error messages for
 accessing functions which are not there. To find out if there is a location
 or language at all you can use B<$has_loc> and B<$has_lang>.
-
-L<DDG::Block::Regexp> based plugins can use B<matches> to get the matches of
-the regexp as parameter on B<@_>.
-
-L<DDG::Block::Words> can use B<remainder> and B<remainder_lc> which gives back
-the parts of the query which are not hit by the trigger of the plugin. It is
-the most used handler.
 
 =cut
 

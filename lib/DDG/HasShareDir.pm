@@ -16,14 +16,13 @@ informations. A class which has no sharedir is not allowed to carry this role.
 The class using this role must implement B<module_share_dir> and B<share>.
 
 B<module_share_dir> must return the path to the sharedir inside the repo,
-like:
-
-  share/goodie/public_dns
+like B<share/goodie/public_dns>.
 
 B<share> must give back a L<Path::Class::Dir> of the share directory if its
 called without parameter. If a parameter is given it must give back
 L<Path::Class::File> or L<Path::Class::Dir> of the corresponding file in the
-sharedir that is given as parameter.
+sharedir that is given as parameter. Checkout L<DDG::Meta::ShareDir/share> for
+information about usage of this function.
 
 For more information about the sharedir see L<DDG::Meta::ShareDir>.
 

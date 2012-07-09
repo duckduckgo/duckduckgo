@@ -1,4 +1,5 @@
 package DDG::Meta::ShareDir;
+# ABSTRACT: Installing functions for easy access to the module sharedir
 
 use strict;
 use warnings;
@@ -10,7 +11,28 @@ use File::ShareDir ':ALL';
 
 require Moo::Role;
 
+=head1 DESCRIPTION
+
+This package installs the function required for using a sharedir and also
+provides the function L<share> for easy access to it.
+
+B<Warning>: This function only installs its function when there is a sharedir
+at the proper directory inside the repository, else it will fail. You cant
+define that directory for yourself, the complete concept requires staying to
+the convention, see L</module_share_dir>.
+
+=cut
+
 my %applied;
+
+=method apply_keywords
+
+Uses a given classname to install the described keywords.
+
+It also adds the role L<DDG::HasShareDir> to the target classname if the
+class has a sharedir.
+
+=cut
 
 sub apply_keywords {
 	my ( $class, $target ) = @_;
@@ -81,13 +103,36 @@ sub apply_keywords {
 
 	if ($share) {
 		my $stash = Package::Stash->new($target);
-		$stash->add_symbol('&module_share_dir', sub { $share_path });
+
+=keyword share
+
+This function gives direct access to sharedir content. For example with
+
+  my $file = share('somefile.txt');
+
+you will get a L<Path::Class::File> object of this specific file inside
+your sharedir. It works in development and inside the live system after
+installation of the module.
+
+=cut
+
 		$stash->add_symbol('&share', sub {
 			@_ ? -d dir($share,@_)
 				? $share->subdir(@_)
 				: $share->file(@_)
 			: $share
 		});
+
+=keyword module_share_dir
+
+This function gets installed as part of the requirements a sharedir must
+provide. It gives back the path inside the repository where the sharedir
+of this module is placed. B<DDG::Spice::TestTest> gets to
+B<share/spice/test_test>.
+
+=cut
+
+		$stash->add_symbol('&module_share_dir', sub { $share_path });
 
 		#
 		# apply role
