@@ -1,5 +1,5 @@
 package DDG::Location;
-# ABSTRACT: A specific location (given by Geo::IP::Record)
+# ABSTRACT: A location, can be empty (given by Geo::IP::Record)
 
 use Moo;
 
@@ -22,6 +22,7 @@ sub new_from_geo_ip_record {
 
 has $_ => (
 	is => 'ro',
+	default => sub { '' }
 ) for (@geo_ip_record_attrs);
 
 has geo_ip_record => (

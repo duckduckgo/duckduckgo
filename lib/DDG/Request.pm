@@ -357,6 +357,7 @@ sub _build_wordcount { scalar @{shift->words} }
 
 # DDG::Language TODO
 has language => (
+	#isa => 'DDG::Language',
 	is => 'ro',
 	predicate => 'has_language',
 );

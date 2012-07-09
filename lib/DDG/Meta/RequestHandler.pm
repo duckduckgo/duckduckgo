@@ -5,6 +5,8 @@ use strict;
 use warnings;
 use Carp;
 use Package::Stash;
+use DDG::Location;
+use DDG::Language;
 require Moo::Role;
 
 =head1 DESCRIPTION
@@ -144,15 +146,42 @@ block. It will get fired when the triggers are matching.
 sub request_symbols {
 	my ( $class, $stash, $request ) = @_;
 	$stash->add_symbol('$req',\$request);
-	$stash->add_symbol('$loc',\$request->location) if $request->has_location;
-	$stash->add_symbol('$lang',\$request->language) if $request->has_language;
+
+	$stash->add_symbol('$has_loc',$request->has_location);
+	if ($request->has_location) {
+		$stash->add_symbol('$loc',\$request->location);
+	} else {
+		$stash->add_symbol('$loc',\DDG::Location->new);
+	}
+
+	$stash->add_symbol('$has_lang',$request->has_language);
+	if ($request->has_language) {
+		$stash->add_symbol('$lang',\$request->language);
+	} else {
+		$stash->add_symbol('$lang',\DDG::Language->new);
+	}
+
+	# $stash->add_symbol('$has_reg',$request->has_region);
+	# if ($request->has_region) {
+	# 	$stash->add_symbol('$reg',\$request->region);
+	# } else {
+	# 	$stash->add_symbol('$reg','');
+	# }
+
 }
 
 sub reset_request_symbols {
 	my ( $class, $stash ) = @_;
 	$stash->add_symbol('$req',undef);
+
+	$stash->add_symbol('$has_loc',undef);
 	$stash->add_symbol('$loc',undef);
+
+	$stash->add_symbol('$has_lang',undef);
 	$stash->add_symbol('$lang',undef);
+
+	# $stash->add_symbol('$has_reg',undef);
+	# $stash->add_symbol('$reg',undef);
 }
 
 1;

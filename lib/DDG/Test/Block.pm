@@ -10,6 +10,7 @@ use DDG::Request;
 use DDG::Block::Words;
 use DDG::Block::Regexp;
 use DDG::Test::Location;
+use DDG::Test::Language;
 use Package::Stash;
 
 sub import {
@@ -53,6 +54,7 @@ informations.
 				$request = DDG::Request->new(
 					query_raw => $query,
 					location => test_location('us'),
+					language => test_language('us'),
 				);
 			}
 			my $target = shift;
