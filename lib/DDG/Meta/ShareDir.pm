@@ -21,10 +21,6 @@ at the proper directory inside the repository, else it will fail. You cant
 define that directory for yourself, the complete concept requires staying to
 the convention, see L</module_share_dir>.
 
-=cut
-
-my %applied;
-
 =method apply_keywords
 
 Uses a given classname to install the described keywords.
@@ -33,6 +29,8 @@ It also adds the role L<DDG::HasShareDir> to the target classname if the
 class has a sharedir.
 
 =cut
+
+my %applied;
 
 sub apply_keywords {
 	my ( $class, $target ) = @_;

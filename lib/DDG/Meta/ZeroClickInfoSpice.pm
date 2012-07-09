@@ -1,4 +1,5 @@
 package DDG::Meta::ZeroClickInfoSpice;
+# ABSTRACT: Functions for generating a L<DDG::ZeroClickInfo::Spice> factory
 
 use strict;
 use warnings;
@@ -24,15 +25,6 @@ sub zeroclickinfospice_attributes {qw(
 	is_unsafe
 	ttl
 )}
-
-sub check_zeroclickinfospice_key {
-	my $key = shift;
-	if (grep { $key eq $_ } zeroclickinfospice_attributes) {
-		return $key;
-	} else {
-		croak $key." is not supported on DDG::ZeroClickInfo::Spice";
-	}
-}
 
 my %applied;
 
@@ -189,6 +181,15 @@ sub apply_keywords {
 	$stash->add_symbol('&spice_call_type',sub { $zcispice_params{'call_type'} });
 	###                       ^^^^ ###
 
+}
+
+sub check_zeroclickinfospice_key {
+	my $key = shift;
+	if (grep { $key eq $_ } zeroclickinfospice_attributes) {
+		return $key;
+	} else {
+		croak $key." is not supported on DDG::ZeroClickInfo::Spice";
+	}
 }
 
 1;

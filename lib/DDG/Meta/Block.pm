@@ -10,9 +10,6 @@ require Moo::Role;
 
 =head1 DESCRIPTION
 
-=cut
-
-my %applied;
 
 =method apply_keywords
 
@@ -21,6 +18,8 @@ Uses a given classname to install the described keywords.
 It also adds the role L<DDG::Block::Blockable> to the target classname.
 
 =cut
+
+my %applied;
 
 sub apply_keywords {
 	my ( $class, $target ) = @_;
