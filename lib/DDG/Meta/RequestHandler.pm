@@ -81,7 +81,16 @@ L<DDG::Request> itself:
 - query_parts (array)
 - query_raw_parts (array)
 
-You can get the L<DDG::Request> itself with B<request>.
+To access the L<DDG::Request> itself, you can directly access the variable
+B<$req> which is set to the current L<DDG::Request> for the call to the
+coderef of the handler.
+
+You also get B<$loc> and B<$lang> which are always L<DDG::Location> and
+L<DDG::Language> objects, even if the L<DDG::Request> had none. If this case
+is, then all functions give back empty values of the objects. This way you
+can directly work with those variable without getting error messages for
+accessing functions which are not there. To find out if there is a location
+or language at all you can use B<$has_loc> and B<$has_lang>.
 
 L<DDG::Block::Regexp> based plugins can use B<matches> to get the matches of
 the regexp as parameter on B<@_>.
@@ -126,6 +135,7 @@ the most used handler.
 				$class->reset_request_symbols($stash);
 				return @result ? $result_handler->($self,@result) : ();
 			});
+		# LEGACY vvvv (got replaced with $req feature)
 		} elsif ($handler eq 'request') {
 			$stash->add_symbol('&handle_request_matches',sub {
 				my ( $self, $request ) = @_;
@@ -137,6 +147,7 @@ the most used handler.
 				$class->reset_request_symbols($stash);
 				return @result ? $result_handler->($self,@result) : ();
 			});
+		#        ^^^^
 		} elsif ($handler eq 'remainder' || $handler eq 'remainder_lc') {
 			croak "You must be using words matching for remainder handler" unless $target->triggers_block_type eq 'Words';
 			$stash->add_symbol('&handle_request_matches',sub {
@@ -182,6 +193,15 @@ the most used handler.
 	});
 }
 
+=method request_symbols
+
+This function uses a given L<Package::Stash> and L<DDG::Request> to implement
+the B<$loc>, B<$has_loc>, B<$lang> and B<$has_lang> variables on the package
+of the L<Package::Stash>. It will automatically called by the installed
+handler, you never need to call it.
+
+=cut
+
 sub request_symbols {
 	my ( $class, $stash, $request ) = @_;
 	$stash->add_symbol('$req',\$request);
@@ -208,6 +228,14 @@ sub request_symbols {
 	# }
 
 }
+
+=method reset_request_symbols
+
+This function uses a given L<Package::Stash> and unsets B<$loc>, B<$has_loc>,
+B<$lang> and B<$has_lang> again. It will automatically called by the installed
+handler, you never need to call it.
+
+=cut
 
 sub reset_request_symbols {
 	my ( $class, $stash ) = @_;
