@@ -11,7 +11,10 @@ require Moo::Role;
 
 =head1 DESCRIPTION
 
+This meta class can install the required B<handle_request_matches> function
+required by the L<DDG::IsGoodie> and the L<DDG::IsSpice> role.
 
+It installs the keyword L</handle>, which installs this function on its call.
 
 =cut
 
@@ -44,6 +47,51 @@ sub apply_keywords {
 
 	$class->reset_request_symbols($stash);
 
+=keyword handle
+
+This function takes the keyword for the to handle attribute of the request as
+first parameter and a coderef of the actual handler.
+
+An example can look like:
+
+  handle remainder => sub { lc($_) };
+
+You must define triggers before you are allowed to define a handler, cause
+specific features are only available for specific L<DDG::Block>
+implementations.
+
+The choosen keyword defines which data can be found in B<$_> or B<@_>
+depending on the kind of data. If the requested attribute is an array then you
+get B<query_raw> on B<$_> and the array of the attribute on B<@_>.
+
+If you dont give any keyword and just give a coderef, then B<query_raw> is
+taken as keyword for the attribute.
+
+The following keywords can be used by all plugins, cause they are based on the
+L<DDG::Request> itself:
+
+- query_raw
+- query_nowhitespace
+- query_nowhitespace_nodash
+- query
+- query_lc
+- query_clean
+- wordcount
+- words (array)
+- query_parts (array)
+- query_raw_parts (array)
+
+You can get the L<DDG::Request> itself with B<request>.
+
+L<DDG::Block::Regexp> based plugins can use B<matches> to get the matches of
+the regexp as parameter on B<@_>.
+
+L<DDG::Block::Words> can use B<remainder> and B<remainder_lc> which gives back
+the parts of the query which are not hit by the trigger of the plugin. It is
+the most used handler.
+
+=cut
+
 	$stash->add_symbol('&handle',sub {
 		my $handler = shift;
 		my $code;
@@ -55,15 +103,6 @@ sub apply_keywords {
 			croak "We need a CODEREF for the handler" unless ref $code eq 'CODE';
 		}
 		croak "Please define triggers before you define a handler" unless $target->has_triggers;
-
-=keyword handle_request_matches
-
-This package installs the function which is required to handle a request for a
-block. It will get fired when the triggers are matching.
-
-...
-
-=cut
 
 		if (grep { $_ eq $handler } @request_scalar_attributes) {
 			$stash->add_symbol('&handle_request_matches',sub {
