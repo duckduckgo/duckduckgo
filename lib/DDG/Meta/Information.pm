@@ -268,7 +268,6 @@ This function returns the plugin's attribution information in a hash
 
 }
 
-
 #
 # Function taken from URL::RegexMatching 
 # - couldn't install due to bad Makefile
