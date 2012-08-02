@@ -52,7 +52,7 @@ sub new_via_output {
     # the values
     my %params = map { $_ => shift @line || ''} @fields;
 
-    # Delete undefined parameters so they attributes aren't set and
+    # Delete undefined parameters so the attributes aren't set and
     # we can use the predicates later.
     foreach (keys %params) {
         delete $params{$_} if $params{$_} eq '';
