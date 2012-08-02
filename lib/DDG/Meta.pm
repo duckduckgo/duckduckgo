@@ -101,4 +101,13 @@ sub apply_spice_keywords {
 	},'DDG::IsSpice');
 }
 
+=method apply_fathead_keywords
+
+=cut
+
+sub apply_fathead_keywords {
+    my ( $class, $target ) = @_;
+    DDG::Meta::Information->apply_keywords($target);    
+}
+
 1;
