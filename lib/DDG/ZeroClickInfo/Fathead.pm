@@ -10,7 +10,7 @@ use Moo;
         type => 'A',
         categories => 'Products',
         abstract => 'The widget is the staple of any good business.',
-        source_url => 'widg.et/amazingwidget.jpg',
+        source_url => 'http://widg.et/amazingwidget.jpg',
     );
 
 =head1 DESCRIPTION
