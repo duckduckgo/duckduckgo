@@ -108,6 +108,9 @@ sub apply_spice_keywords {
 sub apply_fathead_keywords {
     my ( $class, $target ) = @_;
     DDG::Meta::Information->apply_keywords($target);    
+    DDG::Meta::RequestHandler->apply_keywords($target,sub {
+        shift->spice_new(@_);
+    },'DDG::IsFathead');
 }
 
 1;
