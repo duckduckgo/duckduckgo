@@ -21,6 +21,45 @@ ZeroClickInfo class which are not required for the "output" part of it.
 
 =cut
 
+=method new_via_output
+
+Takes a line from output.txt, constructs a hash with the input array mapped to
+the attributes of this package, and returns a new DDG::ZeroClickInfo::Fathead
+object instantiated with that hash.
+
+=cut
+
+sub new_via_output {
+    my @line = split( /\t/, $_[0] );
+
+    my @fields = (
+        'title',
+        'type',
+        'redirect',
+        'otheruses',
+        'categories',
+        'references',
+        'see_also',
+        'further_reading',
+        'external_links',
+        'disambiguation',
+        'image',
+        'abstract',
+        'source_url');
+
+    # Uses the list of fields to construct a hash with the field
+    # names as keys and the corresponding elements in the line as
+    # the values
+    my %params = map { $_ => shift @line || ''} @fields;
+
+    # Delete undefined parameters so they attributes aren't set and
+    # we can use the predicates later.
+    foreach (keys %params) {
+        delete $params{$_} if $params{$_} eq '';
+    }
+
+    return __PACKAGE__->new( %params );
+}
 
 =attr title
 
