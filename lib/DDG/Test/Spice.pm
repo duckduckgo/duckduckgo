@@ -34,7 +34,9 @@ L<call of the DDG::ZeroClickInfo::Spice|DDG::ZeroClickInfo::Spice/call>
 
 =cut
 
-	my %spice_params;
+	my %spice_params = (
+		call_type => 'include',
+	);
 
 	$stash->add_symbol('&test_spice', sub {
 		my $call = shift;

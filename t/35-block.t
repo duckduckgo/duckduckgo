@@ -61,6 +61,28 @@ BEGIN {
 	my $before_wp = 0;
 	my $after_wp = 0;
 
+	eval {
+		DDG::Block::Words->new({ plugins => [qw( DDG::QQQQQQQQQQ::QQQQQQQQQQQ )] });
+	};
+	like($@, qr/Can't load plugin DDG::QQQQQQQQQQ::QQQQQQQQQQQ/, "Checking for failing block cause of missing plugin");
+
+	eval {
+		DDG::Block::Words->new({
+			plugins => [qw( DDG::QQQQQQQQQQ::QQQQQQQQQQQ )],
+			allow_missing_plugins => 1,
+		});
+	};
+	ok(!$@, "Checking allow_missing_plugins with true value");
+
+	my $test_var = 0;
+	eval {
+		DDG::Block::Words->new({
+			plugins => [qw( DDG::QQQQQQQQQQ::QQQQQQQQQQQ )],
+			allow_missing_plugins => sub { $test_var = (ref $_[0])." ".$_[1] },
+		});
+	};
+	is($test_var, "DDG::Block::Words DDG::QQQQQQQQQQ::QQQQQQQQQQQ", "Checking allow_missing_plugins with CODEREF");
+
 	my $words_block = DDG::Block::Words->new({
 		plugins => $words_plugins,
 		before_build => sub {

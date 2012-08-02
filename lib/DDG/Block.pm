@@ -86,6 +86,21 @@ a result. By default this is on.
 
 =cut
 
+has allow_missing_plugins => (
+	#isa => 'Bool',
+	is => 'ro',
+	default => sub { 0 },
+);
+
+=attr allow_missing_plugins
+
+This attribute defines if the block should die on missing plugins, or if he
+should just go on. If given a CODEREF, then this CODEREF will get executed
+with the block as first parameter, and the missing class name as second. By
+default this is disabled.
+
+=cut
+
 has return_one => (
 	#isa => 'Bool',
 	is => 'ro',
@@ -157,7 +172,16 @@ sub _build__plugin_objs {
 		if (ref $class) {
 			$plugin = $class;
 		} else {
-			load_class($class);
+			unless (try_load_class($class)) {
+				if ($self->allow_missing_plugins) {
+					if (ref $self->allow_missing_plugins eq 'CODE') {
+						$self->allow_missing_plugins->($self,$class);
+					}
+				} else {
+					die "Can't load plugin ".$class;
+				}
+				next;
+			}
 			$args{block} = $self;
 			if ($self->has_before_build) {
 				for ($class) {

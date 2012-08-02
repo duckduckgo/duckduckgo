@@ -10,8 +10,8 @@ use DDG::Meta::ZeroClickInfo;
 use DDG::Meta::ZeroClickInfoSpice;
 use DDG::Meta::ShareDir;
 use DDG::Meta::Block;
-use	DDG::Meta::Attribution;
-use	DDG::Meta::Helper;
+use DDG::Meta::Information;
+use DDG::Meta::Helper;
 
 use MooX ();
 
@@ -65,7 +65,7 @@ sub apply_goodie_keywords {
 	DDG::Meta::ZeroClickInfo->apply_keywords($target);
 	DDG::Meta::ShareDir->apply_keywords($target);
 	DDG::Meta::Block->apply_keywords($target);
-	DDG::Meta::Attribution->apply_keywords($target);
+	DDG::Meta::Information->apply_keywords($target);
 	DDG::Meta::Helper->apply_keywords($target);
 	DDG::Meta::RequestHandler->apply_keywords($target,sub {
 		shift->zci_new(
@@ -94,7 +94,7 @@ sub apply_spice_keywords {
 	DDG::Meta::ZeroClickInfoSpice->apply_keywords($target);
 	DDG::Meta::ShareDir->apply_keywords($target);
 	DDG::Meta::Block->apply_keywords($target);
-	DDG::Meta::Attribution->apply_keywords($target);
+	DDG::Meta::Information->apply_keywords($target);
 	DDG::Meta::Helper->apply_keywords($target);
 	DDG::Meta::RequestHandler->apply_keywords($target,sub {
 		shift->spice_new(@_);

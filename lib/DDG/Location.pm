@@ -10,10 +10,13 @@ my @geo_ip_record_attrs = qw( country_code country_code3 country_name region
 sub new_from_geo_ip_record {
 	my ( $class, $geo_ip_record ) = @_;
 	if ($geo_ip_record) {
-		my %vars = map { $_ => $geo_ip_record->$_ if $geo_ip_record->$_ } @geo_ip_record_attrs;
+		my %args;
+		for (@geo_ip_record_attrs) {
+			$args{$_} = $geo_ip_record->$_ if defined $geo_ip_record->$_;
+		}
 		return $class->new(
 			geo_ip_record => $geo_ip_record,
-			%vars,
+			%args,
 		);
 	} else {
 		return $class->new;
