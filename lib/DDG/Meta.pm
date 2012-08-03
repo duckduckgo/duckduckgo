@@ -15,6 +15,8 @@ use DDG::Meta::Helper;
 
 use MooX ();
 
+require Moo::Role;
+
 =head1 SYNOPSIS
 
   DDG::Meta->apply_base_to_package("DDG::Goodie::MyGoodie");
@@ -108,9 +110,7 @@ sub apply_spice_keywords {
 sub apply_fathead_keywords {
     my ( $class, $target ) = @_;
     DDG::Meta::Information->apply_keywords($target);    
-    DDG::Meta::RequestHandler->apply_keywords($target,sub {
-        shift->spice_new(@_);
-    },'DDG::IsFathead');
+    Moo::Role->apply_role_to_package($target, "DDG::IsFathead");
 }
 
 1;
