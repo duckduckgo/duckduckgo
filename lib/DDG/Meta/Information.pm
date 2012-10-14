@@ -40,33 +40,30 @@ my @supported_categories = qw(
 	random
 	reference
 	software
-	special_queries
 	time_sensitive
 	transformations
-	wikia
-	sources
 );
 
 my @supported_topics = qw(
-	everyday
-	business
+	everyday goodies
+	economy and finance
 	cryptography
 	entertainment
-	food
+	food and drink
 	gaming
+	geek
 	geography
-	fun
-	linguistics
 	math 
 	music
 	programming
-	random
 	science
 	social
+	special interest
 	sysadmin
 	travel
 	trivia
 	web design
+	words and games
 );
 
 =head1 DESCRIPTION
