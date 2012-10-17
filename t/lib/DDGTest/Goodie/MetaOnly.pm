@@ -6,11 +6,13 @@ attribution twitter => 'someone';
 
 category 'software';
 
-topics "programming", "fun";
+topics "programming", "sysadmin";
 
 name "myGoodie";
 
-example_query "trigger for myGoodie", "another trigger for myGoodie";
+example_query "primary trigger for myGoodie";
+
+secondary_example_queries "another trigger for myGoodie", "yet another trigger for myGoodie";
 
 icon_url "http://mysite.com/images/icon";
 

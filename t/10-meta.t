@@ -36,13 +36,14 @@ is_deeply(DDGTest::Goodie::MetaOnly->get_category,
 
 is_deeply(DDGTest::Goodie::MetaOnly->get_meta_information,{
 	name => 'myGoodie',
-	example_query => ['trigger for myGoodie', 'another trigger for myGoodie'],
+	example_query => 'primary trigger for myGoodie',
+	secondary_example_queries => ['another trigger for myGoodie', 'yet another trigger for myGoodie'],
 	icon_url => 'http://mysite.com/images/icon',
 	code_url => 'http://github.com/myGoodie',
 },'Checking resulting get_meta_information of DDGTest::Goodie::MetaOnly');
 
 is_deeply(DDGTest::Goodie::MetaOnly->get_topics,[
-	'programming', 'fun',
+	'programming', 'sysadmin',
 ],'Checking resulting get_topics of DDGTest::Goodie::MetaOnly');
 
 eval q{

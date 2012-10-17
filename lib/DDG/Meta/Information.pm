@@ -45,11 +45,11 @@ my @supported_categories = qw(
 );
 
 my @supported_topics = qw(
-	everyday goodies
-	economy and finance
+	everyday_goodies
+	economy_and_finance
 	cryptography
 	entertainment
-	food and drink
+	food_and_drink
 	gaming
 	geek
 	geography
@@ -58,12 +58,12 @@ my @supported_topics = qw(
 	programming
 	science
 	social
-	special interest
+	special_intererst
 	sysadmin
 	travel
 	trivia
-	web design
-	words and games
+	web_design
+	words_and_games
 );
 
 =head1 DESCRIPTION
@@ -167,11 +167,10 @@ This is used to show users an example query for the plugin.
 =cut
 
 	$stash->add_symbol('&example_query', sub {
-		croak 'Only one example query allowed'
+		croak 'Only one primary example query allowed.'
 			unless scalar @_ == 1;
 		my $query = shift;
 		$example_query = $query;
-	
 	});
 
 =keyword secondary_example_queries
@@ -188,8 +187,7 @@ This is used to show users examples of secondary queries for the plugin.
 		}
 	});
 
-
-=keyword icon_urk
+=keyword icon_url
 
 This function sets the url used to fetch the icon for the plugin.
 
@@ -246,7 +244,7 @@ This function returns the plugin's meta information in a hash
 		
 		$meta_information{name} = $name;
 		$meta_information{example_query} = $example_query;	
-		$meta_information{seconday_example_queries} = \@secondary_example_queries;
+		$meta_information{secondary_example_queries} = \@secondary_example_queries;
 		$meta_information{icon_url} = $icon_url;
 		$meta_information{code_url} = $code_url;
 
