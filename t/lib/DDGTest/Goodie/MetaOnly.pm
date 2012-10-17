@@ -10,9 +10,9 @@ topics "programming", "sysadmin";
 
 name "myGoodie";
 
-example_query "primary trigger for myGoodie";
+primary_example_queries "primary trigger for myGoodie", "another primary trigger for myGoodie";
 
-secondary_example_queries "another trigger for myGoodie", "yet another trigger for myGoodie";
+secondary_example_queries "secondary trigger for myGoodie", "another secondary trigger for myGoodie";
 
 icon_url "http://mysite.com/images/icon";
 

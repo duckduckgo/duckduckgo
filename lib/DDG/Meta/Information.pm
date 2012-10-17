@@ -86,7 +86,7 @@ sub apply_keywords {
 
 	my @attributions;
 	my @topics;
-	my $example_query;
+	my @primary_example_queries;
 	my @secondary_example_queries;
 	my $icon;
 	my $category;
@@ -159,18 +159,18 @@ This function sets the name for the plugin.
 		$name = $value;
 	});
 
-=keyword example_query
+=keyword primary_example_queries
 
-This function sets the primary example query for the plugin. 
-This is used to show users an example query for the plugin.
+This function sets the primary example queries for the plugin. 
+This is used to show users example primary queries for the plugin.
 
 =cut
 
-	$stash->add_symbol('&example_query', sub {
-		croak 'Only one primary example query allowed.'
-			unless scalar @_ == 1;
-		my $query = shift;
-		$example_query = $query;
+	$stash->add_symbol('&primary_example_queries', sub {
+		while(@_){
+			my $query = shift;
+			push @primary_example_queries, $query;
+		}
 	});
 
 =keyword secondary_example_queries
@@ -243,7 +243,7 @@ This function returns the plugin's meta information in a hash
 		my %meta_information;
 		
 		$meta_information{name} = $name;
-		$meta_information{example_query} = $example_query;	
+		$meta_information{primary_example_queries} = \@primary_example_queries;
 		$meta_information{secondary_example_queries} = \@secondary_example_queries;
 		$meta_information{icon_url} = $icon_url;
 		$meta_information{code_url} = $code_url;
