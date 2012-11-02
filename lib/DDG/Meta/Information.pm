@@ -88,6 +88,8 @@ sub apply_keywords {
 	my @topics;
 	my @primary_example_queries;
 	my @secondary_example_queries;
+    my $description;
+    my $source;
 	my $icon;
 	my $category;
 	my $name;
@@ -157,6 +159,32 @@ This function sets the name for the plugin.
 			unless scalar @_ == 1;
 		my $value = shift;
 		$name = $value;
+	});
+
+=keyword source
+
+This function sets the source for the plugin.
+
+=cut
+
+	$stash->add_symbol('&source', sub {
+		croak 'Only one source allowed.'
+			unless scalar @_ == 1;
+		my $value = shift;
+		$source = $value;
+	});
+
+=keyword description
+
+This function sets the description for the plugin.
+
+=cut
+
+	$stash->add_symbol('&description', sub {
+		croak 'Only one description allowed.'
+			unless scalar @_ == 1;
+		my $value = shift;
+		$description = $value;
 	});
 
 =keyword primary_example_queries
@@ -246,6 +274,8 @@ This function returns the plugin's meta information in a hash
 		$meta_information{primary_example_queries} = \@primary_example_queries;
 		$meta_information{secondary_example_queries} = \@secondary_example_queries;
 		$meta_information{icon_url} = $icon_url;
+		$meta_information{description} = $description;
+		$meta_information{source} = $source;
 		$meta_information{code_url} = $code_url;
 
 		return \%meta_information;
