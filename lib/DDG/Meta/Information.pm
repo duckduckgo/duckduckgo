@@ -88,13 +88,14 @@ sub apply_keywords {
 	my @topics;
 	my @primary_example_queries;
 	my @secondary_example_queries;
-    my $description;
-    my $source;
+    	my $description;
+    	my $source;
 	my $icon;
 	my $category;
 	my $name;
 	my $icon_url;
 	my $code_url;
+	my $status;
 	my $url_regex = url_match_regex();
 
 	my $stash = Package::Stash->new($target);
@@ -228,7 +229,7 @@ This function sets the url used to fetch the icon for the plugin.
 		$icon_url = $value;
 	});
 
-=keyword code_urk
+=keyword code_url
 
 This function sets the url which links the plugin's code on github.
 
@@ -240,6 +241,20 @@ This function sets the url which links the plugin's code on github.
 			unless $value =~ m/$url_regex/g;
 		$code_url = $value;
 	});
+
+=keyword status
+
+This function indicate the status of the plugin which is used to show it on the goodies page. 
+
+=cut
+
+	$stash->add_symbol('&status', sub {
+		my $value = shift;
+		croak $value." is not a valid status."
+			unless $value =~ m/^(enabled|disabled)$/ig;
+		$status = $value;
+	});
+
 
 =keyword get_category
 
@@ -277,6 +292,7 @@ This function returns the plugin's meta information in a hash
 		$meta_information{description} = $description;
 		$meta_information{source} = $source;
 		$meta_information{code_url} = $code_url;
+		$meta_information{status} = $status;
 
 		return \%meta_information;
 	});

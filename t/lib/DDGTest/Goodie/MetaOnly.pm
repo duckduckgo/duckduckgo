@@ -10,6 +10,8 @@ topics "programming", "sysadmin";
 
 name "myGoodie";
 
+description "describes myGoodie";
+
 primary_example_queries "primary trigger for myGoodie", "another primary trigger for myGoodie";
 
 secondary_example_queries "secondary trigger for myGoodie", "another secondary trigger for myGoodie";
@@ -17,5 +19,9 @@ secondary_example_queries "secondary trigger for myGoodie", "another secondary t
 icon_url "http://mysite.com/images/icon";
 
 code_url "http://github.com/myGoodie";
+
+source "myGoodie|Source";
+
+status "enabled";
 
 1;
