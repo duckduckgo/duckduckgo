@@ -53,12 +53,12 @@ my @supported_topics = qw(
 	gaming
 	geek
 	geography
-	math 
+	math
 	music
 	programming
 	science
 	social
-	special_intererst
+	special_interest
 	sysadmin
 	travel
 	trivia
