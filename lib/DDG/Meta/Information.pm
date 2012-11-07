@@ -225,7 +225,7 @@ This function sets the url used to fetch the icon for the plugin.
 	$stash->add_symbol('&icon_url', sub {
 		my $value = shift;
 		croak $value." is not a valid URL."
-			unless $value =~ m/$url_regex/g;
+			unless ($value =~ m/$url_regex/g or $value =~ /^\/i\/(.+)\.ico$/ig);
 		$icon_url = $value;
 	});
 

@@ -16,7 +16,7 @@ primary_example_queries "primary trigger for myGoodie", "another primary trigger
 
 secondary_example_queries "secondary trigger for myGoodie", "another secondary trigger for myGoodie";
 
-icon_url "http://mysite.com/images/icon";
+icon_url "/i/mysite.com.ico";
 
 code_url "http://github.com/myGoodie";
 

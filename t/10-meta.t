@@ -38,7 +38,7 @@ is_deeply(DDGTest::Goodie::MetaOnly->get_meta_information,{
 	name => 'myGoodie',
 	primary_example_queries => ['primary trigger for myGoodie', 'another primary trigger for myGoodie'],
 	secondary_example_queries => ['secondary trigger for myGoodie', 'another secondary trigger for myGoodie'],
-	icon_url => 'http://mysite.com/images/icon',
+	icon_url => '/i/mysite.com.ico',
 	code_url => 'http://github.com/myGoodie',
 	source => 'myGoodie|Source',
 	description => 'describes myGoodie',
