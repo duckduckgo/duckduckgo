@@ -45,7 +45,7 @@ my @supported_categories = qw(
 );
 
 my @supported_topics = qw(
-	everyday_goodies
+	everyday
 	economy_and_finance
 	cryptography
 	entertainment
