@@ -48,6 +48,7 @@ my @supported_categories = qw(
 my @supported_topics = qw(
 	everyday
 	economy_and_finance
+        computing
 	cryptography
 	entertainment
 	food_and_drink
