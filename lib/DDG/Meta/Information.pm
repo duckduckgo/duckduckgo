@@ -39,6 +39,7 @@ my @supported_categories = qw(
 	q/a
 	random
 	reference
+	special
 	software
 	time_sensitive
 	transformations
