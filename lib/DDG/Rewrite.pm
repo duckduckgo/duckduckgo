@@ -126,7 +126,7 @@ sub _build_nginx_conf {
 	$cfg .= "\tproxy_cache_valid ".$self->proxy_cache_valid.";\n" if $self->has_proxy_cache_valid;
 	$cfg .= "\tproxy_ssl_session_reuse ".$self->proxy_ssl_session_reuse.";\n" if $self->has_proxy_ssl_session_reuse;
 	$cfg .= "\techo_after_body ');';\n" if $wrap_jsonp_callback;
-	$cfg .= "\techo_after_body '\");'\n" if $wrap_string_callback;
+	$cfg .= "\techo_after_body '\");';\n" if $wrap_string_callback;
 	$cfg .= "}\n";
 	return $cfg;
 }

@@ -39,34 +39,33 @@ my @supported_categories = qw(
 	q/a
 	random
 	reference
+	special
 	software
-	special_queries
 	time_sensitive
 	transformations
-	wikia
-	sources
 );
 
 my @supported_topics = qw(
 	everyday
-	business
+	economy_and_finance
+        computing
 	cryptography
 	entertainment
-	food
+	food_and_drink
 	gaming
+	geek
 	geography
-	fun
-	linguistics
-	math 
+	math
 	music
 	programming
-	random
 	science
 	social
+	special_interest
 	sysadmin
 	travel
 	trivia
-	web design
+	web_design
+	words_and_games
 );
 
 =head1 DESCRIPTION
@@ -89,12 +88,16 @@ sub apply_keywords {
 
 	my @attributions;
 	my @topics;
-	my @example_query;
+	my @primary_example_queries;
+	my @secondary_example_queries;
+    	my $description;
+    	my $source;
 	my $icon;
 	my $category;
 	my $name;
 	my $icon_url;
 	my $code_url;
+	my $status;
 	my $url_regex = url_match_regex();
 
 	my $stash = Package::Stash->new($target);
@@ -161,21 +164,61 @@ This function sets the name for the plugin.
 		$name = $value;
 	});
 
-=keyword example_query
+=keyword source
 
-This function sets an array of example queries for the plugin. 
-This is used to show users example queries for the plugin.
+This function sets the source for the plugin.
 
 =cut
 
-	$stash->add_symbol('&example_query', sub {
+	$stash->add_symbol('&source', sub {
+		croak 'Only one source allowed.'
+			unless scalar @_ == 1;
+		my $value = shift;
+		$source = $value;
+	});
+
+=keyword description
+
+This function sets the description for the plugin.
+
+=cut
+
+	$stash->add_symbol('&description', sub {
+		croak 'Only one description allowed.'
+			unless scalar @_ == 1;
+		my $value = shift;
+		$description = $value;
+	});
+
+=keyword primary_example_queries
+
+This function sets the primary example queries for the plugin. 
+This is used to show users example primary queries for the plugin.
+
+=cut
+
+	$stash->add_symbol('&primary_example_queries', sub {
 		while(@_){
 			my $query = shift;
-			push @example_query, $query;
+			push @primary_example_queries, $query;
 		}
 	});
 
-=keyword icon_urk
+=keyword secondary_example_queries
+
+This function sets an array of secondary example queries for the plugin. 
+This is used to show users examples of secondary queries for the plugin.
+
+=cut
+
+	$stash->add_symbol('&secondary_example_queries', sub {
+		while(@_){
+			my $query = shift;
+			push @secondary_example_queries, $query;
+		}
+	});
+
+=keyword icon_url
 
 This function sets the url used to fetch the icon for the plugin.
 
@@ -184,11 +227,11 @@ This function sets the url used to fetch the icon for the plugin.
 	$stash->add_symbol('&icon_url', sub {
 		my $value = shift;
 		croak $value." is not a valid URL."
-			unless $value =~ m/$url_regex/g;
+			unless ($value =~ m/$url_regex/g or $value =~ /^\/i\/(.+)\.ico$/ig);
 		$icon_url = $value;
 	});
 
-=keyword code_urk
+=keyword code_url
 
 This function sets the url which links the plugin's code on github.
 
@@ -200,6 +243,20 @@ This function sets the url which links the plugin's code on github.
 			unless $value =~ m/$url_regex/g;
 		$code_url = $value;
 	});
+
+=keyword status
+
+This function indicate the status of the plugin which is used to show it on the goodies page. 
+
+=cut
+
+	$stash->add_symbol('&status', sub {
+		my $value = shift;
+		croak $value." is not a valid status."
+			unless $value =~ m/^(enabled|disabled)$/ig;
+		$status = $value;
+	});
+
 
 =keyword get_category
 
@@ -231,9 +288,13 @@ This function returns the plugin's meta information in a hash
 		my %meta_information;
 		
 		$meta_information{name} = $name;
-		$meta_information{example_query} = \@example_query;
+		$meta_information{primary_example_queries} = \@primary_example_queries;
+		$meta_information{secondary_example_queries} = \@secondary_example_queries;
 		$meta_information{icon_url} = $icon_url;
+		$meta_information{description} = $description;
+		$meta_information{source} = $source;
 		$meta_information{code_url} = $code_url;
+		$meta_information{status} = $status;
 
 		return \%meta_information;
 	});
