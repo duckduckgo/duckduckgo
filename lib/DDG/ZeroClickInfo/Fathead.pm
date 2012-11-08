@@ -2,6 +2,7 @@ package DDG::ZeroClickInfo::Fathead;
 # ABSTRACT: DuckDuckGo server side used ZeroClickInfo Fathead result class
 
 use Moo;
+with 'DDG::IsControllable';
 
 =head1 SYNOPSIS
 

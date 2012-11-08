@@ -3,9 +3,9 @@ package DDG::IsFathead;
 
 use Moo::Role;
 
-requires qw(
-	handle_request_matches
-);
+##requires qw(
+##	handle_request_matches
+##);
 
 =head1 DESCRIPTION
 

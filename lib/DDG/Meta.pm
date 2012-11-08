@@ -8,6 +8,8 @@ use Carp;
 use DDG::Meta::RequestHandler;
 use DDG::Meta::ZeroClickInfo;
 use DDG::Meta::ZeroClickInfoSpice;
+use DDG::Meta::Fathead;
+use DDG::Meta::Longtail;
 use DDG::Meta::ShareDir;
 use DDG::Meta::Block;
 use DDG::Meta::Information;
@@ -113,6 +115,16 @@ sub apply_fathead_keywords {
     DDG::Meta::Fathead->apply_keywords($target);
     DDG::Meta::Information->apply_keywords($target);    
     Moo::Role->apply_role_to_package($target, "DDG::IsFathead");
+}
+
+=method apply_longtail_keywords
+
+=cut
+
+sub apply_longtail_keywords {
+    my ( $class, $target ) = @_;
+    DDG::Meta::Information->apply_keywords($target);    
+    Moo::Role->apply_role_to_package($target, "DDG::IsLongtail");
 }
 
 1;
