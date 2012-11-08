@@ -14,6 +14,7 @@ use DDG::Meta::ShareDir;
 use DDG::Meta::Block;
 use DDG::Meta::Information;
 use DDG::Meta::Helper;
+use DDG::Meta::AnyBlock;
 
 use MooX ();
 
@@ -114,6 +115,7 @@ sub apply_fathead_keywords {
     DDG::Meta::ZeroClickInfo->apply_keywords($target);
     DDG::Meta::Fathead->apply_keywords($target);
     DDG::Meta::Information->apply_keywords($target);    
+    DDG::Meta::AnyBlock->apply_keywords($target);
     Moo::Role->apply_role_to_package($target, "DDG::IsFathead");
 }
 
@@ -123,7 +125,9 @@ sub apply_fathead_keywords {
 
 sub apply_longtail_keywords {
     my ( $class, $target ) = @_;
-    DDG::Meta::Information->apply_keywords($target);    
+    DDG::Meta::ZeroClickInfo->apply_keywords($target);
+    DDG::Meta::Information->apply_keywords($target);
+    DDG::Meta::AnyBlock->apply_keywords($target);
     Moo::Role->apply_role_to_package($target, "DDG::IsLongtail");
 }
 
