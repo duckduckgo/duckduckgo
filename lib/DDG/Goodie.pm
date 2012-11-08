@@ -14,7 +14,7 @@ ZeroClickInfo Goodies. For more information see L<DDG::Meta>.
 =cut
 
 sub import {
-	my ( $class, %params ) = @_;
+	my ( $class ) = @_;
 	my $target = caller;
 
 	#
