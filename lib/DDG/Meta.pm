@@ -9,7 +9,6 @@ use DDG::Meta::RequestHandler;
 use DDG::Meta::ZeroClickInfo;
 use DDG::Meta::ZeroClickInfoSpice;
 use DDG::Meta::Fathead;
-use DDG::Meta::Longtail;
 use DDG::Meta::ShareDir;
 use DDG::Meta::Block;
 use DDG::Meta::Information;
