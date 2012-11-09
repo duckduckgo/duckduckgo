@@ -113,6 +113,7 @@ sub apply_spice_keywords {
 sub apply_fathead_keywords {
     my ( $class, $target ) = @_;
     DDG::Meta::ZeroClickInfo->apply_keywords($target);
+	DDG::Meta::ShareDir->apply_keywords($target);
     DDG::Meta::Fathead->apply_keywords($target);
     DDG::Meta::Information->apply_keywords($target);    
     DDG::Meta::AnyBlock->apply_keywords($target);
@@ -126,6 +127,7 @@ sub apply_fathead_keywords {
 sub apply_longtail_keywords {
     my ( $class, $target ) = @_;
     DDG::Meta::ZeroClickInfo->apply_keywords($target);
+	DDG::Meta::ShareDir->apply_keywords($target);
     DDG::Meta::Information->apply_keywords($target);
     DDG::Meta::AnyBlock->apply_keywords($target);
     Moo::Role->apply_role_to_package($target, "DDG::IsLongtail");
