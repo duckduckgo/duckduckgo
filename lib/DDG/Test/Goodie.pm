@@ -9,6 +9,9 @@ use DDG::Test::Block;
 use DDG::ZeroClickInfo;
 use Package::Stash;
 
+binmode Test::More->builder->output, ':utf8';
+binmode Test::More->builder->failure_output, ':utf8';
+
 =head1 DESCRIPTION
 
 Installs functions for testing Goodies.
