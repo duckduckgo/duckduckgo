@@ -94,7 +94,7 @@ looks like L<here|http://www.i18nguy.com/unicode/shma.html>. This also changes
 around most punctations and of course the flow of the page itself, even if you
 force a specific order, you must revert it for right to left. 
 
-=head2 Purality cases
+=head2 Plurality
 
 In most languages (like english), there are 2 purality cases: B<singular> and
 B<plural>. In those languages B<plural> is used, if you have none, or many.
@@ -285,7 +285,7 @@ Placeholders in tokens are giving many options to make the displaying of the
 text more finetuned. Often it is required that inside the text itself you need
 a special wrapping for the display, like HTML, this can be achieved with
 placeholders. They are also used to allow number specific case decision, the
-problem described L</Purality cases> section. Here an example for a token in
+problem described L</Plurality> section. Here an example for a token in
 the template (or code, or Javascript):
 
   <: ln("You have %d message","You have %d messages",$messages) :>
@@ -310,7 +310,7 @@ In this specific case, 2 things happen at once when the token is used.
 
 First, gettext will check with the current plural definitions (see above), what
 specific plural case is required for this translation. As mentioned on the
-section L</Purality cases>, some languages might have more then 2 forms for
+section L</Plurality>, some languages might have more then 2 forms for
 this. But whatever it is, gettext handles this with the translation datafile
 for the given language. I will show a translated example later.
 
