@@ -1,0 +1,310 @@
+=head1 NAME
+
+DDG::Manual::Translation - Overview of the translation system of DuckDuckGo
+
+=head1 THE MISSION
+
+Making the translation of a complex and grown system like DuckDuckGo is not an
+easy task. The system is scattered in very many subcomponents, which connect
+together over the user browser mostly. Many HTML snippets combined via code,
+coming from different system parts. Combined with many Javascript and other
+microsolutions to solve specific components. On the other side, there is the
+pure problem of management and the translation itself. We are a small team,
+that limits our options, so we are required to coordinate the community
+together for making this all happen.
+
+=head2 ANALYZING THE MARKET
+
+We tried to use existing solutions for achieving the task, but felt not like
+that the solutions on the market are fulfilling our needs. Even when I (Getty)
+look back, I still think our biggest problems are coordination and defining
+proper processes for the translation flows, which are of course much easier to
+tune with an own system. The biggest lag I found in the systems we found at
+this point, was the lag of context and comments for the tokens. Also we want
+to introduce translation of pictures and other media, and also offer a special
+way for translating long texts, which was lagging on all platforms.
+
+=head1 WHAT IS TRANSLATION?
+
+Many people who never dived into the topic of translations, especially native
+english speaking persons, are not aware of the problems to face on
+translations. I would like to explain some of the base problems.
+
+=head2 Order of text
+
+You shouldn't think that the order of text is always the same in every
+language. You could easily compare this with the option in your own language
+to right a sentence in different ways, to imply or underline different topics
+of it. Those ways to promote specific parts are defined differently in many
+languages, also there are many things that are like very cultural specials
+that could hit the sentence. As a developer you might think you can do it like:
+
+  'You have ' + messages + ' messages'
+
+But this is not translatable. I will explain the solutions for this problem
+later.
+
+=head2 No direct translations possible
+
+Not every word can be 1:1 translated into another language. There are many
+cases, where specific context might change the meaning of a word, or you have
+lots of bigger diversity in the words, then you have in the language you use as
+reference. A common reference people make here, is the amount of
+L<Eskimo words for snow|http://en.wikipedia.org/wiki/Eskimo_words_for_snow>,
+which says that there are more than 50 different words for snow in the language
+eskimos are speaking. This is sadly a hoax, so we can't reference to it as
+example, but something you might stumble upon on airports in Germany is the
+sentence:
+
+  Bitte anschnallen!
+
+Which is the english translation for:
+
+  Fasten your seat belts!
+
+The german words, if you would translate them to english "directly", you would
+get the sentence:
+
+  Please fasten!
+
+Noone speaking english would ever say it that way, you also think that misses
+out informations, but that is all right for germans, they understand exactly
+what you mean. A german would never say:
+
+  Bitte festschnallen mit ihrem Sicherheitsgurt!
+
+which would be the "direct" translation of the english version. It would be
+just very very bad german to translate it that way, no german ever would do
+that. So the context of the words is very important sometimes, to get a real
+"human touch" in the translation you offer. Else we would use automatic
+translation systems, which are unable to find these kind of specialities in
+nearly all cases.
+
+Small subexample that directly comes up: Yes, B<anschnallen> and
+B<festschnallen> are actually the same word in english: B<fasten>. B<fasten>
+actually translates to
+L<12 different words in german|http://dict.leo.org/ende?searchLoc=-1&searchLocRelinked=-1&lp=ende&search=fasten&lp=ende&lang=de&searchLoc=0&searchLocRelinked=1&search=>.
+
+=head2 Right to left
+
+Yes, really, there are languages in the world, which are writing right to left.
+Beside the mess this brings to your hand if you are right handed, this also is
+a huge difference in the web interface. You can see how a right to left page
+looks like L<here|http://www.i18nguy.com/unicode/shma.html>. This also changes
+around most punctations and of course the flow of the page itself, even if you
+force a specific order, you must revert it for right to left. 
+
+=head2 Purality cases
+
+In most languages (like english), there are 2 purality cases: B<singular> and
+B<plural>. In those languages B<plural> is used, if you have none, or many.
+And B<singular> is only used, if you have just one:
+
+  You have 1 message.
+  You have 2 messages. (or also 0 or more than 2)
+
+In other languages, there are up to 5 different cases for B<plural>. Depending
+on sometimes complex math which I don't like to explain, but luckily the world
+has defined logic for this. This is a concept implemented in gettext, so this
+form is what we actually use, because our implementatin is on top of gettext
+for most base infrastructure. The english (and most other languages) plural
+definition for gettext is:
+
+  nplurals=2; plural=(n != 1)
+
+This describes the logic I mentioned above, that we have 2 "plural forms"
+(B<singular> and B<plural>), and the first plural form is used, if the amount
+described is not 1.
+
+Don't be scared! All those definitions are fixed, you can find them on this
+awesome page, and you dont need any more (beside if you want to define a
+fantasy language) L<http://translate.sourceforge.net/wiki/l10n/pluralforms>.
+
+In Slovak (the language spoken in L<Slovakia|https://duckduckgo.com/Slovakia>)
+there are 3 "plural forms", defined by this gettext definition:
+
+  nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2
+
+So the text above would require 3 cases:
+
+  Mas 1 spravu.
+  Mas 2 spravy. (or 3 and 4)
+  Mas 5 sprav. (or also 0 and more than 5)
+
+=head2 Gender cases
+
+Also relevant in most languages, is the gender, which might have influence to
+the case of the word.
+
+=head1 TRANSLATION SYSTEM
+
+After understanding those base problems that come up, you might see, that it is
+not really possible to cover up everything. Also, which plays in here, is the
+fact that we, of course, want to make our own layer for the translation, but on
+the other side, we don't want to reinvent the wheel for translation topic
+complete. Most of the logic we require is already there. To see what we can do
+here means to understand the specific layers that are involved.
+
+You should make an account at L<https://dukgo.com/> if you want to follow all
+steps of this documentation. It is required to access our community platform
+which is used for translating the system. No personal information is required.
+
+=head2 Storage
+
+I<This part is very technical, and can be skipped, if you are not interested in
+the technical decisions we made. Just go directly to Tokens.>
+
+The storage for the translations, is a very important topic, it defines most of
+the decisions you have to make afterwards. The storage must be really fast and
+effective, especially inside the code. Replicating existing concepts here would
+produce a massive overhead, which leads to an analyze of the existing libraries
+for this topic which are fast enough for our requirements. Sadly, we also had
+to think about a solution that works inside JavaScript, so that we can
+integrate it most easy into our JavaScript code, which drives most of the
+visuals on a modern browser on DuckDuckGo.
+
+There are some pretty interesting solutions in Perl which allow us to really
+cover up all cases, like also gender, but those solutions are specific to Perl
+and can't work in JavaScript. In the end we decided "down" to the very common
+L<gettext|http://www.gnu.org/software/gettext/> system, which also has a
+L<Javascript implementation|http://jsgettext.berlios.de/> and is covered with
+implementations in all languages, so Perl, Ruby, Python and other languages
+where we might need to integrate translation.
+
+Especially the existence of a very wide used and accepted plain C
+implementation makes it also reliable in many ways. The C library delivers
+directly a commandline tool to convert text based datafiles for the
+translations (the so called po files), to high effective binary files to make
+this data accessable very fast (the binary file is called mo). This tool is
+called B<msgfmt> and included in the B<gettext> package of your distribution.
+
+In the Javascript implementation we have a small Perl program B<po2json> which
+converts the same text datafile into a json that is better usable in
+Javascript. Sadly this datafile must be of course loaded for the browser, you
+might see that big Javascript file on the load of DuckDuckGo which integrates
+the translations together with the libraries for using those. We compress this
+to make it smaller for the bandwidth. More optimization options are open here.
+
+In the end gettext is able to solve the problem about the non direct
+translations and the plurality cases. It is by itself not able to solve the
+gender case or the order of text problem, especially in combination with
+combined elements that have to be translated independent. The option to extend
+our system todo also the gender case is open, but we are not heading towards
+this yet.
+
+Many people who never did translation before, but heard of gettext, think that
+gettext itself directly handles everything you need for the translation, but
+this is just plain wrong. gettext works only as storage and accessor for the
+translations you need. It solves lots of problems that you really can't solve
+easily alone, but it misses out little details.
+
+We need still to wrap gettext with sprintf to make it really useful. This will
+allow us to combine tokens with HTML and other formattings. I will describe
+this in the next section. This covers up the order of text problem. We released
+this wrapping, which makes the exactly same API for Perl and Javascript on
+L<CPAN|http://cpan.org/> as L<Locale::Simple|https://metacpan.org/module/Locale::Simple>.
+Inside this distribution you find also all the Javascript required, if you want
+to use it for your own project someday.
+
+=head2 Tokens
+
+The storage also determines the way we define the base of our workflow about
+the translations. These are the so called B<tokens>, which is the main part of
+all the flow about translation. The coders are making tokens in the code, the
+templates or wherever its needed. Those tokens define the texts that have to
+get translated. So, a very important point here, is to understand, that the
+text that has to be translated is the token, lets see some examples of 
+templates that makes it easier to understand.
+
+=head3 Simple token
+
+  <: l('Monthly newsletter:') :>
+
+So this defines a simple token with the text 'Monthy newsletter:'. So gettext,
+our translation storage, actually has no data file for these so called tokens
+itself, cause the text data file only contains the token AND a translation. But
+for having a good normalization we store this in our database under the same
+fieldnames that gettext wants, so i display it to you now like a "partly" po
+file without the translation, this makes it easier to understand it:
+
+  msgid "Monthly newsletter:"
+
+Those tokens we store in the database of our community platform at
+L<https://dukgo.com/translate/do/index>. For the token itself exist no page,
+but here is the page for this specific token in german:
+L<https://dukgo.com/translate/tokenlanguage/26811>.
+
+In the general translation interface of the community platform, you normally
+see a list of those tokens, but I will explain the translation interface later,
+to not make it to complex for now, but you see the text to translate right to
+the word "Singular" on top. Below you see the translations of other users for
+it, there is (right now) only one for german.
+
+=head3 Token with context
+
+As you now see, this is a very simple token, it is just text, it is not like
+really touching any of our problem cases. Another problem case, would be for
+example the token 'Medium'. This is a very very vague word, you need a bit of
+a context to really find the right translation, even if you think in english
+it is very clear, you can imagine that a lonely "Medium" can be in lots of
+different kind of context. gettext offers here the option to give a so called
+B<context> additional to a token, which allows us, to give a bit more "context"
+without changing the token itself. In the template it would look like this:
+
+  <: lp('size','Medium') :>
+
+and in the gettext storage:
+
+  msgctxt "size"
+  msgid "Medium"
+
+This means that we want the token "Medium" in the context of "size". The
+advantage here is now, if there would be for example:
+
+  <: lp('weight','Medium') :>
+
+Then there are 2 tokens in the system to translate, both with different
+context. Here you can see the page for the german translation of this shown
+token L<https://dukgo.com/translate/tokenlanguage/26671>. As you see, above
+the word that has to be translate, you see B<Context>, which SHOULD be not
+taken as really description for the context, instead this context helps all
+people working with the tokens to find this specific token in the code,
+templates or wherever it needs to be coordinated, and it should be a much
+clearer description in the notes for this token.
+
+So here is already a very first thing to take care about, if you are
+responsible for working with tokens, you can't give everything a context, else
+the reusage of tokens is much harder, but you also can't expect that everything
+works fine without using any context for specific words, especially if they are
+very lonely.
+
+=head3 Placeholders in tokens
+
+Placeholders in tokens are giving many options to make the displaying of the
+text more finetuned. Often it is required that inside the text itself you need
+a special wrapping for the display, like HTML, this can be achieved with
+placeholders. They are also used to allow number specific case decision, the
+problem described L</Purality cases> section. Here an example for a token in
+the template:
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+=head2 Output
+
+Many people who never did translation before, but heard of gettext, think that
+gettext itself directly handles everything you need for the translation, but
+this is just plain wrong. gettext works only as storage and accessor for the
+translations you need. It solves lots of problems that you really can't solve
+easily alone, but it misses out little details.
