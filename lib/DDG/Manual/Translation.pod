@@ -198,11 +198,12 @@ this is just plain wrong. gettext works only as storage and accessor for the
 translations you need. It solves lots of problems that you really can't solve
 easily alone, but it misses out little details.
 
-We need still to wrap gettext with sprintf to make it really useful. This will
-allow us to combine tokens with HTML and other formattings. I will describe
-this in the next section. This covers up the order of text problem. We released
-this wrapping, which makes the exactly same API for Perl and Javascript on
-L<CPAN|http://cpan.org/> as L<Locale::Simple|https://metacpan.org/module/Locale::Simple>.
+We need still to wrap gettext with L<sprintf|https://duckduckgo.com/sprintf>
+to make it really useful. This will allow us to combine tokens with HTML and
+other formattings. I will describe this in the next section. This covers up
+the order of text problem. We released this wrapping, which makes the exactly
+same API for Perl and Javascript on L<CPAN|http://cpan.org/> as
+L<Locale::Simple|https://metacpan.org/module/Locale::Simple>.
 Inside this distribution you find also all the Javascript required, if you want
 to use it for your own project someday.
 
@@ -285,26 +286,152 @@ text more finetuned. Often it is required that inside the text itself you need
 a special wrapping for the display, like HTML, this can be achieved with
 placeholders. They are also used to allow number specific case decision, the
 problem described L</Purality cases> section. Here an example for a token in
-the template:
+the template (or code, or Javascript):
 
-  
+  <: ln("You have %d message","You have %d messages",$messages) :>
 
+This is for defining a token which is based on the number for the specific
+token. In the definition in the gettext storage it ends like this:
 
+  msgid "You have %d message"
+  msgid_plural "You have %d messages"
 
+Just to directly show, this can of course be combined with a B<context>:
 
+  <: lnp("email","You have %d message","You have %d messages",$messages) :>
 
+which ends up in this form in gettext:
 
+  msgctxt "email"
+  msgid "You have %d message"
+  msgid_plural "You have %d messages"
 
+In this specific case, 2 things happen at once when the token is used.
 
+First, gettext will check with the current plural definitions (see above), what
+specific plural case is required for this translation. As mentioned on the
+section L</Purality cases>, some languages might have more then 2 forms for
+this. But whatever it is, gettext handles this with the translation datafile
+for the given language. I will show a translated example later.
 
+After gettext has picked the correct translated text, it will put this
+translation towards L<sprintf|https://duckduckgo.com/sprintf>, which replaces
+the placeholders with the proper values. The following section describes how
+sprintf works.
 
+=head3 sprintf
 
+sprintf is a function of C that defines the so called printf conventions for
+formatting a text with dynamic data. You will find it in every language, so
+you can always reference to the usage via your favorite programming language
+documentation. A little of the most relevant overview I will describe here:
 
+sprintf is made to take a format definition and some values for the dynamic
+parts in this definition to produce a new string. A simple example in Perl
+would be:
 
-=head2 Output
+  perl -e'print sprintf("%s is my search engine!","DuckDuckGo")."\n";'
 
-Many people who never did translation before, but heard of gettext, think that
-gettext itself directly handles everything you need for the translation, but
-this is just plain wrong. gettext works only as storage and accessor for the
-translations you need. It solves lots of problems that you really can't solve
-easily alone, but it misses out little details.
+The output of this will be:
+
+  DuckDuckGo is my search engine!
+
+The B<%s> in the first parameter of sprintf, is replaced with the second
+parameter we have given to the sprintf call. This is a very simple example,
+B<%s> means B<string> in this case. Alternative options are:
+
+  %%    a percent sign
+  %c    a character with the given number
+  %s    a string
+  %d    a signed integer, in decimal
+  %u    an unsigned integer, in decimal
+  %o    an unsigned integer, in octal
+  %x    an unsigned integer, in hexadecimal
+  %e    a floating-point number, in scientific notation
+  %f    a floating-point number, in fixed decimal notation
+  %g    a floating-point number, in %e or %f notation
+
+You normally will only face B<%s> and probably B<%d> in the context of
+DuckDuckGo, so don't be scared about the other options.
+
+B<%d> is specific to display a number, as decimal, so if you would say:
+
+  sprintf("%d bottles of beer",99.0);
+
+In your language, where 99.0 defines a float number, you would still get back:
+
+  "99 bottles of beer"
+
+A very important point here is the option to give several parameters, AND
+reorder them in the usage, for example:
+
+  sprintf("From %s to %s",'A','B');
+  # "From A to B"
+
+This seems to force always B<$from> in the first %s that appears, and B<$to> in
+the second appreance of %s. If in some language for example the order for this
+case gets "other around", then we can't change the order in the code of course,
+or make a switch. Luckily sprintf allows us to use the data in other order then
+given, as you can see on this example:
+
+  sprintf("To %2$s from %1$s",'A','B');
+  # "To B from A"
+
+This tells sprintf to put the first extra value into the B<%1$s> and the second
+extra value into B<%2$s>. So, if a translation that hits several placeholders,
+needs a different order of them, it can use this syntax to achieve this.
+
+If you want to know more about sprintf, you can checkout the
+L<perldoc to sprintf|http://perldoc.perl.org/functions/sprintf.html>, but for
+anything related to tokens, you leave the placeholders always as is in the
+tokens. Deeper knowledge of sprintf is only required for people who define
+tokens.
+
+=head3 Combined tokens
+
+With the understandment of sprintf, we are now able to make tokens specific for
+special visual needs, like if they need additional HTML. An example could be:
+
+  <: l('%s for more info!', '<a href="...">' ~ l('Click here') ~ '</a>' :>
+
+Would give out:
+
+  <a href="...">Click here</a> for more info!
+
+Which allows us to exclude the HTML from the translation, and still give the
+translator enough freedom to define which part of his text is the text that
+should be made clickable (or colored differently or whatever).
+
+The very big disadvantage here is the organizational part. It is really complex
+to have all those tokens in the database and still reference which ones are
+staying together. It always requires lots of comments and further information.
+In some very awkward cases you a real extreme cascading of the tokens. In those
+cases it is really essential to generated B<context>, here a bigger example
+from our Javascript:
+
+  lp('webelieve','%s believe in %s AND %s',
+    '<a href="/about">' + lp('webelieve','We') + '</a>',
+    '<a href="/goodies">' + lp('webelieve','better search') + '</a>',
+    '<a href="http://donttrack.us">' + lp('webelieve','no tracking') + '</a>'
+  );
+
+Which is in gettext written this:
+
+  msgctxt "webelieve"
+  msgid "%s believe in %s AND %s"
+
+  msgctxt "webelieve"
+  msgid "We"
+
+  msgctxt "webelieve"
+  msgid "better search"
+
+  msgctxt "webelieve"
+  msgid "no tracking"
+
+You can now imagine, that without a bit more comment, it is very hard to get
+it right to translate those texts. Especially in the flow of all untranslated
+tokens, which is what most users do to help us translate.
+
+TODO.... ADD FEATURE TO COMMUNITY PLATFORM TO LINK CONTEXT... DESCRIBE HERE
+
