@@ -6,3 +6,5 @@ DDG::Manual - Overview of opensource documentations of DuckDuckGo
 
  * L<Overview of our translation system|DDG::Manual::Translation>
 
+ * L<Overview of DuckPAN|DDG::Manual::DuckPAN> B<TODO>
+

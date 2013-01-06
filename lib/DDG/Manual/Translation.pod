@@ -7,7 +7,7 @@ DDG::Manual::Translation - Overview of the translation system of DuckDuckGo
 Making the translation of a complex and grown system like DuckDuckGo is not an
 easy task. The system is scattered in very many subcomponents, which connect
 together over the user browser mostly. Many HTML snippets combined via code,
-coming from different system parts. Combined with many Javascript and other
+coming from different system parts. Combined with many JavaScript and other
 microsolutions to solve specific components. On the other side, there is the
 pure problem of management and the translation itself. We are a small team,
 that limits our options, so we are required to coordinate the community
@@ -28,7 +28,7 @@ way for translating long texts, which was lagging on all platforms.
 
 Many people who never dived into the topic of translations, especially native
 english speaking persons, are not aware of the problems to face on
-translations. I would like to explain some of the base problems.
+translations. We would like to explain some of the base problems.
 
 =head2 Order of text
 
@@ -41,7 +41,7 @@ that could hit the sentence. As a developer you might think you can do it like:
 
   'You have ' + messages + ' messages'
 
-But this is not translatable. I will explain the solutions for this problem
+But this is not translatable. We will explain the solutions for this problem
 later.
 
 =head2 No direct translations possible
@@ -82,8 +82,7 @@ nearly all cases.
 
 Small subexample that directly comes up: Yes, B<anschnallen> and
 B<festschnallen> are actually the same word in english: B<fasten>. B<fasten>
-actually translates to
-L<12 different words in german|http://dict.leo.org/ende?searchLoc=-1&searchLocRelinked=-1&lp=ende&search=fasten&lp=ende&lang=de&searchLoc=0&searchLocRelinked=1&search=>.
+actually translates to L<12 different words in german|http://dict.leo.org/ende?searchLoc=-1&searchLocRelinked=-1&lp=ende&search=fasten&lp=ende&lang=de&searchLoc=0&searchLocRelinked=1&search=>.
 
 =head2 Right to left
 
@@ -104,7 +103,7 @@ And B<singular> is only used, if you have just one:
   You have 2 messages. (or also 0 or more than 2)
 
 In other languages, there are up to 5 different cases for B<plural>. Depending
-on sometimes complex math which I don't like to explain, but luckily the world
+on sometimes complex math which we don't like to explain, but luckily the world
 has defined logic for this. This is a concept implemented in gettext, so this
 form is what we actually use, because our implementatin is on top of gettext
 for most base infrastructure. The english (and most other languages) plural
@@ -112,7 +111,7 @@ definition for gettext is:
 
   nplurals=2; plural=(n != 1)
 
-This describes the logic I mentioned above, that we have 2 "plural forms"
+This describes the logic, we mentioned above, that we have 2 "plural forms"
 (B<singular> and B<plural>), and the first plural form is used, if the amount
 described is not 1.
 
@@ -134,25 +133,38 @@ So the text above would require 3 cases:
 =head2 Gender cases
 
 Also relevant in most languages, is the gender, which might have influence to
-the case of the word.
+the case of the word. We just mention it in this documentation, as an element
+that could be taken into concern. So far our system is not able to handle this
+problem.
 
 =head1 TRANSLATION SYSTEM
 
 After understanding those base problems that come up, you might see, that it is
-not really possible to cover up everything. Also, which plays in here, is the
-fact that we, of course, want to make our own layer for the translation, but on
-the other side, we don't want to reinvent the wheel for translation topic
-complete. Most of the logic we require is already there. To see what we can do
-here means to understand the specific layers that are involved.
+very resource intensive to handle every problem of translations. We don't want
+to reinvent the wheel here, but the existing solutions are all not covering our
+needs, which means we need to make our own translation system, but trying to
+use as much existing solutions as possible, to reduce the amount of work.
 
-You should make an account at L<https://dukgo.com/> if you want to follow all
-steps of this documentation. It is required to access our community platform
-which is used for translating the system. No personal information is required.
+We use our own community platform for managing all the translations. This
+allows us to make very individual concepts and workflows specific for our
+needs. Especially integrating the translation with socializing components and
+more visualization options, is a key that allows us to give people who
+translate the texts have the optimum environment for understanding the deeper
+meaning of the text to translate.
+
+You should make an account at the L<community platform|https://dukgo.com/>, if
+you want to follow all steps of this documentation. This account is required
+for working with the translation system, but as long as you don't make your
+account public (you get an option for this in your account menu), noone will
+see any information about you, not even the username, only your translations
+will be stored in the database, so that the users can vote for it.
+
+The following sections explain all relevant components in detail.
 
 =head2 Storage
 
-I<This part is very technical, and can be skipped, if you are not interested in
-the technical decisions we made. Just go directly to Tokens.>
+I<This section is very technical, and can be skipped, if you are not interested
+in the technical decisions we made. Just go directly to L</Tokens>.>
 
 The storage for the translations, is a very important topic, it defines most of
 the decisions you have to make afterwards. The storage must be really fast and
@@ -167,7 +179,7 @@ There are some pretty interesting solutions in Perl which allow us to really
 cover up all cases, like also gender, but those solutions are specific to Perl
 and can't work in JavaScript. In the end we decided "down" to the very common
 L<gettext|http://www.gnu.org/software/gettext/> system, which also has a
-L<Javascript implementation|http://jsgettext.berlios.de/> and is covered with
+L<JavaScript implementation|http://jsgettext.berlios.de/> and is covered with
 implementations in all languages, so Perl, Ruby, Python and other languages
 where we might need to integrate translation.
 
@@ -178,10 +190,10 @@ translations (the so called po files), to high effective binary files to make
 this data accessable very fast (the binary file is called mo). This tool is
 called B<msgfmt> and included in the B<gettext> package of your distribution.
 
-In the Javascript implementation we have a small Perl program B<po2json> which
+In the JavaScript implementation we have a small Perl program B<po2json> which
 converts the same text datafile into a json that is better usable in
-Javascript. Sadly this datafile must be of course loaded for the browser, you
-might see that big Javascript file on the load of DuckDuckGo which integrates
+JavaScript. Sadly this datafile must be of course loaded for the browser, you
+might see that big JavaScript file on the load of DuckDuckGo which integrates
 the translations together with the libraries for using those. We compress this
 to make it smaller for the bandwidth. More optimization options are open here.
 
@@ -201,10 +213,10 @@ easily alone, but it misses those very important details.
 
 We need still to wrap I<gettext> with L<sprintf|https://duckduckgo.com/sprintf>
 to make it really useful. This will allow us to combine tokens with HTML and
-other formattings. I will describe this in the next section.
+other formattings. We will describe this in the next section.
 
 We released this wrapping, which makes the exactly same API for Perl, Python and
-Javascript on L<CPAN|http://cpan.org/> and L<pypi|http://pypi.python.org/>. You
+JavaScript on L<CPAN|http://cpan.org/> and L<pypi|http://pypi.python.org/>. You
 can install it with cpan or your prefered CPAN package installer for Perl, like
 with L<App::cpanminus|https://metacpan.org/module/App::cpanminus>:
 
@@ -214,7 +226,7 @@ or for python with pip2 in your userspace:
 
   pip2 install --user locale-simple
 
-Inside the Perl distribution, you find also all the Javascript required, if you
+Inside the Perl distribution, you find also all the JavaScript required, if you
 want to use it for your own project someday. If you want to play around with
 Perl in general, please consider installing L<perlbrew|http://www.perlbrew.pl/>
 first. It's not required to install any of this to contribute.
@@ -249,10 +261,10 @@ but here is the page for this specific token in german:
 L<https://dukgo.com/translate/tokenlanguage/26811>.
 
 In the general translation interface of the community platform, you normally
-see a list of those tokens, but I will explain the translation interface later,
-to not make it to complex for now, but you see the text to translate right to
-the word "Singular" on top. Below you see the translations of other users for
-it, there is (right now) only one for german.
+see a list of those tokens, but we will explain the translation interface
+later, to not make it to complex for now, but you see the text to translate
+right to the word "Singular" on top. Below you see the translations of other
+users for it, there is (right now) only one for german.
 
 When there is no translation found, the system always gives back the token
 itself. At DuckDuckGo all tokens are given in English of the United States.
@@ -327,25 +339,25 @@ Additional to placeholders for text, we always cover combined with I<gettext>
 the option for dynamic numbered cases, which requires to decide for the proper
 plurality case in the language, and replace the placeholder for the number with
 the number given for the case. Here an example for a numbered case of a token
-in the template (or code, or Javascript):
+in the template (or code, or JavaScript):
 
-  <: ln("You have %d message","You have %d messages",$messages) :>
+  <: ln("You have %d message.","You have %d messages.",$messages) :>
 
 This is for defining a token which is based on the number for the specific
 token. In the definition in the I<gettext> storage it ends like this:
 
-  msgid "You have %d message"
-  msgid_plural "You have %d messages"
+  msgid "You have %d message."
+  msgid_plural "You have %d messages."
 
 Just to directly show, this can, of course, be combined with a B<context>:
 
-  <: lnp("email","You have %d message","You have %d messages",$messages) :>
+  <: lnp("email","You have %d message.","You have %d messages.",$messages) :>
 
 which ends up in this form in I<gettext>:
 
   msgctxt "email"
-  msgid "You have %d message"
-  msgid_plural "You have %d messages"
+  msgid "You have %d message."
+  msgid_plural "You have %d messages."
 
 First, I<gettext> will check with the current plural definitions (see above), what
 specific plural case is required for this translation. As mentioned on the
@@ -365,7 +377,10 @@ The following section about sprintf describes more deeply how the placeholders
 are functioning, but normally this is only relevant for developers who
 generate tokens for the system.
 
-=head3 sprintf
+=head4 sprintf
+
+I<This section is very technical, and can be skipped. Just go directly to
+L</Combined tokens>.>
 
 sprintf is a function of C that defines the so called printf conventions for
 formatting a text with dynamic data. You will find it in every language, so
@@ -412,7 +427,7 @@ A very important point here is the option to give several parameters, AND
 reorder them in the usage, for example:
 
   sprintf("From %s to %s",'A','B');
-  # "From A to B"
+  # returns "From A to B"
 
 This seems to force always B<$from> in the first %s that appears, and B<$to> in
 the second appreance of %s. If in some language for example the order for this
@@ -421,7 +436,7 @@ or make a switch. Luckily sprintf allows us to use the data in other order then
 given, as you can see on this example:
 
   sprintf("To %2$s from %1$s",'A','B');
-  # "To B from A"
+  # returns "To B from A"
 
 This tells sprintf to put the first extra value into the B<%1$s> and the second
 extra value into B<%2$s>. So, if a translation that hits several placeholders,
@@ -453,9 +468,9 @@ to have all those tokens in the database and still reference which ones are
 staying together. It always requires lots of comments and further information.
 In some very awkward cases you a real extreme cascading of the tokens. In those
 cases it is really essential to generated B<context>, here a bigger example
-from our Javascript:
+from our JavaScript:
 
-  lp('webelieve','%s believe in %s AND %s',
+  lp('webelieve','%s believe in %s AND %s.',
     '<a href="/about">' + lp('webelieve','We') + '</a>',
     '<a href="/goodies">' + lp('webelieve','better search') + '</a>',
     '<a href="http://donttrack.us">' + lp('webelieve','no tracking') + '</a>'
@@ -464,7 +479,7 @@ from our Javascript:
 Which is in gettext written this:
 
   msgctxt "webelieve"
-  msgid "%s believe in %s AND %s"
+  msgid "%s believe in %s AND %s."
 
   msgctxt "webelieve"
   msgid "We"
@@ -476,8 +491,91 @@ Which is in gettext written this:
   msgid "no tracking"
 
 You can now imagine, that without a bit more comment, it is very hard to get
-it right to translate those texts. Especially in the flow of all untranslated
-tokens, which is what most users do to help us translate.
+it right to translate those texts. Best is if the user additional has an URL
+to see the tokens in action. Especially in the flow of all untranslated tokens,
+which is what most users do to help us translate.
 
-TODO.... ADD FEATURE TO COMMUNITY PLATFORM TO LINK CONTEXT... DESCRIBE HERE
+Most combined tokens are gathered under one specific B<msgctxt>, in the
+translation interface, you can click on the context given in the interface to
+reach a page with all tokens of this specific context. Still we try to add
+comments to every token that describe the complete text context where the token
+is used.
+
+=head3 Token translation storage
+
+As described in the previous sections, the database of the community platform
+stores all the translations, which then gets generated to the I<po> files used
+by I<gettext> in our translation system. Here I show you the german
+translations of the examples from above from the I<po> that gets generated:
+
+  msgid "Monthly newsletter:"
+  msgstr "Monatlicher Newsletter:"
+
+  msgctxt "size"
+  msgid "Medium"
+  msgstr "Mittelgroß"
+
+  msgid "Hello %s!"
+  msgstr "Hallo %s!"
+
+  msgctxt "email"
+  msgid "You have %d message."
+  msgid_plural "You have %d messages."
+  msgstr[0] "Du hast %d Nachricht."
+  msgstr[1] "Du hast %d Nachrichten."
+
+  msgid "From %s to %s"
+  msgstr "Von %s nach %s"
+
+The pirate translation of the B<"Hello %s!"> example would look like this:
+
+  msgid "Hello %s!"
+  msgstr "%s, ahoi! hrrr"
+
+Our example to change the order of the placeholders would look like this:
+
+  msgid "From %s to %s"
+  msgstr "To %2$s from %1$s"
+
+In the case of a language which has more than 2 L<plural forms/Plurality>, the
+number in the brackets will just get stacked up:
+
+  msgid "You have %d message."
+  msgid_plural "You have %d messages."
+  msgstr[0] "Mas %d spravu."
+  msgstr[1] "Mas %d spravy."
+  msgstr[2] "Mas %d sprav."
+
+Interesting note: The highest amount of plural forms is 6. You can find this in
+the L<arabic language|https://duckduckgo.com/?q=arabic>.
+
+=head3 Voting translations
+
+On the community platform, you are able to vote for an existing translation,
+instead of making your own translation. If you, by mistake, not saw the
+existing translation, your translation will automatically get converted to a
+note for this translation.
+
+=head3 Used translation
+
+The system which generates the translation I<po> files for all the languages,
+picks the translation by finding the translation with the most votes. If there
+are several translations with the same amount of votes, the translation will be
+used, where the translator has the highest B<grade> in this language. We will
+explain this in the L<community platform/The community platform> section more
+deeply. This process happens on the release of the translations.
+
+=head3 Releasing translations
+
+I<This section is very technical, and can be skipped. Just go directly to
+L</The community platform>.>
+
+The generated I<po> files will be packed together with all other necessary data
+files, like the I<mo> file and the I<json> file for the JavaScript, as a Perl
+distribution for our central B<DuckPAN> server, which is used to fetch the
+releases of the open source development to our live systems. The code for this
+procedures is in the package L<DDGC::LocaleDist|https://github.com/duckduckgo/community-platform/blob/master/lib/DDGC/LocaleDist.pm>
+in the L<source code of the community platform|https://github.com/duckduckgo/community-platform>.
+
+=head2 The community platform
 
