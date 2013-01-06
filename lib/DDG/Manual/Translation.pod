@@ -576,7 +576,7 @@ Our example to change the order of the placeholders would look like this:
   msgid "From %s to %s"
   msgstr "To %2$s from %1$s"
 
-In the case of a language which has more than 2 L<plural forms/Plurality>, the
+In the case of a language which has more than 2 plural forms (See L</Plurality>), the
 number in the brackets will just get stacked up:
 
   msgid "You have %d message."
@@ -610,8 +610,8 @@ The system which generates the translation I<po> files for all the languages,
 picks the translation by finding the translation with the most votes. If there
 are several translations with the same amount of votes, the translation will be
 used, where the translator has the highest B<grade> in this language. We will
-explain this in the L<community platform/The community platform> section more
-deeply. This process happens on the release of the translations.
+explain this in the community platform section (L</The community platform>)
+more deeply. This process happens on the release of the translations.
 
 =head3 Releasing translations
 
@@ -634,32 +634,32 @@ normally define a default domain on initalization of our translation library.
 This way we never need to care about the domain on the function calls for the
 translation library.
 
-Also the L<release of the translations|/Releasing translations> is done for
-every token domain individually. On the live systems we install all the latest
-releases of all token domains at once.
+Also the release of the translations (See L<|/Releasing translations>) is
+executed for every token domain individually. On the live systems we install
+all the latest releases of all token domains at once.
 
 =head3 Token domains in the community platform
 
-In the L<community platform/The community platform> the different token domains
-are an independent list of tokens. This allows translators to pick the block
-they want to work on. It is very important to understand that a half done
-translation is nearly as usable as no translation at all. The translators must
-be encouraged to finish up all tokens of a domain, only then it really makes
-sense to promote wider the specific project part to the users. We explain more
-about this in the section L</The community platform>.
+In the community platform (L</The community platform>) the different token
+domains are an independent list of tokens. This allows translators to pick the
+block of tokens, they want to work on. It is very important to understand that
+a half done translation is nearly as usable as no translation at all. The
+translators must be encouraged to finish up all tokens of a domain, only then
+it really makes sense to promote wider the specific project part to the users.
+We explain more about this in the section L</The community platform>.
 
 =head3 Token domain translation functions
 
 I<This section is very technical, and can be skipped. Just go directly to
 L</Overlapping tokens>.>
 
-Our L<translation library|/Locale::Simple> also supports functions which use
-a specific token domain directly as parameter, but those functions are (so far)
-never used at DuckDuckGo. A switch between several domains inside one code file
-or template is avoided. They are called B<ld()>, B<ldn()>, B<ldp()> and B<ldnp()> and
-work exactly like already described translation functions, but take the name
-for the token domain that has to be used as first parameter. The function to
-set the default token domain is B<ltd()>.
+Our translation library (See L<|/Locale::Simple>) also supports functions which
+use a specific token domain directly as parameter, but those functions are (so
+far) never used at DuckDuckGo. A switch between several domains inside one code
+file or template is avoided. They are called B<ld()>, B<ldn()>, B<ldp()> and
+B<ldnp()> and work exactly like already described translation functions, but
+take the name for the token domain that has to be used as first parameter. The
+function to set the default token domain is B<ltd()>.
 
 =head3 Overlapping tokens
 
