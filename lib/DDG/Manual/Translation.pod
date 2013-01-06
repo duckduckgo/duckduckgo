@@ -204,6 +204,8 @@ combined elements that have to be translated independent. The option to extend
 our system todo also the gender case is open, but we are not heading towards
 this yet.
 
+=head2 Locale::Simple
+
 Many people who never did translation before, but heard of I<gettext>, think 
 that I<gettext> itself directly handles everything you need for the
 translation, but it has no real concept for combined tokens or placeholders
@@ -335,6 +337,8 @@ would be:
 
   yegg, ahoi! hrrr
 
+=head3 Placeholders and plurality
+
 Additional to placeholders for text, we always cover combined with I<gettext>
 the option for dynamic numbered cases, which requires to decide for the proper
 plurality case in the language, and replace the placeholder for the number with
@@ -359,8 +363,8 @@ which ends up in this form in I<gettext>:
   msgid "You have %d message."
   msgid_plural "You have %d messages."
 
-First, I<gettext> will check with the current plural definitions (see above), what
-specific plural case is required for this translation. As mentioned on the
+First, I<gettext> will check with the current plural definitions (see above),
+what specific plural case is required for this translation. As mentioned on the
 section L</Plurality>, some languages might have more then 2 forms for
 this. But whatever it is, I<gettext> handles this with the translation datafile
 for the given language. I will show a translated example later.
@@ -372,6 +376,11 @@ the placeholders with the proper values.
 If we have B<$messages> like B<3> on the above example, the output would be:
 
   You have 3 messages.
+
+The combination of I<gettext> and I<sprintf> here sadly has the disadvantage,
+to force the count that defines the plural form to be the first placeholder.
+This makes problems in the combination with combined tokens. We explain the
+problem in the section L</Combined tokens>, later in this manual.
 
 The following section about sprintf describes more deeply how the placeholders
 are functioning, but normally this is only relevant for developers who
@@ -463,6 +472,22 @@ Which allows us to exclude the HTML from the translation, and still give the
 translator enough freedom to define which part of his text is the text that
 should be made clickable (or colored differently or whatever).
 
+A bigger problem exist, if we combine those placeholders in combination with
+number placeholders, explained in the section L</Placeholders and plurality>.
+The concept forces to get the count that is used to determine the proper plural
+form must be set to the first position. Which could lead to a problem, like in
+this case:
+
+  $username has $count message.
+  $username has $count messages.
+
+If we would try to convert this to B<"%s has %d messages.">, we would run into
+the problem, that the first placeholder would be B<$username> and not
+B<$count>. To avoid this we can use the method of I<sprintf> to change the
+order of the values given for the placeholders, the right solution would be:
+
+  <: ln("%2$s has %1$d message.","%2$s has %1$d messages.",$count,$username) :>
+
 The very big disadvantage here is the organizational part. It is really complex
 to have all those tokens in the database and still reference which ones are
 staying together. It always requires lots of comments and further information.
@@ -501,6 +526,13 @@ reach a page with all tokens of this specific context. Still we try to add
 comments to every token that describe the complete text context where the token
 is used.
 
+=head3 Token translation functions
+
+  l(            msgid,                      ... )
+  ln(           msgid, msgid_plural, count, ... )
+  lp(  msgctxt, msgid,                      ... )
+  lnp( msgctxt, msgid, msgid_plural, count, ... )
+
 =head3 Token translation storage
 
 As described in the previous sections, the database of the community platform
@@ -524,6 +556,11 @@ translations of the examples from above from the I<po> that gets generated:
   msgstr[0] "Du hast %d Nachricht."
   msgstr[1] "Du hast %d Nachrichten."
 
+  msgid "%2$s has %1$d message."
+  msgid_plural "%2$s has %1$d messages."
+  msgstr[0] "%2$s hat %1$d Nachricht."
+  msgstr[1] "%2$s hat %1$d Nachrichten."
+
   msgid "From %s to %s"
   msgstr "Von %s nach %s"
 
@@ -546,8 +583,17 @@ number in the brackets will just get stacked up:
   msgstr[1] "Mas %d spravy."
   msgstr[2] "Mas %d sprav."
 
-Interesting note: The highest amount of plural forms is 6. You can find this in
+Interesting sidenote, the highest amount of plural forms is 6. You can find this in
 the L<arabic language|https://duckduckgo.com/?q=arabic>.
+
+In the case of the placeholder with count and a dynamic text, a translation
+which uses the order correct, can of course then use the normal I<sprintf>
+placeholders definition:
+
+  msgid "%2$s has %1$d message."
+  msgid_plural "%2$s has %1$d messages."
+  msgstr[0] "%d Nachricht hat %s."
+  msgstr[1] "%d Nachrichten hat %s."
 
 =head3 Voting translations
 
@@ -568,7 +614,7 @@ deeply. This process happens on the release of the translations.
 =head3 Releasing translations
 
 I<This section is very technical, and can be skipped. Just go directly to
-L</The community platform>.>
+L</Token domains>.>
 
 The generated I<po> files will be packed together with all other necessary data
 files, like the I<mo> file and the I<json> file for the JavaScript, as a Perl
@@ -576,6 +622,55 @@ distribution for our central B<DuckPAN> server, which is used to fetch the
 releases of the open source development to our live systems. The code for this
 procedures is in the package L<DDGC::LocaleDist|https://github.com/duckduckgo/community-platform/blob/master/lib/DDGC/LocaleDist.pm>
 in the L<source code of the community platform|https://github.com/duckduckgo/community-platform>.
+
+=head2 Token domains
+
+For organizational reasons, but also for technical reasons, we are required to
+group the tokens in so called B<token domains>. The terminology is taken from
+I<gettext>, which also defines one I<po> file is one specific domain. We
+normally define a default domain on initalization of our translation library.
+This way we never need to care about the domain on the function calls for the
+translation library.
+
+Also the L<release of the translations|/Releasing translations> is done for
+every token domain individually. On the live systems we install all the latest
+releases of all token domains at once.
+
+=head3 Token domains in the community platform
+
+In the L<community platform/The community platform> the different token domains
+are an independent list of tokens. This allows translators to pick the block
+they want to work on. It is very important to understand that a half done
+translation is nearly as usable as no translation at all. The translators must
+be encouraged to finish up all tokens of a domain, only then it really makes
+sense to promote wider the specific project part to the users. We explain more
+about this in the section L</The community platform>.
+
+=head3 Token domain translation functions
+
+I<This section is very technical, and can be skipped. Just go directly to
+L</The community platform>.>
+
+Our L<translation library|/Locale::Simple> also supports functions which use
+a specific token domain directly as parameter, but those functions are (so far)
+never used at DuckDuckGo. A switch between several domains inside one code file
+or template is avoided. They are called B<ld()>, B<ldn()>, B<ldp()> and B<ldnp()> and
+work exactly like already described translation functions, but take the name
+for the token domain that has to be used as first parameter. The function to
+set the default token domain is B<ltd()>.
+
+=head3 Overlapping tokens
+
+The definition of a token is bound to its token domain. This means, that 2
+identical tokens in 2 domains are still 2 independent tokens and still both
+need to be translated. In most cases, this sadly leads to a pointless
+translation of the exactly same meaning and probably even in the exactly same
+context. It is very hard to avoid this.
+
+Still there are cases left where the context given with the token domain might
+slighty fix the interpretation more deeply. Only because a token seems very
+identical in the english language does not directly lead to the same
+interpretation with other languages.
 
 =head2 The community platform
 
