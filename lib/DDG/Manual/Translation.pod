@@ -649,7 +649,7 @@ about this in the section L</The community platform>.
 =head3 Token domain translation functions
 
 I<This section is very technical, and can be skipped. Just go directly to
-L</The community platform>.>
+L</Overlapping tokens>.>
 
 Our L<translation library|/Locale::Simple> also supports functions which use
 a specific token domain directly as parameter, but those functions are (so far)
