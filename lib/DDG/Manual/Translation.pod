@@ -192,20 +192,32 @@ combined elements that have to be translated independent. The option to extend
 our system todo also the gender case is open, but we are not heading towards
 this yet.
 
-Many people who never did translation before, but heard of gettext, think that
-gettext itself directly handles everything you need for the translation, but
-this is just plain wrong. gettext works only as storage and accessor for the
+Many people who never did translation before, but heard of I<gettext>, think 
+that I<gettext> itself directly handles everything you need for the
+translation, but it has no real concept for combined tokens or placeholders
+for dynamic text. I<gettext> works only as storage and accessor for the
 translations you need. It solves lots of problems that you really can't solve
-easily alone, but it misses out little details.
+easily alone, but it misses those very important details.
 
-We need still to wrap gettext with L<sprintf|https://duckduckgo.com/sprintf>
+We need still to wrap I<gettext> with L<sprintf|https://duckduckgo.com/sprintf>
 to make it really useful. This will allow us to combine tokens with HTML and
-other formattings. I will describe this in the next section. This covers up
-the order of text problem. We released this wrapping, which makes the exactly
-same API for Perl and Javascript on L<CPAN|http://cpan.org/> as
-L<Locale::Simple|https://metacpan.org/module/Locale::Simple>.
-Inside this distribution you find also all the Javascript required, if you want
-to use it for your own project someday.
+other formattings. I will describe this in the next section.
+
+We released this wrapping, which makes the exactly same API for Perl, Python and
+Javascript on L<CPAN|http://cpan.org/> and L<pypi|http://pypi.python.org/>. You
+can install it with cpan or your prefered CPAN package installer for Perl, like
+with L<App::cpanminus|https://metacpan.org/module/App::cpanminus>:
+
+  cpanm Locale::Simple
+
+or for python with pip2 in your userspace:
+
+  pip2 install --user locale-simple
+
+Inside the Perl distribution, you find also all the Javascript required, if you
+want to use it for your own project someday. If you want to play around with
+Perl in general, please consider installing L<perlbrew|http://www.perlbrew.pl/>
+first. It's not required to install any of this to contribute.
 
 =head2 Tokens
 
@@ -221,12 +233,13 @@ templates that makes it easier to understand.
 
   <: l('Monthly newsletter:') :>
 
-So this defines a simple token with the text 'Monthy newsletter:'. So gettext,
-our translation storage, actually has no data file for these so called tokens
-itself, cause the text data file only contains the token AND a translation. But
-for having a good normalization we store this in our database under the same
-fieldnames that gettext wants, so i display it to you now like a "partly" po
-file without the translation, this makes it easier to understand it:
+So this defines a simple token with the text 'Monthy newsletter:'. So
+I<gettext>, our translation storage, actually has no data file for these so
+called tokens itself, cause the text data file only contains the token AND a
+translation. But for having a good normalization we store this in our database
+under the same fieldnames that I<gettext> wants, so i display it to you now
+like a "partly" I<po> file without the translation, this makes it easier to
+understand it:
 
   msgid "Monthly newsletter:"
 
@@ -241,20 +254,23 @@ to not make it to complex for now, but you see the text to translate right to
 the word "Singular" on top. Below you see the translations of other users for
 it, there is (right now) only one for german.
 
+When there is no translation found, the system always gives back the token
+itself. At DuckDuckGo all tokens are given in English of the United States.
+
 =head3 Token with context
 
 As you now see, this is a very simple token, it is just text, it is not like
 really touching any of our problem cases. Another problem case, would be for
-example the token 'Medium'. This is a very very vague word, you need a bit of
+example the token I<Medium>. This is a very very vague word, you need a bit of
 a context to really find the right translation, even if you think in english
-it is very clear, you can imagine that a lonely "Medium" can be in lots of
-different kind of context. gettext offers here the option to give a so called
+it is very clear, you can imagine that a lonely I<Medium> can be in lots of
+different kind of context. I<gettext> offers here the option to give a so called
 B<context> additional to a token, which allows us, to give a bit more "context"
 without changing the token itself. In the template it would look like this:
 
   <: lp('size','Medium') :>
 
-and in the gettext storage:
+and in the I<gettext> storage:
 
   msgctxt "size"
   msgid "Medium"
@@ -285,39 +301,69 @@ Placeholders in tokens are giving many options to make the displaying of the
 text more finetuned. Often it is required that inside the text itself you need
 a special wrapping for the display, like HTML, this can be achieved with
 placeholders. They are also used to allow number specific case decision, the
-problem described L</Plurality> section. Here an example for a token in
-the template (or code, or Javascript):
+problem described L</Plurality> section. Here a simple example of a dynamic
+text inside a token:
+
+  <: l("Hello %s!",$username) :>
+
+This allows to give a username towards the token, but still allows the
+translator to move the dynamic text to another place, which is more proper in
+his language (like if it would be right to left, the placeholder might be more
+left). 2 things are happening now in the translation system:
+
+At first I<gettext> will try to find the translation for this token given,
+and in the translation the translator also keeps this placeholder B<%s>. After
+this translation is found, for example going B<Pirate>:
+
+  %s, ahoi! hrrr
+
+Given this example translation, the translated text for a user switched to
+L<Pirate|https://duckduckgo.com/?kad=pirate_XX>, with the username B<yegg>,
+would be:
+
+  yegg, ahoi! hrrr
+
+Additional to placeholders for text, we always cover combined with I<gettext>
+the option for dynamic numbered cases, which requires to decide for the proper
+plurality case in the language, and replace the placeholder for the number with
+the number given for the case. Here an example for a numbered case of a token
+in the template (or code, or Javascript):
 
   <: ln("You have %d message","You have %d messages",$messages) :>
 
 This is for defining a token which is based on the number for the specific
-token. In the definition in the gettext storage it ends like this:
+token. In the definition in the I<gettext> storage it ends like this:
 
   msgid "You have %d message"
   msgid_plural "You have %d messages"
 
-Just to directly show, this can of course be combined with a B<context>:
+Just to directly show, this can, of course, be combined with a B<context>:
 
   <: lnp("email","You have %d message","You have %d messages",$messages) :>
 
-which ends up in this form in gettext:
+which ends up in this form in I<gettext>:
 
   msgctxt "email"
   msgid "You have %d message"
   msgid_plural "You have %d messages"
 
-In this specific case, 2 things happen at once when the token is used.
-
-First, gettext will check with the current plural definitions (see above), what
+First, I<gettext> will check with the current plural definitions (see above), what
 specific plural case is required for this translation. As mentioned on the
 section L</Plurality>, some languages might have more then 2 forms for
-this. But whatever it is, gettext handles this with the translation datafile
+this. But whatever it is, I<gettext> handles this with the translation datafile
 for the given language. I will show a translated example later.
 
-After gettext has picked the correct translated text, it will put this
+After I<gettext> has picked the correct translated text, it will put this
 translation towards L<sprintf|https://duckduckgo.com/sprintf>, which replaces
-the placeholders with the proper values. The following section describes how
-sprintf works.
+the placeholders with the proper values.
+
+If we have B<$messages> like B<3> on the above example, the output would be:
+
+  You have 3 messages.
+
+The following section about sprintf describes more deeply how the placeholders
+are functioning, but normally this is only relevant for developers who
+generate tokens for the system.
 
 =head3 sprintf
 
