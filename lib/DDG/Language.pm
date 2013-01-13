@@ -30,4 +30,9 @@ has $_ => (
 	default => sub { '' }
 ) for (@language_attributes);
 
+use overload '""' => sub {
+  my $self = shift;
+  return $self->locale;
+}, fallback => 1;
+
 1;

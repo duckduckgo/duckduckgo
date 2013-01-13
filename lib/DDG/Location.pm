@@ -33,4 +33,9 @@ has geo_ip_record => (
 	predicate => 'has_geo_ip_record',
 );
 
+use overload '""' => sub {
+	my $self = shift;
+	return $self->country_code;
+}, fallback => 1;
+
 1;
