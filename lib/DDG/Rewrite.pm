@@ -86,6 +86,11 @@ has wrap_string_callback => (
     default => sub { 0 },
 );
 
+has accept_header => (
+    is => 'ro',
+    default => sub { 0 },
+);
+
 has proxy_cache_valid => (
 	is => 'ro',
 	predicate => 'has_proxy_cache_valid',
@@ -119,6 +124,7 @@ sub _build_nginx_conf {
 	my $wrap_string_callback = $self->has_callback && $self->wrap_string_callback;
 
 	my $cfg = "location ^~ ".$self->path." {\n";
+	$cfg .= "\tproxy_set_header Accept '".$self->accept_header."';\n" if $self->accept_header;
 	$cfg .= "\techo_before_body '".$self->callback."(';\n" if $wrap_jsonp_callback;
 	$cfg .= "\techo_before_body '".$self->callback.qq|("';\n| if $wrap_string_callback;
 	$cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")." ".$uri_path." break;\n";
