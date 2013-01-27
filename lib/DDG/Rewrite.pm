@@ -12,12 +12,12 @@ sub BUILD {
 	croak "Missing callback attribute for {{callback}} in to" if ($to =~ s/{{callback}}/$callback/g && !$self->has_callback);
 	my @missing_envs;
 	for ($to =~ m/{{ENV{(\w+)}}}/g) {
-		if (defined $ENV{$1}) {
-			my $val = $ENV{$1};
-			$to =~ s/{{ENV{$1}}}/$val/g;
+		if (defined $ENV{$_}) {
+			my $val = $ENV{$_};
+			$to =~ s/{{ENV{$_}}}/$val/g;
 		} else {
-			push @missing_envs, $1;
-			$to =~ s/{{ENV{$1}}}//g;
+			push @missing_envs, $_;
+			$to =~ s/{{ENV{$_}}}//g;
 		}
 	}
 	$self->_missing_envs(\@missing_envs) if @missing_envs;
