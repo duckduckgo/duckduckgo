@@ -1,3 +1,5 @@
+# PODNAME: DDG::Manual
+
 =head1 NAME
 
 DDG::Manual - Overview of opensource documentations of DuckDuckGo
