@@ -1,5 +1,3 @@
-# PODNAME: DDG::Manual::Translation
-
 =encoding utf-8
 
 =head1 NAME
@@ -24,9 +22,9 @@ that the solutions on the market are fulfilling our needs. Even when I (Getty)
 look back, I still think our biggest problems are coordination and defining
 proper processes for the translation flows, which are of course much easier to
 tune with an own system. The biggest lag I found in the systems we found at
-this point, was the lag of context and comments for the tokens. Also we want
-to introduce translation of pictures and other media, and also offer a special
-way for translating long texts, which was lagging on all platforms.
+this point, was the lag of context and comments for the tokens. Also we want to
+introduce translation of pictures and other media, and also offer a special way
+for translating long texts, which was lagging on all platforms.
 
 =head1 WHAT IS TRANSLATION?
 
@@ -37,11 +35,11 @@ translations. We would like to explain some of the base problems.
 =head2 Order of text
 
 You shouldn't think that the order of text is always the same in every
-language. You could easily compare this with the option in your own language
-to write a sentence in different ways, to imply or underline different topics
-of it. Those ways to promote specific parts are defined differently in many
-languages, also there are many things that are like very cultural specials
-that could hit the sentence. As a developer you might think you can do it like:
+language. You could easily compare this with the option in your own language to
+write a sentence in different ways, to imply or underline different topics of
+it. Those ways to promote specific parts are defined differently in many
+languages, also there are many things that are like very cultural specials that
+could hit the sentence. As a developer you might think you can do it like:
 
   'You have ' + messages + ' messages' # THIS IS WRONG!
 
@@ -53,12 +51,11 @@ later.
 Not every word can be 1:1 translated into another language. There are many
 cases, where specific context might change the meaning of a word, or you have
 lots of bigger diversity in the words, then you have in the language you use as
-reference. A common reference people make here, is the amount of
-L<Eskimo words for snow|http://en.wikipedia.org/wiki/Eskimo_words_for_snow>,
-which says that there are more than 50 different words for snow in the language
-eskimos are speaking. This is sadly a hoax, so we can't reference to it as
-example, but something you might stumble upon on airports in Germany is the
-sentence:
+reference. A common reference people make here, is the amount of L<Eskimo words
+for snow|http://en.wikipedia.org/wiki/Eskimo_words_for_snow>, which says that
+there are more than 50 different words for snow in the language eskimos are
+speaking. This is sadly a hoax, so we can't reference to it as example, but
+something you might stumble upon on airports in Germany is the sentence:
 
   Bitte anschnallen!
 
@@ -86,7 +83,8 @@ nearly all cases.
 
 Small subexample that directly comes up: Yes, B<anschnallen> and
 B<festschnallen> are actually the same word in english: B<fasten>. B<fasten>
-actually translates to L<12 different words in german|http://dict.leo.org/ende?searchLoc=-1&searchLocRelinked=-1&lp=ende&search=fasten&lp=ende&lang=de&searchLoc=0&searchLocRelinked=1&search=>.
+actually translates to L<12 different words in
+german|http://dict.leo.org/ende?searchLoc=-1&searchLocRelinked=-1&lp=ende&search=fasten&lp=ende&lang=de&searchLoc=0&searchLocRelinked=1&search=>.
 
 =head2 Right to left
 
@@ -95,13 +93,13 @@ Beside the mess this brings to your hand if you are right handed, this also is
 a huge difference in the web interface. You can see how a right to left page
 looks like L<here|http://www.i18nguy.com/unicode/shma.html>. This also changes
 around most punctations and of course the flow of the page itself, even if you
-force a specific order, you must revert it for right to left. 
+force a specific order, you must revert it for right to left.
 
-=head2 Plurality
+=head2 Grammatical numbers
 
-In most languages (like english), there are 2 purality cases: B<singular> and
-B<plural>. In those languages B<plural> is used, if you have none, or many.
-And B<singular> is only used, if you have just one:
+In most languages (like english), there are 2 so called grammatical numbers
+cases: B<singular> and B<plural>. In those languages B<plural> is used, if you
+have none, or many. And B<singular> is only used, if you have just one:
 
   You have 1 message.
   You have 2 messages. (or also 0 or more than 2)
@@ -115,12 +113,12 @@ definition for gettext is:
 
   nplurals=2; plural=(n != 1)
 
-This describes the logic, we mentioned above, that we have 2 "plural forms"
-(B<singular> and B<plural>), and the first plural form is used, if the amount
-described is not 1.
+This describes the logic, we mentioned above, that we have 2 grammatical
+numbers (B<singular> and B<plural>), and the first plural form is used, if the
+amount described is not 1.
 
 Don't be scared! All those definitions are fixed, you can find them on this
-awesome page, and you dont need any more (beside if you want to define a
+awesome page, and you don't need any more (beside if you want to define a
 fantasy language) L<http://translate.sourceforge.net/wiki/l10n/pluralforms>.
 
 In Slovak (the language spoken in L<Slovakia|https://duckduckgo.com/Slovakia>)
@@ -202,18 +200,18 @@ the translations together with the libraries for using those. We compress this
 to make it smaller for the bandwidth. More optimization options are open here.
 
 In the end gettext is able to solve the problem about the non direct
-translations and the plurality cases. It is by itself not able to solve the
-gender case or the order of text problem, especially in combination with
-combined elements that have to be translated independent. The option to extend
-our system todo also the gender case is open, but we are not heading towards
-this yet.
+translations and the grammatical number cases. It is by itself not able to
+solve the gender case or the order of text problem, especially in combination
+with combined elements that have to be translated independent. The option to
+extend our system todo also the gender case is open, but we are not heading
+towards this yet.
 
 =head2 Locale::Simple
 
 Many people who never did translation before, but heard of I<gettext>, think 
 that I<gettext> itself directly handles everything you need for the
-translation, but it has no real concept for combined tokens or placeholders
-for dynamic text. I<gettext> works only as storage and accessor for the
+translation, but it has no real concept for combined tokens or placeholders for
+dynamic text. I<gettext> works only as storage and accessor for the
 translations you need. It solves lots of problems that you really can't solve
 easily alone, but it misses those very important details.
 
@@ -221,10 +219,10 @@ We need still to wrap I<gettext> with L<sprintf|https://duckduckgo.com/sprintf>
 to make it really useful. This will allow us to combine tokens with HTML and
 other formattings. We will describe this in the next section.
 
-We released this wrapping, which makes the exactly same API for Perl, Python and
-JavaScript on L<CPAN|http://cpan.org/> and L<pypi|http://pypi.python.org/>. You
-can install it with cpan or your prefered CPAN package installer for Perl, like
-with L<App::cpanminus|https://metacpan.org/module/App::cpanminus>:
+We released this wrapping, which makes the exactly same API for Perl, Python
+and JavaScript on L<CPAN|http://cpan.org/> and L<pypi|http://pypi.python.org/>.
+You can install it with cpan or your prefered CPAN package installer for Perl,
+like with L<App::cpanminus|https://metacpan.org/module/App::cpanminus>:
 
   cpanm Locale::Simple
 
@@ -280,11 +278,12 @@ itself. At DuckDuckGo all tokens are given in English of the United States.
 As you now see, this is a very simple token, it is just text, it is not like
 really touching any of our problem cases. Another problem case, would be for
 example the token I<Medium>. This is a very very vague word, you need a bit of
-a context to really find the right translation, even if you think in english
-it is very clear, you can imagine that a lonely I<Medium> can be in lots of
-different kind of context. I<gettext> offers here the option to give a so called
-B<context> additional to a token, which allows us, to give a bit more "context"
-without changing the token itself. In the template it would look like this:
+a context to really find the right translation, even if you think in english it
+is very clear, you can imagine that a lonely I<Medium> can be in lots of
+different kind of context. I<gettext> offers here the option to give a so
+called B<context> additional to a token, which allows us, to give a bit more
+"context" without changing the token itself. In the template it would look like
+this:
 
   <: lp('size','Medium') :>
 
@@ -300,12 +299,12 @@ advantage here is now, if there would be for example:
 
 Then there are 2 tokens in the system to translate, both with different
 context. Here you can see the page for the german translation of this shown
-token L<https://dukgo.com/translate/tokenlanguage/26671>. As you see, above
-the word that has to be translate, you see B<Context>, which SHOULD be not
-taken as really description for the context, instead this context helps all
-people working with the tokens to find this specific token in the code,
-templates or wherever it needs to be coordinated, and it should be a much
-clearer description in the notes for this token.
+token L<https://dukgo.com/translate/tokenlanguage/26671>. As you see, above the
+word that has to be translate, you see B<Context>, which SHOULD be not taken as
+really description for the context, instead this context helps all people
+working with the tokens to find this specific token in the code, templates or
+wherever it needs to be coordinated, and it should be a much clearer
+description in the notes for this token.
 
 So here is already a very first thing to take care about, if you are
 responsible for working with tokens, you can't give everything a context, else
@@ -319,8 +318,8 @@ Placeholders in tokens are giving many options to make the displaying of the
 text more finetuned. Often it is required that inside the text itself you need
 a special wrapping for the display, like HTML, this can be achieved with
 placeholders. They are also used to allow number specific case decision, the
-problem described L</Plurality> section. Here a simple example of a dynamic
-text inside a token:
+problem described L</Grammatical numbers> section. Here a simple example of a
+dynamic text inside a token:
 
   <: l("Hello %s!",$username) :>
 
@@ -329,9 +328,9 @@ translator to move the dynamic text to another place, which is more proper in
 his language (like if it would be right to left, the placeholder might be more
 left). 2 things are happening now in the translation system:
 
-At first I<gettext> will try to find the translation for this token given,
-and in the translation the translator also keeps this placeholder B<%s>. After
-this translation is found, for example going B<Pirate>:
+At first I<gettext> will try to find the translation for this token given, and
+in the translation the translator also keeps this placeholder B<%s>. After this
+translation is found, for example going B<Pirate>:
 
   %s, ahoi! hrrr
 
@@ -341,13 +340,13 @@ would be:
 
   yegg, ahoi! hrrr
 
-=head3 Placeholders and plurality
+=head3 Placeholders and grammatical numbers
 
 Additional to placeholders for text, we always cover combined with I<gettext>
 the option for dynamic numbered cases, which requires to decide for the proper
-plurality case in the language, and replace the placeholder for the number with
-the number given for the case. Here an example for a numbered case of a token
-in the template (or code, or JavaScript):
+grammatical numbers case in the language, and replace the placeholder for the
+number with the number given for the case. Here an example for a numbered case
+of a token in the template (or code, or JavaScript):
 
   <: ln("You have %d message.","You have %d messages.",$messages) :>
 
@@ -369,9 +368,9 @@ which ends up in this form in I<gettext>:
 
 First, I<gettext> will check with the current plural definitions (see above),
 what specific plural case is required for this translation. As mentioned on the
-section L</Plurality>, some languages might have more then 2 forms for
-this. But whatever it is, I<gettext> handles this with the translation datafile
-for the given language. I will show a translated example later.
+section L</Grammatical numbers>, some languages might have more then 2 forms
+for this. But whatever it is, I<gettext> handles this with the translation
+datafile for the given language. I will show a translated example later.
 
 After I<gettext> has picked the correct translated text, it will put this
 translation towards L<sprintf|https://duckduckgo.com/sprintf>, which replaces
@@ -387,8 +386,8 @@ This makes problems in the combination with combined tokens. We explain the
 problem in the section L</Combined tokens>, later in this manual.
 
 The following section about sprintf describes more deeply how the placeholders
-are functioning, but normally this is only relevant for developers who
-generate tokens for the system.
+are functioning, but normally this is only relevant for developers who generate
+tokens for the system.
 
 =head4 sprintf
 
@@ -396,8 +395,8 @@ I<This section is very technical, and can be skipped. Just go directly to
 L</Combined tokens>.>
 
 sprintf is a function of C that defines the so called printf conventions for
-formatting a text with dynamic data. You will find it in every language, so
-you can always reference to the usage via your favorite programming language
+formatting a text with dynamic data. You will find it in every language, so you
+can always reference to the usage via your favorite programming language
 documentation. A little of the most relevant overview I will describe here:
 
 sprintf is made to take a format definition and some values for the dynamic
@@ -455,11 +454,10 @@ This tells sprintf to put the first extra value into the B<%1$s> and the second
 extra value into B<%2$s>. So, if a translation that hits several placeholders,
 needs a different order of them, it can use this syntax to achieve this.
 
-If you want to know more about sprintf, you can checkout the
-L<perldoc to sprintf|http://perldoc.perl.org/functions/sprintf.html>, but for
-anything related to tokens, you leave the placeholders always as is in the
-tokens. Deeper knowledge of sprintf is only required for people who define
-tokens.
+If you want to know more about sprintf, you can checkout the L<perldoc to
+sprintf|http://perldoc.perl.org/functions/sprintf.html>, but for anything
+related to tokens, you leave the placeholders always as is in the tokens.
+Deeper knowledge of sprintf is only required for people who define tokens.
 
 =head3 Combined tokens
 
@@ -477,10 +475,10 @@ translator enough freedom to define which part of his text is the text that
 should be made clickable (or colored differently or whatever).
 
 A bigger problem exist, if we combine those placeholders in combination with
-number placeholders, explained in the section L</Placeholders and plurality>.
-The concept forces to get the count that is used to determine the proper plural
-form must be set to the first position. Which could lead to a problem, like in
-this case:
+number placeholders, explained in the section L</Placeholders and grammatical
+numbers>. The concept forces to get the count that is used to determine the
+proper plural form must be set to the first position. Which could lead to a
+problem, like in this case:
 
   $username has $count message.
   $username has $count messages.
@@ -519,9 +517,9 @@ Which is in gettext written this:
   msgctxt "webelieve"
   msgid "no tracking"
 
-You can now imagine, that without a bit more comment, it is very hard to get
-it right to translate those texts. Best is if the user additional has an URL
-to see the tokens in action. Especially in the flow of all untranslated tokens,
+You can now imagine, that without a bit more comment, it is very hard to get it
+right to translate those texts. Best is if the user additional has an URL to
+see the tokens in action. Especially in the flow of all untranslated tokens,
 which is what most users do to help us translate.
 
 Most combined tokens are gathered under one specific B<msgctxt>, in the
@@ -536,6 +534,26 @@ is used.
   ln(           msgid, msgid_plural, count, ... )
   lp(  msgctxt, msgid,                      ... )
   lnp( msgctxt, msgid, msgid_plural, count, ... )
+
+=head3 Token scraping
+
+I<This section is only relevant for people who put tokens in the code or the
+HTML, and can be skipped. Just go directly to L</Token translation storage>.>
+
+For L</Locale::Simple>, we made a scraper which is able to parse through any
+Javascript, Perl or Python, to find those tokens. It is very primitive and
+can't really fully parse any code. This makes it relevant to be careful about
+the positioning of the tokens:
+
+Always have the complete token and everything that is in it, in one line. This
+is something we hope to change soon, but the logic is very complex to parse any
+possible code combination for all the specific languages.
+
+Be aware that every parameter of the token must be really written out. That
+means you can't use code, to generate magical a fixed B<msgctxt> for a group of
+tokens and add it via variable. This is not allowed and never the purpose of
+translation tokens. You can only use placeholder, but you are not allowed to
+make code that gives out the token. You only work with the result.
 
 =head3 Token translation storage
 
@@ -578,8 +596,8 @@ Our example to change the order of the placeholders would look like this:
   msgid "From %s to %s"
   msgstr "To %2$s from %1$s"
 
-In the case of a language which has more than 2 plural forms (See L</Plurality>), the
-number in the brackets will just get stacked up:
+In the case of a language which has more than 2 plural forms (See
+L</Grammatical numbers>), the number in the brackets will just get stacked up:
 
   msgid "You have %d message."
   msgid_plural "You have %d messages."
@@ -587,8 +605,8 @@ number in the brackets will just get stacked up:
   msgstr[1] "Mas %d spravy."
   msgstr[2] "Mas %d sprav."
 
-Interesting sidenote, the highest amount of plural forms is 6. You can find this in
-the L<arabic language|https://duckduckgo.com/?q=arabic>.
+Interesting sidenote, the highest amount of plural forms is 6. You can find
+this in the L<arabic language|https://duckduckgo.com/?q=arabic>.
 
 In the case of the placeholder with count and a dynamic text, a translation
 which uses the order correct, can of course then use the normal I<sprintf>
@@ -624,8 +642,10 @@ The generated I<po> files will be packed together with all other necessary data
 files, like the I<mo> file and the I<json> file for the JavaScript, as a Perl
 distribution for our central B<DuckPAN> server, which is used to fetch the
 releases of the open source development to our live systems. The code for this
-procedures is in the package L<DDGC::LocaleDist|https://github.com/duckduckgo/community-platform/blob/master/lib/DDGC/LocaleDist.pm>
-in the L<source code of the community platform|https://github.com/duckduckgo/community-platform>.
+procedures is in the package
+L<DDGC::LocaleDist|https://github.com/duckduckgo/community-platform/blob/master/lib/DDGC/LocaleDist.pm>
+in the L<source code of the community
+platform|https://github.com/duckduckgo/community-platform>.
 
 =head2 Token domains
 
