@@ -38,12 +38,12 @@ translations. We would like to explain some of the base problems.
 
 You shouldn't think that the order of text is always the same in every
 language. You could easily compare this with the option in your own language
-to right a sentence in different ways, to imply or underline different topics
+to write a sentence in different ways, to imply or underline different topics
 of it. Those ways to promote specific parts are defined differently in many
 languages, also there are many things that are like very cultural specials
 that could hit the sentence. As a developer you might think you can do it like:
 
-  'You have ' + messages + ' messages'
+  'You have ' + messages + ' messages' # THIS IS WRONG!
 
 But this is not translatable. We will explain the solutions for this problem
 later.
