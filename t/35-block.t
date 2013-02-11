@@ -85,6 +85,7 @@ BEGIN {
 
 	my $words_block = DDG::Block::Words->new({
 		plugins => $words_plugins,
+		return_one => 0,
 		before_build => sub {
 			my ( $self, $class ) = @_;
 			ok($class eq $words_plugins->[$before_wp],'$class should be '.$words_plugins->[$before_wp]);
@@ -170,6 +171,13 @@ BEGIN {
 			wo => [zci('a|or|b|or|c','woblockarr')],
 			re => [],
 		},
+
+	    # Triggers multiple plugins.
+	    'or two' => {
+		wo => [zci('or|two','woblockarr'), zci('or','woblocktwo')], 
+		re => [],
+	    },
+
 	);
 	
 	while (@queries) {
