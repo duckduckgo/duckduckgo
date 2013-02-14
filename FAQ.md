@@ -9,7 +9,7 @@ FAQ
  * Write us privately at open@duckduckgo.com.
 
 ### What if I don't know Perl?
-If you don't know Perl, that's OK! Several <a href="https://github.com/duckduckgo/duckduckgo/Readme.md#overview">plugin types</a> are not in Perl. Also, if you know PHP, Ruby, or Python you should be able to write Goodies in Perl pretty easily using [this awesome cheat sheet](http://hyperpolyglot.org/scripting).
+If you don't know Perl, that's OK! Several <a href="README.md#overview">plugin types</a> are not in Perl. Also, if you know PHP, Ruby, or Python you should be able to write Goodies in Perl pretty easily using [this awesome cheat sheet](http://hyperpolyglot.org/scripting).
 
 ### Do you have any plugin ideas?
 Yup! We maintain [a growing list](http://ideas.duckduckhack.com/). There are also improvement ideas for [Goodies](https://github.com/duckduckgo/zeroclickinfo-goodies/issues), [Spice](https://github.com/duckduckgo/zeroclickinfo-spice/issues), [Fathead](https://github.com/duckduckgo/zeroclickinfo-fathead/issues) and [Longtail](https://github.com/duckduckgo/zeroclickinfo-longtail/issues).
