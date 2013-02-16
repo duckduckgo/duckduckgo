@@ -1,5 +1,7 @@
-What is this?
-===========
+DuckDuckHack Developer Overview
+===
+## What is this?
+
 [DuckDuckGo](https://duckduckgo.com/) is a general purpose search engine. We've created a platform called DuckDuckHack that enables developers to write open source plugins on top of the search engine (like [add-ons for Firefox](https://addons.mozilla.org/en-US/firefox/addon/duckduckgo-ssl/?src=search)). DuckDuckGo plugins react to search queries and provide [useful](https://duckduckgo.com/?q=%40duckduckgo) [instant](https://duckduckgo.com/?q=roman+xvi) [answers](https://duckduckgo.com/?q=private+ips) above traditional links.
 
 DuckDuckHack is very much a work in progress. Some plugin types have better interfaces than others. We will be improving the platform based on [your feedback](https://fiesta.cc/~duckduckhack).
@@ -10,8 +12,8 @@ This site will always have the latest platform information.
 * For ongoing discussion: [DuckDuckHack list](https://www.listbox.com/subscribe/?list_id=197814)
 
 
-Why should I make plugins?
-===
+## Why should I make plugins?
+
 We hope you will consider making DuckDuckGo plugins to:
 
 * Improve results in areas you personally search and care about, e.g. [programming documentation](https://duckduckgo.com/?q=perl+split), [gaming](https://duckduckgo.com/?q=roll+3d12+%2B+4) or [entertainment](https://duckduckgo.com/?q=xkcd).
@@ -20,8 +22,8 @@ We hope you will consider making DuckDuckGo plugins to:
 * Attribution [on our site](https://duckduckgo.com/goodies.html) and [Twitter](https://twitter.com/duckduckhack) (working on more).
 * See your code live on a [growing](https://duckduckgo.com/traffic.html) search engine!
 
-Overview
-====
+##Overview
+
 There are currently four types of DuckDuckGo plugins:
 
 ### Goodies &mdash; calculations and cheat sheets.
@@ -53,8 +55,8 @@ There are currently four types of DuckDuckGo plugins:
  * Involves: formatting data sets to answer general queries.
 
 
-Getting Started
-===
+## Getting Started
+
 
 **Step 1.** &nbsp;Decide what you want to work on. If you don't have any ideas, [start here](http://ideas.duckduckhack.com/).
 
