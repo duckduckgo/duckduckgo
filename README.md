@@ -136,7 +136,7 @@ Make a new file in the **lib/DDG/Goodie/** directory for Goodies or the **lib/DD
 Type this command at the command line.
 
 ```txt
-duckpan goodie test
+duckpan query
 ```
 
 First, this command will output all of the plugins available in your local plugin repository.
