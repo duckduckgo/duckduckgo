@@ -86,7 +86,7 @@ Before reading this section, make sure you've at least worked through the [basic
 
 ----
 
-**Step 1.** &nbsp;Install our DuckDuckHack utility called [duckpan](https://metacpan.org/module/duckpan):
+**Step 1.** &nbsp;Install our DuckDuckHack utility called [duckpan](https://metacpan.org/module/App::DuckPAN):
 
 ```bash
 curl http://duckpan.org/install.pl | perl
