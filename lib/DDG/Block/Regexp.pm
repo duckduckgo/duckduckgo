@@ -25,11 +25,6 @@ sub parse_trigger {
 	return $triggers;
 }
 
-=method request
-
-
-=cut
-
 sub request {
 	my ( $self, $request ) = @_;
 	my @results;
@@ -40,7 +35,7 @@ sub request {
 			for my $attr (keys %{$trigger}) {
 				for (@{$trigger->{$attr}}) {
 					if ( my @matches = $request->$attr =~ m/$_/ ) {
-						push @results, $plugin->handle_request_matches($request,@matches);
+						push @results, $self->handle_request_matches($plugin,$request,@matches);
 						return @results if $self->return_one && @results;
 					}
 				}

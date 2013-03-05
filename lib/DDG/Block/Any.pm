@@ -20,8 +20,8 @@ sub request {
 	for (@{$self->plugin_objs}) {
 		my $trigger = $_->[0];
 		my $plugin = $_->[1];
-		push @results, $plugin->handle_request_matches($request,0);
-		return @results if $self->return_one;
+		push @results, $self->handle_request_matches($plugin,$request,0);
+		return @results if $self->return_one && @results;
 	}
 	return @results;
 }
