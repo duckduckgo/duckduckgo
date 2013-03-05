@@ -100,7 +100,6 @@ sub _build__words_plugins {{
 sub request {
 	my ( $self, $request ) = @_;
 	my @results;
-	$self->trace( "Query raw: ", "'".$request->query_raw."'" );
 	#
 	# Mapping positions of keywords in the request
 	# to a flat array which we can access stepwise.
@@ -170,7 +169,10 @@ sub request {
 						if (defined $hitstruct->{$word_count}->{$sofar_word}) {
 							for (@{$hitstruct->{$word_count}->{$sofar_word}}) {
 								push @results, $self->handle_request_matches($_,$request,$pos);
-								return @results if $self->return_one && @results;
+								if ($self->return_one && @results) {
+									$self->trace("Got return_one and ".(scalar @results)." results, finishing here");
+									return @results;
+								}
 							}
 						}
 					}
@@ -188,7 +190,10 @@ sub request {
 								if (defined $hitstruct->{$word_count}->{$new_next_word}) {
 									for (@{$hitstruct->{$word_count}->{$new_next_word}}) {
 										push @results, $self->handle_request_matches($_,$request,( $pos < $next_pos ) ? ( $pos,$next_pos ) : ( $next_pos,$pos ));
-										return @results if $self->return_one && @results;
+										if ($self->return_one && @results) {
+											$self->trace("Got return_one and ".(scalar @results)." results, finishing here");
+											return @results;
+										}
 									}
 								}
 								push @new_next_words, $new_next_word;
@@ -198,8 +203,13 @@ sub request {
 					}
 				}
 				if (defined $hitstruct->{1}) {
-					push @results, $self->handle_request_matches($_,$request,$poses[$cnt]) for @{$hitstruct->{1}};
-					return @results if $self->return_one && @results;
+					for (@{$hitstruct->{1}}) {
+						push @results, $self->handle_request_matches($_,$request,$poses[$cnt]);
+						if ($self->return_one && @results) {
+							$self->trace("Got return_one and ".(scalar @results)." results, finishing here");
+							return @results;
+						}
+					}
 				}
 			} else {
 				$self->trace("No hit with","'".$word."'");

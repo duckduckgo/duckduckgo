@@ -37,6 +37,8 @@ sub request {
 					if ( my @matches = $request->$attr =~ m/$_/ ) {
 						push @results, $self->handle_request_matches($plugin,$request,@matches);
 						return @results if $self->return_one && @results;
+					} else {
+						$self->trace("No match with",ref $plugin);
 					}
 				}
 			}

@@ -177,7 +177,6 @@ BEGIN {
 			wo => [zci('collide','collideone'),zci('collide','collidetwo')],
 			re => [],
 		},
-	    # Triggers multiple plugins.
 	    'or two' => {
 			wo => [zci('or|two','woblockarr'), zci('or','woblocktwo')], 
 			re => [],
@@ -194,7 +193,43 @@ BEGIN {
 		my @re_result = $re_block->request($request);
 		is_deeply(\@re_result,$expect->{re} ? $expect->{re} : [],'Testing regexp block result of query "'.$query.'"');
 	}
+
+
+	my $one_words_block = DDG::Block::Words->new({
+		plugins => $words_plugins,
+		return_one => 1,
+	});
+
+	isa_ok($one_words_block,'DDG::Block::Words');
+
+	my @one_queries = (
+		'aROUNd two' => {
+			wo => [zci('two','woblockone')],
+			re => [],
+		},
+		'  a    or     b   or        c  ' => {
+			wo => [zci('a|or|b|or|c','woblockarr')],
+			re => [],
+		},
+		'collide' => {
+			wo => [zci('collide','collideone')],
+			re => [],
+		},
+	    'or two' => {
+			wo => [zci('or|two','woblockarr')], 
+			re => [],
+	    },
+
+	);
 	
+	while (@one_queries) {
+		my $query = shift @one_queries;
+		my $expect = shift @one_queries;
+		my $request = DDG::Request->new({ query_raw => $query });
+		my @words_result = $one_words_block->request($request);
+		is_deeply(\@words_result,$expect->{wo} ? $expect->{wo} : [],'Testing words block result of query "'.$query.'"');
+	}
+		
 }
 
 done_testing;

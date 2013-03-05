@@ -13,6 +13,12 @@ requires qw(
 sub BUILD {
 	my ( $self ) = @_;
 	$self->_plugin_objs;
+	$self->trace('Loaded block',
+		ref $self,
+		map {
+			$_.':'.( $self->$_ ? 1 : 0 ),
+		} qw( return_one allow_missing_plugins allow_duplicate ),
+	);
 }
 
 =head1 SYNOPSIS
@@ -133,8 +139,9 @@ has debug_trace => (
 );
 
 sub trace {
-	return unless shift->debug_trace;
-	print STDERR ('[DDG_BLOCK_TRACE] ',join(" ",@_),"\n");
+	my $self = shift;
+	return unless $self->debug_trace;
+	print STDERR ("[".(ref $self)."] ",join(" ",map { defined $_ ? $_ : 'undef' } @_),"\n");
 }
 
 =attr before_build
@@ -307,7 +314,14 @@ sub handle_request_matches {
 		}
 	}
 	push @{$request->seen_plugins}, $plugin_class;
-	return $plugin->handle_request_matches($request, @args);
+	my @results = $plugin->handle_request_matches($request, @args);
+	$self->trace("Got",scalar @results,"results");
+	return @results;
 }
+
+before request => sub {
+	my ( $self, $request ) = @_;
+	$self->trace( "Query raw:", "'".$request->query_raw."'" );
+};
 
 1;
