@@ -169,6 +169,7 @@ sub request {
 					for my $sofar_word (@sofar_words) {
 						if (defined $hitstruct->{$word_count}->{$sofar_word}) {
 							for (@{$hitstruct->{$word_count}->{$sofar_word}}) {
+								$self->trace('Handle request matches:',ref $_,"'".$request->query_raw."'",$pos);
 								push @results, $self->handle_request_matches($_,$request,$pos);
 								return @results if $self->return_one && @results;
 							}
@@ -187,6 +188,7 @@ sub request {
 									: join(" ",$next_trigger,$current_sofar_word);
 								if (defined $hitstruct->{$word_count}->{$new_next_word}) {
 									for (@{$hitstruct->{$word_count}->{$new_next_word}}) {
+										$self->trace('Handle request matches:',ref $_,"'".$request->query_raw."'",( $pos < $next_pos ) ? ( $pos,$next_pos ) : ( $next_pos,$pos ));
 										push @results, $self->handle_request_matches($_,$request,( $pos < $next_pos ) ? ( $pos,$next_pos ) : ( $next_pos,$pos ));
 										return @results if $self->return_one && @results;
 									}
@@ -198,6 +200,7 @@ sub request {
 					}
 				}
 				if (defined $hitstruct->{1}) {
+					$self->trace('Handle request matches:',ref $_,"'".$request->query_raw."'",$poses[$cnt]);
 					push @results, $self->handle_request_matches($_,$request,$poses[$cnt]) for @{$hitstruct->{1}};
 					return @results if $self->return_one && @results;
 				}

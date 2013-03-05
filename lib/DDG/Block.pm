@@ -300,7 +300,10 @@ sub handle_request_matches {
 	my ( $self, $plugin, $request, @args ) = @_;
 	my $plugin_class = ref $plugin;
 	unless ($self->allow_duplicate) {
-		return () if grep { $_ eq $plugin_class } @{$request->seen_plugins};
+		if (grep { $_ eq $plugin_class } @{$request->seen_plugins}) {
+			$self->trace("The request already saw","'".$plugin_class."'");
+			return ();
+		}
 	}
 	push @{$request->seen_plugins}, $plugin_class;
 	return $plugin->handle_request_matches($request, @args);
