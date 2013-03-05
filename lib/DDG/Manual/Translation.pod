@@ -1,8 +1,7 @@
+# PODNAME: DDG::Manual::Translation
+# ABSTRACT: Overview of the translation system of DuckDuckGo
+
 =encoding utf-8
-
-=head1 NAME
-
-DDG::Manual::Translation - Overview of the translation system of DuckDuckGo
 
 =head1 THE MISSION
 

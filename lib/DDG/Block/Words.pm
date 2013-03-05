@@ -7,7 +7,7 @@ with qw( DDG::Block );
 
 sub BUILD {
 	my ( $self ) = @_;
-	for (reverse @{$self->plugin_objs}) {
+	for (@{$self->plugin_objs}) {
 		my $triggers = $_->[0];
 		my $plugin = $_->[1];
 		for (@{$triggers}) {
@@ -63,10 +63,12 @@ sub _set_word_plugin {
 	my $word_count = scalar @split_word;
 	$self->_words_plugins->{$type}->{$key} = {} unless defined $self->_words_plugins->{$type}->{$key};
 	if ($word_count eq 1) {
-		$self->_words_plugins->{$type}->{$key}->{1} = $plugin;
+		$self->_words_plugins->{$type}->{$key}->{1} = [] unless defined $self->_words_plugins->{$type}->{$key}->{$word_count};
+		push @{$self->_words_plugins->{$type}->{$key}->{1}}, $plugin;
 	} else {
 		$self->_words_plugins->{$type}->{$key}->{$word_count} = {} unless defined $self->_words_plugins->{$type}->{$key}->{$word_count};
-		$self->_words_plugins->{$type}->{$key}->{$word_count}->{$word} = $plugin;
+		$self->_words_plugins->{$type}->{$key}->{$word_count}->{$word} = [] unless defined $self->_words_plugins->{$type}->{$key}->{$word_count}->{$word};
+		push @{$self->_words_plugins->{$type}->{$key}->{$word_count}->{$word}}, $plugin;
 	}
 }
 
@@ -98,13 +100,46 @@ sub _build__words_plugins {{
 sub request {
 	my ( $self, $request ) = @_;
 	my @results;
+	$self->trace( "Query raw: ", "'".$request->query_raw."'" );
+	#
+	# Mapping positions of keywords in the request
+	# to a flat array which we can access stepwise.
+	#
+	# So @poses is an array of the positions inside
+	# the triggers hash.
+	#
+	################################################
 	my %triggers = %{$request->triggers};
 	my $max = scalar keys %triggers;
 	my @poses = sort { $a <=> $b } keys %triggers;
+	$self->trace( "Trigger word positions: ", @poses );
 	for my $cnt (0..$max-1) {
+		#
+		# We do split up this into a flat array to have it
+		# easier to determine if the query is starting, ending
+		# or still in the beginning, this is very essential
+		# for the following steps.
+		#
 		my $start = $cnt == 0 ? 1 : 0;
 		my $end = $cnt == $max-1 ? 1 : 0;
 		for my $word (@{$request->triggers->{$poses[$cnt]}}) {
+			$self->trace( "Testing word:", "'".$word."'" );
+			#
+			# Checking if any of the plugins have this specific word
+			# in the start end or any trigger. start and end of course
+			# only if its first or last word in the query.
+			#
+			# It gives back a touple of 2 elements, a bool which defines
+			# if there COULD BE more words after it (so this fits for
+			# any and start triggers), the second is the part of the
+			# prepared trigger set of the blocks which is responsible
+			# for this word.
+			#
+			# The keys inside the hitstruct define the words count it
+			# additional carries. This allows to kick out the ones which
+			# are not fitting anymore into the length of the query (by
+			# wordcount)
+			#
 			if (my ( $begin, $hitstruct ) =
 					$start && defined $self->_words_plugins->{start}->{$word}
 						? ( 1 => $self->_words_plugins->{start}->{$word} )
@@ -113,12 +148,31 @@ sub request {
 							: defined $self->_words_plugins->{any}->{$word}
 								? ( 1 => $self->_words_plugins->{any}->{$word} )
 								: undef) {
+			######################################################
+				$self->trace("Got a hit with","'".$word."'","!", $begin ? "And it's just the beginning..." : "");
+				#
+				# $cnt is the specific position inside our flat array of
+				# positions inside the query.
+				#
 				my $pos = $poses[$cnt];
+				#
+				# This for loop is only executed if for the specific word
+				# that is triggered is having "more then one word" triggers
+				# that are attached to it. In this case it iterates through
+				# all those different combination and tries to match it
+				# with the request of the query.
+				#
 				for my $word_count (sort { $b <=> $a } grep { $_ > 1 } keys %{$hitstruct}) {
+				############################################################
+					$self->trace( "Checking additional multiword triggers with length of", $word_count);
 					my @sofar_words = @{$triggers{$pos}};
-					for (@sofar_words) {
-						push @results, $hitstruct->{$word_count}->{$_}->handle_request_matches($request,$pos) if defined $hitstruct->{$word_count}->{$_};
-						return @results if $self->return_one && @results;
+					for my $sofar_word (@sofar_words) {
+						if (defined $hitstruct->{$word_count}->{$sofar_word}) {
+							for (@{$hitstruct->{$word_count}->{$sofar_word}}) {
+								push @results, $self->handle_request_matches($_,$request,$pos);
+								return @results if $self->return_one && @results;
+							}
+						}
 					}
 					my @next_poses_key = grep { $_ >= 0 } $begin ? ($cnt+1)..($cnt+$word_count-1) : ($cnt-$word_count-1)..($cnt-1);
 					my @next_poses = grep { defined $_ && defined $triggers{$_} } @poses[@next_poses_key];
@@ -131,16 +185,24 @@ sub request {
 								my $new_next_word = $begin
 									? join(" ",$current_sofar_word,$next_trigger)
 									: join(" ",$next_trigger,$current_sofar_word);
-								push @results, $hitstruct->{$word_count}->{$new_next_word}->handle_request_matches($request,( $pos < $next_pos ) ? ( $pos,$next_pos ) : ( $next_pos,$pos ) ) if defined $hitstruct->{$word_count}->{$new_next_word};
-								return @results if $self->return_one && @results;
+								if (defined $hitstruct->{$word_count}->{$new_next_word}) {
+									for (@{$hitstruct->{$word_count}->{$new_next_word}}) {
+										push @results, $self->handle_request_matches($_,$request,( $pos < $next_pos ) ? ( $pos,$next_pos ) : ( $next_pos,$pos ));
+										return @results if $self->return_one && @results;
+									}
+								}
 								push @new_next_words, $new_next_word;
 							}
 						}
 						push @sofar_words, @new_next_words;
 					}
 				}
-				push @results, $hitstruct->{1}->handle_request_matches($request,$poses[$cnt]) if defined $hitstruct->{1};
-				return @results if $self->return_one && @results;
+				if (defined $hitstruct->{1}) {
+					push @results, $self->handle_request_matches($_,$request,$poses[$cnt]) for @{$hitstruct->{1}};
+					return @results if $self->return_one && @results;
+				}
+			} else {
+				$self->trace("No hit with","'".$word."'");
 			}
 		}
 	}

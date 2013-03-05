@@ -57,6 +57,8 @@ BEGIN {
 		DDGTest::Goodie::WoBlockTwo
 		DDGTest::Goodie::WoBlockThree
 		DDGTest::Goodie::WoBlockArr
+		DDGTest::Goodie::CollideOne
+		DDGTest::Goodie::CollideTwo
 	)];
 	my $before_wp = 0;
 	my $after_wp = 0;
@@ -104,7 +106,7 @@ BEGIN {
 
 	my @queries = (
 		'aROUNd two' => {
-			wo => [zci('two','woblockone')],
+			wo => [zci('two','woblockone'),zci('aROUNd','woblocktwo')],
 			re => [],
 		},
 		'wikipedia blub' => {
@@ -171,11 +173,14 @@ BEGIN {
 			wo => [zci('a|or|b|or|c','woblockarr')],
 			re => [],
 		},
-
+		'collide' => {
+			wo => [zci('collide','collideone'),zci('collide','collidetwo')],
+			re => [],
+		},
 	    # Triggers multiple plugins.
 	    'or two' => {
-		wo => [zci('or|two','woblockarr'), zci('or','woblocktwo')], 
-		re => [],
+			wo => [zci('or|two','woblockarr'), zci('or','woblocktwo')], 
+			re => [],
 	    },
 
 	);

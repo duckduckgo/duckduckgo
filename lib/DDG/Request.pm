@@ -350,6 +350,21 @@ has wordcount => (
 );
 sub _build_wordcount { scalar @{shift->words} }
 
+=attr seen_plugins
+
+This array contains all the plugins which already worked with this request.
+This means all the plugins which are triggered. If they gave back a result or
+not, doesn't matter here. This list is used by L<DDG::Block/allow_duplicate>.
+
+=cut
+
+has seen_plugins => (
+	is => 'rw',
+	lazy => 1,
+	builder => '_build_seen_plugins',
+);
+sub _build_seen_plugins {[]}
+
 #
 # LANGUAGE / LOCATION / IP
 #
