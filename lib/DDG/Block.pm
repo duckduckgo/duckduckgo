@@ -299,6 +299,7 @@ which is implemented there via L<DDG::Meta::RequestHandler>.
 sub handle_request_matches {
 	my ( $self, $plugin, $request, @args ) = @_;
 	my $plugin_class = ref $plugin;
+	$self->trace('Handle request matches:',$plugin_class,"'".$request->query_raw."'",@args);
 	unless ($self->allow_duplicate) {
 		if (grep { $_ eq $plugin_class } @{$request->seen_plugins}) {
 			$self->trace("The request already saw","'".$plugin_class."'");
