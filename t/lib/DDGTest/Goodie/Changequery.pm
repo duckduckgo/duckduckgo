@@ -8,16 +8,8 @@ use DDG::Goodie;
 
 triggers startend => 'duckduckgo','ios';
 
-# list of trigger words
-my $words = 'ios';
-
 handle query_raw => sub {
-	if (m/$words/i){
-		my $query = $_;
-		s/$words//ig;
-		return $query if length $_ > 1;
-	}
-	return;
+	s/.+//ig;
 };
 
 1;
