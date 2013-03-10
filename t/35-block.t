@@ -200,8 +200,6 @@ BEGIN {
 		return_one => 1,
 	});
 
-	isa_ok($one_words_block,'DDG::Block::Words');
-
 	my @one_queries = (
 		'aROUNd two' => {
 			wo => [zci('two','woblockone')],
@@ -228,6 +226,19 @@ BEGIN {
 		my $request = DDG::Request->new({ query_raw => $query });
 		my @words_result = $one_words_block->request($request);
 		is_deeply(\@words_result,$expect->{wo} ? $expect->{wo} : [],'Testing words block result of query "'.$query.'"');
+	}
+
+	# evil test for a plugin that somehow manages to change the query
+	# on the processing...
+	{
+		my $query_change = DDG::Block::Words->new({
+			plugins => [qw( DDGTest::Goodie::Changequery )],
+			return_one => 1,
+		});
+		my $request = DDG::Request->new({ query_raw => 'duckduckgo ios' });
+		is($request->query_raw,'duckduckgo ios','Query is fine before query_change block');
+		my @words_result = $query_change->request($request);
+		is($request->query_raw,'duckduckgo ios','Query is still fine after query_change block');
 	}
 		
 }

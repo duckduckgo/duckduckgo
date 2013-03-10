@@ -141,8 +141,10 @@ has debug_trace => (
 sub trace {
 	my $self = shift;
 	return unless $self->debug_trace;
-	print STDERR ("[".(ref $self)."] ",join(" ",map { defined $_ ? $_ : 'undef' } @_),"\n");
+	print STDERR ("[".$self->trace_name."] ",join(" ",map { defined $_ ? $_ : 'undef' } @_),"\n");
 }
+
+sub trace_name { ref(shift) }
 
 =attr before_build
 
@@ -319,9 +321,13 @@ sub handle_request_matches {
 	return @results;
 }
 
-before request => sub {
+around request => sub {
+	my $orig = shift;
 	my ( $self, $request ) = @_;
 	$self->trace( "Query raw:", "'".$request->query_raw."'" );
+	my @results = $orig->(@_);
+	$self->trace( "Query", "'".$request->query_raw."'", "produced", scalar @results, "results" );
+	return @results;
 };
 
 1;
