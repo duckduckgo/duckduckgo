@@ -6,11 +6,8 @@ DuckDuckHack Developer Overview
 
 DuckDuckHack is very much a work in progress. Some plugin types have better interfaces than others. We will be improving the platform based on [your feedback](https://fiesta.cc/~duckduckhack).
 
-This site will always have the latest platform information.
-
 * For new plugins, follow [@duckduckhack](https://twitter.com/duckduckhack)
 * For ongoing discussion: [DuckDuckHack list](https://www.listbox.com/subscribe/?list_id=197814)
-
 
 ## Why should I make plugins?
 
@@ -54,13 +51,34 @@ There are currently four types of DuckDuckGo plugins:
  * Languages: Perl, Node, Ruby, Python (maybe others)
  * Involves: formatting data sets to answer general queries.
 
+---
+
+## How to follow the Documentation
+This repo contains all plugin-agnostic information that you'll need. In the Getting Started section below, you'll find overviews and documentation trails for Spice and Goodie plugins. These two plugin types have more well-defined processes and you just have to follow the list of links in order to learn all you need to know. For Fathead and Longtail plugins, you should see their individual repositories for how-to instructions (linked in Getting Started). The zeroclickinfo-goodies and zeroclickinfo-spice repositories each contain more detailed information on their respective plugin types and their readme's are linked to from the tracks below. At the end of a section in one of these repos, there will always be a link that will take you back to this page and the documentation trail that you have been following.
+
+---
 
 ## Getting Started
 
 
 **Step 1.** &nbsp;Decide what you want to work on. If you don't have any ideas, [start here](http://ideas.duckduckhack.com/).
 
-**Step 2.** &nbsp;Figure out your plugin type (see Plugin Types above). If the right type is not obvious, please <a href="FAQ.md">ask us</a>. Sometimes multiple plugin types could work, and we can help you figure out which one would work best.
+**Step 2.** &nbsp;Figure out your plugin type (see Plugin Types above). If the right type is not obvious, please <a href="FAQ.md">ask us</a>. Sometimes multiple plugin types could work, and we can help you figure out which one would work best. Consider the following when choosing what type of plugin to make.
+
+#### Guidelines
+* DuckDuckGo plugins appear at the top of search results pages, which is a **sacred space!** Please follow these guidelines to ensure the quickest path to going live.
+
+* **Use the right [plugin type](#overview)**.  If your plugin uses external APIs in real time, it should be Spice.
+
+* **Better than links**.  Since instant answers are above the traditional links, they should be unambiguously better than them.
+
+* **No false positives**.  A false positive is an irrelevant instant answer. Only return an instant answer when you know it is good, and otherwise return nothing.
+
+* **Minimize vertical space**.  Only include the most important information and then offer the user to click through for more if needed.
+
+* **Readable answers**.  If textual, create sentences or short statements that users can actually read.
+
+* **Consistent design**.  When in doubt, copy what already exists or ask us! 
 
 **Step 3.** &nbsp;Fork the right repository ([GitHub instructions](http://help.github.com/fork-a-repo/)):
 
@@ -71,20 +89,172 @@ There are currently four types of DuckDuckGo plugins:
 
 **Step 4.** &nbsp;Now it's choose-your-own-adventure time!
 
- * For **Goodies** or **Spice**, proceed to the [Basic tutorial](https://github.com/duckduckgo/zeroclickinfo-goodies) in the Goodies repository.
+ * For **Goodies**, check out the [Goodies Overview](#goodies-overview) below. This will give you a list of links to other pages that will guide you through the goodie process.
+ * For **Spice**, proceed to the [Spice Overview](#spice-overview) below. This section will walk you through everything you need to build a basic spice plugin.
 
  * For **Fathead**, check out the Readme in the [fathead repository](https://github.com/duckduckgo/zeroclickinfo-fathead).
  * For **Longtail**, check out the Readme in the [longtail repository](https://github.com/duckduckgo/zeroclickinfo-longtail).
 
-Advanced Stuff
-===
+## Goodies Overview
+Follow this list to go through the goodie progression.
 
-## Testing Triggers
-### Pre-requisites:
-Before reading this section, make sure you've at least worked through the [basic tutorial](https://github.com/duckduckgo/zeroclickinfo-goodies/blob/master/README.md#basic-tutorial).
+1. **[Basic Tutorial](#basic-tutorial)** -- this will show you the fundamentals of making a plugin. It's a simple walkthrough-by-example and gives a good introduction to the system.
+2. **[Testing Triggers](#testing-triggers)** -- this will lead you through how to use duckpan, our command-line utility, to test the plugins that you've written and make sure your triggers are working properly.
+3. **[Submitting Plugins](#submitting-plugins)** -- this section guides you through the plugin submission process, and is the last section that you need to gain a basic understanding of the entire process.
+4. Once you're familiar with the above three sections, it's time to move on the [Goodies repository](https://github.com/duckduckgo/zeroclickinfo-goodies), which contains information about advanced goodie creation, and the [Advanced section](#advanced) of the plugin-agnostic docs (this page).
+
+## Spice Overview
+Follow this list to go through the spice progression.
+
+1. **[Basic Tutorial](#basic-tutorial)** -- this will show you the fundamentals of making a plugin. It's a simple walkthrough-by-example and gives a good introduction to the system.
+2. **[Spice Handle Functions](https://github.com/duckduckgo/zeroclickinfo-spice#spice-handle-functions)** -- this section provides an overview of the different variables that a spice plugin can process.
+3. **[Testing Triggers](#testing-triggers)** -- this will lead you through how to use duckpan, our command-line utility, to test the plugins that you've written and make sure your triggers are working properly.
+4. **[Spice Callback Functions](https://github.com/duckduckgo/zeroclickinfo-spice#spice-callback-functions)** -- this section explains how JavaScript callback functions are generated by the plugin system.
+5. **[Testing Spice](https://github.com/duckduckgo/zeroclickinfo-spice#testing-spice)** -- this section introduces you to the spice testing process.
+6. **[Submitting Plugins](#submitting-plugins)** -- this section guides you through the plugin submission process, and is the last section that you need to gain a basic understanding of the entire process.
+7. Once you're familiar with the above sections, it's time to move on the [Spice repository](https://github.com/duckduckgo/zeroclickinfo-spice#advanced-spice), which contains an advanced section with information about more involved spice creation, and the [Advanced section](#advanced) of the plugin-agnostic docs (this page).
+
+## Basic Tutorial
+
+In this tutorial, we'll be making a Goodie plugin that checks the number of characters in a given search query. The end result will look [like this](https://github.com/duckduckgo/zeroclickinfo-goodies/blob/master/lib/DDG/Goodie/Chars.pm) and works [like this](https://duckduckgo.com/?q=chars+How+many+characters+are+in+this+sentence%3F). The same framework is used to trigger Spice plugins.
+
+Let's begin. Open a text editor like [gedit](http://projects.gnome.org/gedit/), notepad or [emacs](http://www.gnu.org/software/emacs/) and type the following:
+
+```perl
+package DDG::Goodie::Chars;
+# ABSTRACT: Give the number of characters (length) of the query.
+```
+
+Each plugin is a [Perl package](https://duckduckgo.com/?q=perl+package), so we start by declaring the package namespace. In a new plugin, you would change **Chars** to the name of the new plugin (written in [CamelCase](https://duckduckgo.com/?q=camelcase) format).
+
+The second line is a special comment line that gets parsed automatically to make nice documentation (by [Dist::Zilla](https://metacpan.org/module/Dist::Zilla)).
+
+Next, type the following [use statement](https://duckduckgo.com/?q=perl+use) to import [the magic behind](https://github.com/duckduckgo/duckduckgo/tree/master/lib/DDG) our plugin system.
+
+```perl
+use DDG::Goodie;
+```
+
+---
+
+#### A Note on Modules
+Right after the above line, you should include any Perl modules that you'll be leveraging to help generate the answer. Make sure you add those modules to the dist.ini file in this repository.
+If you're not using any additional modules, carry on!
+
+----
+
+Now here's where it gets interesting. Type:
+
+```perl
+triggers start => 'chars';
+```
+
+**triggers** are keywords that tell us when to make the plugin run. They are _trigger words_. When a particular trigger word is part of a search query, it tells DuckDuckGo to _trigger_ the appropriate plugins.
+
+In this case there is one trigger word: **chars**. Let's say someone searched "chars this is a test." **chars** is the first word so it would trigger our Goodie. The **start** keyword says, "Make sure the trigger word is at the start of the query." The **=>** symbol is there to separate the trigger words from the keywords (for readability).
+
+Now type in this line:
+
+```perl
+handle remainder => sub {
+```
+
+Once triggers are specified, we define how to _handle_ the query. **handle** is another keyword, similar to triggers.
+
+You can _handle_ different aspects of the search query, but the most common is the **remainder**, which refers to the rest of the query (everything but the triggers). For example, if the query was _"chars this is a test"_, the trigger would be _chars_ and the remainder would be _this is a test_.
+
+Now let's add a few more lines to complete the handle function.
+
+```perl
+handle remainder => sub {
+    return 'Chars: ' . length $_ if $_;
+    return;
+};
+```
+
+This function (the part within the **{}** after **sub**) is the meat of the Goodie. It generates the instant answer that is displayed at the top of the [search results page](https://duckduckgo.com/?q=chars+this+is+a+test).
+
+Whatever you are handling is passed to the function in the **$_** variable ( **$_** is a special default variable in Perl that is commonly used to store temporary values). For example, if you searched DuckDuckGo for _"chars this is a test"_, the value of **$_** will be _"this is a test"_, i.e. the remainder.
+
+Let's take a closer look at the first line of the function.
+
+```perl
+return 'Chars: ' . length $_ if $_;
+```
+
+The heart of the function is just this one line. The **remainder** is in the **$_** variable as discussed. If it is not blank ( **if $_** ), we return the number of chars using Perl's built-in [length function](https://duckduckgo.com/?q=perl+length).
+
+Perl has a lot of built-in functions, as well as thousands and thousands of modules available [via CPAN](https://metacpan.org/). You can leverage these modules when making Goodies, similar to how the [Roman Goodie](https://github.com/duckduckgo/zeroclickinfo-goodies/blob/master/lib/DDG/Goodie/Roman.pm) uses the [Roman module](https://metacpan.org/module/Roman).
+
+If we are unable to provide a good instant answer, we simply **return** nothing. And that's exactly what the second line in the function does.
+
+```perl
+return;
+```
+
+This line is only run if **$_** contained nothing, because otherwise the line before it would return something and end the function.
+
+Now, below your function type the following line:
+
+```perl
+zci is_cached => 1;
+```
+
+This line is optional. Goodies technically return a [ZeroClickInfo object](https://metacpan.org/module/WWW::DuckDuckGo::ZeroClickInfo) (abbreviated as **zci**). This effect happens transparently by default, but you can override this default behavior via the **zci** keyword.
+
+We set **is_cached** to true (0 is false, 1 is true) because this plugin will always return the same answer for the same query. This speeds up future answers by caching them (saving previous answers).
+
+Finally, all Perl packages that load correctly should [return a true value](http://stackoverflow.com/questions/5293246/why-the-1-at-the-end-of-each-perl-package) so add a 1 on the very last line.
+
+```perl
+1;
+```
+
+And that's it! At this point you have a working DuckDuckHack Goodie plugin. It should look like this:
+
+```perl
+package DDG::Goodie::Chars;
+# ABSTRACT: Give the number of characters (length) of the query.
+
+use DDG::Goodie;
+
+triggers start => 'chars';
+
+handle remainder => sub {
+    return 'Chars: ' . length $_ if $_;
+    return;
+};
+
+zci is_cached => 1;
+
+1;
+```
+### Review
+The plugin system works like this at the highest level:
+
+* We break the query (search terms) into words. This process happens in the background.
+
+* We see if any of those words are **triggers** (trigger words). These are provided by each of the plugins. In the example, the trigger word is **chars**.
+
+* If a Goodie plugin is triggered, we run its **handle** function.
+
+* If the Goodie's handle function outputs an instant answer via a **return** statement, we pass it back to the user.
+
+### Where to go from here
+
+Click to return to the [Goodies Overview](#goodies-overview) or the [Spice Overview](#spice-overview).
 
 
 ----
+
+Plugin-agnostic Information
+===
+---
+
+## Testing Triggers
+
+Before reading this section, make sure you've at least worked through the [basic tutorial](https://github.com/duckduckgo/duckduckgo#basic-tutorial).
+
 
 **Step 1.** &nbsp;Install our DuckDuckHack utility called [duckpan](https://metacpan.org/module/App::DuckPAN):
 
@@ -200,6 +370,260 @@ Query:
 
 ### Where to go now:
 
-* You may want to build a test file in the [Advanced trigger testing](#advanced-trigger-testing) section.
-* If you're making a **Goodie** plugin, you can go directly to the [Submitting plugins](#submitting-plugins) section.
-* If you're following along with the **Spice** plugin docs, you should go to the section on [Spice callback functions](https://github.com/duckduckgo/zeroclickinfo-spice/blob/master/README.md#spice-callback-functions).
+Click to return to the [Goodies Overview](#goodies-overview) or the [Spice Overview](#spice-overview).
+
+--- 
+## Submitting Plugins
+**Step 1.**  &nbsp;Commit your changes.
+
+```bash
+git commit -a -m "My first plugin that does X is ready to go!"
+```
+
+**Step 2.**  &nbsp;Get your commit history [how you like it](http://book.git-scm.com/4_interactive_rebasing.html).
+
+```
+git rebase -i origin/master
+```
+
+**Step 3.**  &nbsp;Push your forked repository back to GitHub.
+
+```
+git push
+```
+
+**Step 4.**  &nbsp;Go into GitHub and submit a [pull request!](http://help.github.com/send-pull-requests/) That will let us know about your plugin and start the conversation about integrating it into the live search engine.
+
+### Where to go now:
+You're pretty much done! Now it's time to learn the advanced stuff!
+Click to return to the [Goodies Overview](#goodies-overview) or the [Spice Overview](#spice-overview). Each of these sections has links to follow so you can read up on the more advanced facets of plugin development.
+
+===
+
+Advanced
+===
+----
+## Advanced Triggers
+In the [Basic tutorial](#basic-tutorial) we walked through a one word trigger and in the [Spice handle functions](https://github.com/duckduckgo/zeroclickinfo-spice#spice-handle-functions) section we walked through a simple regexp trigger.
+
+Here are some more advanced trigger techniques you may need to use:
+
+**Multiple trigger words**. &nbsp;Suppose you thought that in addition to _chars_, _numchars_ should also trigger the [Chars Goodie](https://github.com/duckduckgo/zeroclickinfo-goodies/blob/master/lib/DDG/Goodie/Chars.pm). You can simply add extra trigger words to the triggers definition.
+
+```perl
+triggers start => 'chars', 'numchars';
+```
+
+**Trigger locations.** &nbsp;The keyword after triggers, **start** in the Chars example, specifies where the triggers need to appear. Here are the choices:
+
+ * start - just at the start of the query
+ * end - just at the end of the query
+ * startend - at either end of the query
+ * any - anywhere in the query
+
+**Combining locations.** &nbsp;You can use multiple locations like in the [Drinks Spice](https://github.com/duckduckgo/zeroclickinfo-spice/blob/master/lib/DDG/Spice/Drinks.pm).
+
+```perl
+triggers any => "drink", "make", "mix", "recipe", "ingredients";
+triggers start => "mixing", "making";
+```
+
+**Regular Expressions.** &nbsp;As we walked through in the [Spice handle functions](https://github.com/duckduckgo/zeroclickinfo-spice#spice-handle-functions) section you can also trigger on a regular expression.
+
+```perl
+triggers query_lc => qr/^@([^\s]+)$/;
+```
+
+We much prefer you use trigger words when possible because they are faster on the backend. However, in some cases regular expressions are necessary, e.g. when you need to trigger on sub-words.
+
+**Regexp types.** &nbsp;Like trigger words, regular expression triggers have several keywords as well. In the above example **query_lc** was used, which operates on the lower case version of the full query. Here are the choices:
+
+ * **query_raw** - the actual (full) query
+ * **query** - with extra whitespace removed
+ * **query_lc** - lower case version of the query and extra whitespace removed
+ * **query_clean** - lower case with non alphanumeric ASCII and extra whitespace removed
+ * **query_nowhitespace** - with whitespace totally removed
+ * **query_nowhitespace_nodash** - with whitespace and dashes totally removed
+
+If you want to see some test cases where these types are enumerated check out our [internal test file](https://github.com/duckduckgo/duckduckgo/blob/master/t/15-request.t) that tests they are generated properly.
+
+**Two-word+ triggers** &nbsp;Right now trigger words only operate on single words. If you want to operate on a two or more word trigger, you have a couple of options.
+
+ * Use a regular expression trigger like in the [Expatistan Spice](https://github.com/duckduckgo/zeroclickinfo-spice/blob/master/lib/DDG/Spice/Expatistan.pm).
+
+```perl
+triggers query_lc => qr/cost of living/;
+```
+
+ * Use single word queries and then further qualify the query within the handle function as explained in the [Advanced handle functions](#advanced-handle-functions) section.
+
+## Advanced Handle Functions
+
+In the [Basic tutorial](#basic-tutorial) we walked through a simple query transformation and in the [Spice handle functions](https://github.com/duckduckgo/zeroclickinfo-spice#spice-handle-function) section we walked through a simple return of the query.
+
+Here are some more advanced handle techniques you may need to use:
+
+**Further qualifying the query.** &nbsp;Trigger words are blunt instruments; they may send you queries you cannot handle. As such, you generally need to further qualify the query (and return nothing in cases where the query doesn't really qualify for your goodie).
+
+There are number of techniques for doing so. For example, the first line of [Base Goodie](https://github.com/duckduckgo/zeroclickinfo-goodies/blob/master/lib/DDG/Goodie/Base.pm) has a return statement paired with unless.
+
+```perl
+return unless  /^([0-9]+)\s*(?:(?:in|as)\s+)?(hex|hexadecimal|octal|oct|binary|base\s*([0-9]+))$/;
+```
+
+You could also do it the other way, like the [GoldenRatio Goodie](https://github.com/duckduckgo/zeroclickinfo-goodies/blob/master/lib/DDG/Goodie/GoldenRatio.pm).
+
+```perl
+if ($input =~ /^(?:(?:(\?)\s*:\s*(\d+(?:\.\d+)?))|(?:(\d+(?:\.\d+)?)\s*:\s*(\?)))$/) {
+```
+
+Another technique is to use a hash to allow specific query strings, as the [GUID Goodie](https://github.com/duckduckgo/zeroclickinfo-goodies/blob/master/lib/DDG/Goodie/GUID.pm) does.
+
+```
+my %guid = (
+    'guid' => 0,
+    'uuid' => 1,
+    'globally unique identifier' => 0,
+    'universally unique identifier' => 1,
+    'rfc 4122' => 0,
+    );
+
+return unless exists $guid{$_};
+```
+
+**Handling the whole query.** &nbsp;In the Chars example, we handled the **remainder**. You can also handle:
+
+* **query_raw** - the actual (full) query
+* **query** - with extra whitespace removed
+* **query_parts** - like query but given as an array of words
+* **query_nowhitespace** - with whitespace totally removed
+* **query_nowhitespace_nodash** - with whitespace and dashes totally removed
+
+For example, the [Xor Goodie](https://github.com/duckduckgo/zeroclickinfo-goodies/blob/master/lib/DDG/Goodie/Xor.pm) handles query_raw and the [ABC Goodie](https://github.com/duckduckgo/zeroclickinfo-goodies/blob/master/lib/DDG/Goodie/ABC.pm) handles query_parts.
+
+**Using files**. &nbsp;You can use simple text/html input files for display or processing.
+
+```perl
+my @words = share('words.txt')->slurp;
+```
+
+The [Passphrase Goodie](https://github.com/duckduckgo/zeroclickinfo-goodies/blob/master/lib/DDG/Goodie/Passphrase.pm) does this for processing purposes and the [PrivateNetwork Goodie](https://github.com/duckduckgo/zeroclickinfo-goodies/blob/master/lib/DDG/Goodie/PrivateNetwork.pm) does it for display purposes.
+
+The files themselves go in the **/share/goodie/** directory.
+
+**Generating data files.** You may also need to generate data files. If you do so, please also include the generation scripts. These do not have to be done in Perl, and you can also put them within the **/share/goodie/** directory. For example, the [CurrencyIn Goodie](https://github.com/duckduckgo/zeroclickinfo-goodies/tree/master/share/goodie/currency_in) uses a Python script to generate the input data.
+
+
+There are a couple more sections on advanced handle techniques depending on [Plugin type](#overview):
+
+* For **Goodies**, check out the [Advanced Goodies](https://github.com/duckduckgo/zeroclickinfo-goodies#advanced-goodies) section.
+* For **Spice**, check out the [Advanced Spice handlers](https://github.com/duckduckgo/zeroclickinfo-spice#advanced-spice-handlers) section.
+
+## Advanced Testing
+The [testing triggers](#testing-triggers) section explained interactive testing. Before going live we also make programmatic tests for each plugin.
+
+**Step 1.** &nbsp;Add your plugin test file.
+
+Make a new file in the test directory **t/**. The name of the file is the name of your plugin, but this time followed by the extension **.t** for test because it is a Perl testing file. For example, if the name of your plugin was _TestPlugin_, the file would be _TestPlugin.t_.
+
+The top of the file reads like a normal Perl script with some use statements to include testing modules, including the DuckDuckGo testing module.
+
+```perl
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use Test::More;
+use DDG::Test::Goodie;
+```
+
+Then you define any default **zci** values that you set in your plugin.
+
+```perl
+zci answer_type => 'chars';
+zci is_cached => 1;
+```
+
+These should match exactly what you set in your **.pm** file.
+
+Next comes the actual testing function.
+
+```
+ddg_goodie_test(
+        [qw(
+                DDG::Goodie::Chars
+        )],
+        'chars test' => test_zci('Chars: 4'),
+        'chars this is a test' => test_zci('Chars: 14'),
+);
+```
+
+For each test, you include a line like this:
+
+```perl
+        'chars test' => test_zci('Chars: 4'),
+```
+
+The first part, **'chars test'** in this example, is the test query. The second part, **test_zci('Chars: 4')** calls the test function and checks if **Chars: 4** is the answer.
+
+Finally you end a testing file with this line.
+
+```perl
+done_testing;
+```
+
+The full file should look like this:
+
+```perl
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use Test::More;
+use DDG::Test::Goodie;
+
+zci answer_type => 'chars';
+zci is_cached => 1;
+
+ddg_goodie_test(
+        [qw(
+                DDG::Goodie::Chars
+        )],
+        'chars test' => test_zci('Chars: 4'),
+        'chars this is a test' => test_zci('Chars: 14'),
+);
+
+done_testing;
+```
+
+
+**Step 2.** &nbsp;Test your plugin programmatically.
+
+Run your plugin test file like this:
+
+```txt
+perl -Ilib t/Chars.t
+```
+
+If successful, you should see a lot of **ok** lines.
+
+```txt
+ubuntu@yegg:~/zeroclickinfo-goodies$ perl -Ilib t/Chars.t
+ok 1 - Testing query chars test
+ok 2 - Testing query chars this is a test
+1..2
+```
+
+If unsuccessful, you will see one or more **not ok** lines followed with some debugging output to help you chase down the error(s).
+
+```txt
+ok 1 - Testing query chars test
+not ok 2 - Testing query chars this is a test
+#   Failed test 'Testing query chars this is a test'
+#   at /usr/local/ddg.cpan/perl5/lib/perl5/DDG/Test/Goodie.pm line 69.
+#     Structures begin differing at:
+#          $got->{answer} = '14'
+#     $expected->{answer} = '15'
+1..2
+# Looks like you failed 1 test of 2.
+```
