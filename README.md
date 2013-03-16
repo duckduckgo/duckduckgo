@@ -459,7 +459,7 @@ triggers query_lc => qr/cost of living/;
 
 ## Advanced Handle Functions
 
-In the [Basic tutorial](#basic-tutorial) we walked through a simple query transformation and in the [Spice handle functions](https://github.com/duckduckgo/zeroclickinfo-spice#spice-handle-function) section we walked through a simple return of the query.
+In the [Basic tutorial](#basic-tutorial) we walked through a simple query transformation and in the [Spice handle functions](https://github.com/duckduckgo/zeroclickinfo-spice#spice-handle-functions) section we walked through a simple return of the query.
 
 Here are some more advanced handle techniques you may need to use:
 
