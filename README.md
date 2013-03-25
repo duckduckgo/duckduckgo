@@ -68,17 +68,17 @@ This repo contains all plugin-agnostic information that you'll need. In the Gett
 #### Guidelines
 * DuckDuckGo plugins appear at the top of search results pages, which is a **sacred space!** Please follow these guidelines to ensure the quickest path to going live.
 
-* **Use the right [plugin type](#overview)**.  If your plugin uses external APIs in real time, it should be Spice.
+* **Use the right [plugin type](#overview)**.  If your plugin uses external APIs in real time, it should be Spice. See the [Xkcd integration](https://duckduckgo.com/?q=xkcd) for an example.
 
-* **Better than links**.  Since instant answers are above the traditional links, they should be unambiguously better than them.
+* **Better than links**.  Since instant answers are above the traditional links, they should be unambiguously better than them. For example, the [Yummly integration](https://duckduckgo.com/?q=garlic+steak+recipe) shows recipes that are better than the links below.
 
-* **No false positives**.  A false positive is an irrelevant instant answer. Only return an instant answer when you know it is good, and otherwise return nothing.
+* **No false positives**.  A false positive is an irrelevant instant answer. Only return an instant answer when you know it is good, and otherwise return nothing. For example, the [Quixey plugin](http://ddg.gg/?q=flight+search+app) shouldn't show an answer for a query like "How to write an app."
 
 * **Minimize vertical space**.  Only include the most important information and then offer the user to click through for more if needed.
 
 * **Readable answers**.  If textual, create sentences or short statements that users can actually read.
 
-* **Consistent design**.  When in doubt, copy what already exists or ask us! 
+* **Consistent design**.  When in doubt, copy what already exists or ask us! We already have [a](http://ddg.gg/?q=garlic+steak+recipe) [few](http://ddg.gg/?q=xkcd) [cool](http://ddg.gg/?q=movies) [designs](http://ddg.gg/?q=flight+search+app).
 
 **Step 3.** &nbsp;Fork the right repository ([GitHub instructions](http://help.github.com/fork-a-repo/)):
 
