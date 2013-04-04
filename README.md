@@ -251,7 +251,7 @@ Plugin-agnostic Information
 ===
 ---
 ## Triggers
-There are two types of triggers, **words** and **regex**. The [basic tutorial](#basic-tutorial) walks through a simple example of a words trigger, while the [spice handle functions](https://github.com/duckduckgo/zeroclickinfo-spice#spice-handle-functions) section explains the Twitter regexp trigger.
+There are two types of triggers, **words** and **regex**. The [basic tutorial](#basic-tutorial) walks through a simple example of a words trigger. While you technically *can* use a regular expression as a trigger, we encourage you to use words triggers first, and then use a regexp to further qualify the query once the plugin has been called, like in the [Xkcd example](https://github.com/duckduckgo/zeroclickinfo-spice#spice-handle-functions) in the Spice Handle Functions section. Words triggers are several orders of magnitude faster than regexp triggers (a hash check vs. a regexp match).
 
 ### Words Triggers
 ```
@@ -266,7 +266,7 @@ You can combine several trigger statements if, for example, you want certain wor
 
 ### Regex Triggers
 
-In the [spice handle functions](https://github.com/duckduckgo/zeroclickinfo-spice#spice-handle-functions) section, the regexp trigger triggered on **query_lc**, which is a lower-case version of the user query. The other trigger-able objects are as follows:
+Regular expression triggers can be applied to the following query objects:
 
 ```
 query_raw............the query in its most basic form, with no clean-up string operations.
