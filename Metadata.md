@@ -94,3 +94,7 @@ goodies page.
 [4]:https://github.com/duckduckgo/duckduckgo/blob/master/lib/DDG/Meta/Information.pm#L10
 [5]:https://github.com/duckduckgo/duckduckgo/blob/master/lib/DDG/Meta/Information.pm#L19
 [6]:https://github.com/duckduckgo/duckduckgo/blob/master/lib/DDG/Meta/Information.pm#L48
+
+### Where to go now
+---
+Back to [Submitting Plugins](https://github.com/duckduckgo/duckduckgo#submitting-plugins) | [Goodies Overview](https://github.com/duckduckgo/duckduckgo#goodies-overview) | [Spice Overview](https://github.com/duckduckgo/duckduckgo#spice-overview)
