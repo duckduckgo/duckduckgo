@@ -85,9 +85,9 @@ taken as keyword for the attribute.
 L<DDG::Block::Regexp> based plugins can use B<matches> to get the matches of
 the regexp as parameter on B<@_>.
 
-L<DDG::Block::Words> can use B<remainder> and B<remainder_lc> which gives back
-the parts of the query which are not hit by the trigger of the plugin. It is
-the most used handler.
+L<DDG::Block::Words> can use B<remainder>, B<remainder_lc> and B<remainder_nowhitespace>
+which give back the parts of the query which are not hit by the trigger of the plugin. They
+are the most used handlers.
 
 The following keywords can be used by all plugins, cause they are based on the
 L<DDG::Request> itself:
@@ -165,14 +165,20 @@ or language at all you can use B<$has_loc> and B<$has_lang>.
 				return @result ? $result_handler->($self,@result) : ();
 			});
 		#        ^^^^
-		} elsif ($handler eq 'remainder' || $handler eq 'remainder_lc') {
+		} elsif ($handler eq 'remainder' || $handler eq 'remainder_lc' || $handler eq 'remainder_nowhitespace') {
 			croak "You must be using words matching for remainder handler" unless $target->triggers_block_type eq 'Words';
 			$stash->add_symbol('&handle_request_matches',sub {
 				my ( $self, $request, $from_pos, $to_pos ) = @_;
 				$class->request_symbols($stash,$request);
 				my $remainder = $request->generate_remainder($from_pos,$to_pos);
 				my @result;
-				for ($handler eq 'remainder' ? $remainder : lc($remainder)) {
+				for ($remainder) {
+					if ($handler eq 'remainder_lc') {
+						$_ = lc $_;
+					}
+					elsif ($handler eq 'remainder_nowhitespace') {
+						s/^\s+|\s+$//g;
+					}
 					@result = $code->($_);
 				}
 				$class->reset_request_symbols($stash);
