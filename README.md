@@ -5,6 +5,10 @@ DuckDuckHack Developer Overview
 [DuckDuckGo](https://duckduckgo.com/) is a general purpose search engine. We've created a platform called DuckDuckHack that enables developers to write open source plugins on top of the search engine (like [add-ons for Firefox](https://addons.mozilla.org/en-US/firefox/addon/duckduckgo-ssl/?src=search)). DuckDuckGo plugins react to search queries and provide [useful](https://duckduckgo.com/?q=%40duckduckgo) [instant](https://duckduckgo.com/?q=roman+xvi) [answers](https://duckduckgo.com/?q=private+ips) above traditional links.
 
 DuckDuckHack is very much a work in progress. Some plugin types have better interfaces than others. We will be improving the platform based on [your feedback](https://fiesta.cc/~duckduckhack).
+Our long-term goal is to be able to distribute all DuckDuckHack (and internal) instant answers via the [DuckDuckGo API](https://api.duckduckgo.com). 
+Currently [fathead](https://github.com/duckduckgo/zeroclickinfo-fathead) and [goodie](#goodies-overview) plugin types 
+automatically flow through. We are working on exposing the other plugin types, which are more complicated to distribute
+and can have licensing restrictions.
 
 * For new plugins, follow [@duckduckhack](https://twitter.com/duckduckhack)
 * For ongoing discussion: [DuckDuckHack list](https://www.listbox.com/subscribe/?list_id=197814)
@@ -458,6 +462,10 @@ Submit GitHub issues in the [appropriate repo](http://github.com/duckduckgo).
 ### What if there are plugin conflicts?
 The ultimate arbiter is the user, and that's the perspective we take. In other words, we ask "what is best for the user experience?" That said, it often makes sense to combine ideas into one, better plugin.
 
+### Why isn't my plugin in the [DuckDuckGo API](https://api.duckduckgo.com)?
+If your plugin is spice or longtail, sometimes we can't expose it through the DDG API for licensing reasons (e.g. the WolframAlpha plugin), but our
+over-arching goal is to make all of our instant answers available on their own.
+
 ### Can I do something more complicated?
 Maybe. There are a bunch more internal interfaces we haven't exposed yet, and we'd love to hear your ideas to influence that roadmap.
 
@@ -474,3 +482,7 @@ Here's what we're working on (in roughly in this order):
 
 
 **Are there other open source projects?** &nbsp;Yes! Check out the other repositories in [our GitHub account](https://github.com/duckduckgo). You can email open@duckduckgo.com if you have any questions on those.
+
+### Can I get the instant answers through an API?
+Yes! Check out the [DuckDuckGo API](https://api.duckduckgo.com). Our goal is to make as many plugins as possible
+available through this interface. Fathead and goodie plugins are automatically syndicated through the API, and Spice and Longtail are selectively (due to licensing complications) mixed in.
