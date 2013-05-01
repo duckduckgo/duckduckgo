@@ -11,7 +11,7 @@ sub BUILD {
 	my $callback = $self->has_callback ? $self->callback : "";
 	croak "Missing callback attribute for {{callback}} in to" if ($to =~ s/{{callback}}/$callback/g && !$self->has_callback);
     # Make sure we replace "{{dollar}}"" with "$".
-    $to =~ s/{{dollar}}/\$/g;
+    $to =~ s/{{dollar}}/\$\{dollar\}/g;
 	my @missing_envs;
 	for ($to =~ m/{{ENV{(\w+)}}}/g) {
 		if (defined $ENV{$_}) {
