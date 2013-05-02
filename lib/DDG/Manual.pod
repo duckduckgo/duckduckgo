@@ -1,4 +1,5 @@
 # PODNAME: DDG::Manual
+# ABSTRACT: Overview of all documentations
 
 =head1 NAME
 

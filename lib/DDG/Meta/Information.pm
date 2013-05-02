@@ -1,4 +1,5 @@
 package DDG::Meta::Information;
+# ABSTRACT: DDG plugin meta information storage
 
 use strict;
 use warnings;
