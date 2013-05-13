@@ -102,6 +102,7 @@ For example, the [Xor Goodie](https://github.com/duckduckgo/zeroclickinfo-goodie
 **Using files**. &nbsp;You can use simple text/html input files for display or processing.
 
 ```perl
+# IO should always be done outside of the handle function
 my @words = share('words.txt')->slurp;
 ```
 
