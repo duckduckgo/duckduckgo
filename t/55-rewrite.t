@@ -35,7 +35,7 @@ $ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY} = 1;
 my $rewrite = DDG::Rewrite->new(
 	path => '/js/test/',
 	from => '([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|)',
-	to => 'http://some.api/$1/?a=$2&b=$3&cb={{callback}}&{{dollar}}ak={{ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY}}}',
+	to => 'http://some.api/$1/?a=$2&b=$3&cb={{callback}}&ak={{ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY}}}',
 	callback => 'test',
 	proxy_cache_valid => '418 1d',
 	wrap_jsonp_callback => 1,
@@ -46,12 +46,23 @@ isa_ok($rewrite,'DDG::Rewrite');
 is($rewrite->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
 is($rewrite->nginx_conf,'location ^~ /js/test/ {
 	echo_before_body \'test(\';
-	rewrite ^/js/test/([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|) /$1/?a=$2&b=$3&cb=test&${dollar}ak=1 break;
+	rewrite ^/js/test/([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|) /$1/?a=$2&b=$3&cb=test&ak=1 break;
 	proxy_pass http://some.api:80/;
 	proxy_cache_valid 418 1d;
 	echo_after_body \');\';
 }
 ','Checking generated nginx.conf');
+
+my $dollarrewrite = DDG::Rewrite->new(
+	path => '/js/test/',
+	to => 'http://some.api/{{dollar}}',
+);
+
+is($dollarrewrite->nginx_conf,'location ^~ /js/test/ {
+	rewrite ^/js/test/(.*) /${dollar} break;
+	proxy_pass http://some.api:80/;
+}
+','Checking {{dollar}} replacement');
 
 my $minrewrite = DDG::Rewrite->new(
 	path => '/js/test/',
