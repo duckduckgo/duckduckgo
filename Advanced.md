@@ -32,7 +32,17 @@ triggers start => "mixing", "making";
 triggers query_lc => qr/^@([^\s]+)$/;
 ```
 
-We much prefer you use trigger words when possible because they are faster on the backend. However, in some cases regular expressions are necessary, e.g. when you need to trigger on sub-words.
+We much prefer you use trigger words when possible because they are faster on the backend. In some cases regular expressions are necessary, e.g. when you need to trigger on sub-words. However, you should still consider using a word trigger and a **regex guard**. A regex guard is a return clause immediately inside the handle function. A good example of this is the Base64 goodie. Here's an excerpt from Base64.pm:
+
+```perl
+triggers startend => "base64";
+
+handle remainder => sub {
+    return unless $_ =~ /^(encode|decode|)\s*(.*)$/i;
+```
+
+This way, we get the speed of the word trigger and still ensure that the search query is an exact match for our plugin. You can also return similarly (without a value) at any point in the handle function if the answer cannot be calculated.
+
 
 **Regexp types.** &nbsp;Like trigger words, regular expression triggers have several keywords as well. In the above example **query_lc** was used, which operates on the lower case version of the full query. Here are the choices:
 
