@@ -205,7 +205,7 @@ ddg_goodie_test(
 done_testing;
 ```
 
-If you have a long list of queries that need to be tested, you can map over an array or hash inside `ddg\_goodie\_test`. Remember, this is a Perl program, so we have all the normal tools at our disposal to construct a list to pass to the function.
+If you have a long list of queries that need to be tested, you can map over an array or hash inside `ddg_goodie_test`. Remember, this is a Perl program, so we have all the normal tools at our disposal to construct a list to pass to the function.
 
 
 ```perl
