@@ -67,7 +67,7 @@ This repo contains all plugin-agnostic information that you'll need. In the Gett
 
 **Step 1.** &nbsp;Decide what you want to work on. If you don't have any ideas, [start here](http://ideas.duckduckhack.com/).
 
-**Step 2.** &nbsp;Figure out your plugin type (see Plugin Types above). If the right type is not obvious, please <a href="FAQ.md">ask us</a>. Sometimes multiple plugin types could work, and we can help you figure out which one would work best. Consider the following when choosing what type of plugin to make.
+**Step 2.** &nbsp;Figure out your plugin type (see Plugin Types above). If the right type is not obvious, please <a href="https://github.com/duckduckgo/duckduckgo#can-you-help-me">ask us</a>. Sometimes multiple plugin types could work, and we can help you figure out which one would work best. Consider the following when choosing what type of plugin to make.
 
 #### Guidelines
 * DuckDuckGo plugins appear at the top of search results pages, which is a **sacred space!** Please follow these guidelines to ensure the quickest path to going live.
