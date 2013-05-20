@@ -53,6 +53,17 @@ is($rewrite->nginx_conf,'location ^~ /js/test/ {
 }
 ','Checking generated nginx.conf');
 
+my $dollarrewrite = DDG::Rewrite->new(
+	path => '/js/test/',
+	to => 'http://some.api/{{dollar}}',
+);
+
+is($dollarrewrite->nginx_conf,'location ^~ /js/test/ {
+	rewrite ^/js/test/(.*) /${dollar} break;
+	proxy_pass http://some.api:80/;
+}
+','Checking {{dollar}} replacement');
+
 my $minrewrite = DDG::Rewrite->new(
 	path => '/js/test/',
 	to => 'http://some.api/$1',
