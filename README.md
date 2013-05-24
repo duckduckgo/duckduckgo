@@ -20,7 +20,7 @@ and can have licensing restrictions.
 * For ongoing discussion: [DuckDuckHack list](https://www.listbox.com/subscribe/?list_id=197814)
 
 ## Index
-* [Type Overview](documentation/overview.md)
+
 * [For non-coders](documentation/faq.md#what-if-im-not-a-coder-at-all)
 * [Why should I make plugins?](documentation/faq.md#why-should-i-make-plugins)
 * [Getting Started](documentation/getting_started.md)
@@ -28,7 +28,8 @@ and can have licensing restrictions.
 	* [Guidelines](documentation/getting_started.md#guidelines)
 * [General](documentation/general.md)
 	* [Basic Tutorial](documentation/general.md#basic-tutorial)
-	* [Triggers](documentation/general.md#triggers) 
+	* [Triggers](documentation/general.md#triggers)
+	* [Submitting Plugins](documentation/general.md#submitting-plugins)
 * [Goodies Overview](documentation/goodies_overview.md)
  	* [Basic Tutorial](documentation/general.md#basic-tutorial)
  	* [Testing Triggers](documentation/testing.md#testing-triggers)
@@ -44,7 +45,6 @@ and can have licensing restrictions.
 	* [Advanced Spice](https://github.com/duckduckgo/zeroclickinfo-spice)
 * [Fathead Overview](https://github.com/duckduckgo/zeroclickinfo-fathead)
 * [Longtail Overview](https://github.com/duckduckgo/zeroclickinfo-longtail)
-
 * [FAQ](documentation/faq.md)
 
 
