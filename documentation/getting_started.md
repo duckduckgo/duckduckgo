@@ -6,7 +6,7 @@
 
 **Step 1.** &nbsp;Decide what you want to work on. If you don't have any ideas, [start here](http://ideas.duckduckhack.com/).
 
-**Step 2.** &nbsp;Figure out your plugin type. If the right type is not obvious, please <a href="https://github.com/duckduckgo/duckduckgo#can-you-help-me">ask us</a>. Sometimes multiple pheavily lugin types could work, and we can help you figure out which one would work best. Consider the [guidelines](#guidelines) when choosing what type of plugin to make.
+**Step 2.** &nbsp;Figure out your plugin type. If the right type is not obvious, please <a href="https://github.com/duckduckgo/duckduckgo#can-you-help-me">ask us</a>. Sometimes multiple plugin types could work, and we can help you figure out which one would work best. Consider the [guidelines](#guidelines) when choosing what type of plugin to make.
 
 ## Determining Plugin Type
 [Index](https://github.com/duckduckgo/duckduckgo/) / [Getting Started](#getting-started) / **Determining Plugin Type**
