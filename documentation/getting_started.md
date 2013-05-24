@@ -13,7 +13,7 @@
 
 ---
 
-Check out this flow chart to determine what type of plugin you should create. Also refer to the [Overview]() for detailed explanations and examples of each type.
+Check out this flow chart to determine what type of plugin you should create. Also refer to the [Type Overview](overview.md) for detailed explanations and examples of each type.
 
 ![plugin type flow chart](https://s3.amazonaws.com/ddg-assets/docs/plugin_flow.png)
 
@@ -24,7 +24,7 @@ Check out this flow chart to determine what type of plugin you should create. Al
 
 * DuckDuckGo plugins appear at the top of search results pages, which is a **sacred space!** Please follow these guidelines to ensure the quickest path to going live.
 
-* **Use the right [plugin type](#figuring-out-plugin-type)**. Check out the linked flow chart.
+* **Use the right [plugin type](#determining-plugin-type)**. Check out the linked flow chart.
 
 * **Better than links**. Since instant answers are above the traditional links, they should be unambiguously better than them. For example, the [Yummly integration](https://duckduckgo.com/?q=garlic+steak+recipe) shows recipes that are better than the links below.
 ![better than links](https://s3.amazonaws.com/ddg-assets/docs/better_than_links.png)
