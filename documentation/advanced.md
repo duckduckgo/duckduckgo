@@ -2,7 +2,7 @@ Advanced
 ===
 ----
 ## Advanced Triggers
-In the [Basic tutorial](#basic-tutorial) we walked through a one word trigger and in the [Spice handle functions](https://github.com/duckduckgo/zeroclickinfo-spice#spice-handle-functions) section we walked through a simple regexp trigger.
+In the [Basic tutorial](general.md#basic-tutorial) we walked through a one word trigger and in the [Spice handle functions](spice.md#spice-handle-functions) section we walked through a simple regexp trigger.
 
 Here are some more advanced trigger techniques you may need to use:
 
@@ -26,7 +26,7 @@ triggers any => "drink", "make", "mix", "recipe", "ingredients";
 triggers start => "mixing", "making";
 ```
 
-**Regular Expressions.** &nbsp;As we walked through in the [Spice handle functions](https://github.com/duckduckgo/zeroclickinfo-spice#spice-handle-functions) section you can also trigger on a regular expression.
+**Regular Expressions.** &nbsp;As we walked through in the [Spice handle functions](spice.md#spice-handle-functions) section you can also trigger on a regular expression.
 
 ```perl
 triggers query_lc => qr/^@([^\s]+)$/;
@@ -67,7 +67,7 @@ triggers query_lc => qr/cost of living/;
 
 ## Advanced Handle Functions
 
-In the [Basic tutorial](#basic-tutorial) we walked through a simple query transformation and in the [Spice handle functions](https://github.com/duckduckgo/zeroclickinfo-spice#spice-handle-functions) section we walked through a simple return of the query.
+In the [Basic tutorial](general.md#basic-tutorial) we walked through a simple query transformation and in the [Spice handle functions](spice.md#spice-handle-functions) section we walked through a simple return of the query.
 
 Here are some more advanced handle techniques you may need to use:
 
@@ -129,7 +129,7 @@ There are a couple more sections on advanced handle techniques depending on [Plu
 * For **Spice**, check out the [Advanced Spice handlers](https://github.com/duckduckgo/zeroclickinfo-spice#advanced-spice-handlers) section.
 
 ## Advanced Testing
-The [testing triggers](#testing-triggers) section explained interactive testing. Before going live we also make programmatic tests for each plugin.
+The [testing triggers](testing.md#testing-triggers) section explained interactive testing. Before going live we also make programmatic tests for each plugin.
 
 **Step 1.** &nbsp;Add your plugin test file.
 
