@@ -1,11 +1,11 @@
 # Testing
-[Index](https://github.com/duckduckgo/duckduckgo/) / **Testing**
+[Index](https://github.com/duckduckgo/duckduckgo#index) / **Testing**
 
 ---
 This section of the documentation walks you through the process of testing everything that you've written so far, and is crucial to ensuring a smooth integration process. Don't forget to write your test files!
 
 ## Testing Triggers
-[Index](https://github.com/duckduckgo/duckduckgo) / [Spice Overview](spice_overview.md) | [Goodies Overview](goodies_overview.md) / **Testing Triggers**
+[Index](https://github.com/duckduckgo/duckduckgo#index) / [Testing](#testing) / **Testing Triggers**
 
 ---
 
@@ -124,12 +124,60 @@ Query:
 \_o< Thanks for testing!
 ```
 
-Back to [Index](https://github.com/duckduckgo/duckduckgo) | [Goodies Overview](goodies_overview.md) | [Spice Overview](spice_overview.md) | [Basic tutorial](general.md#basic-tutorial)
+**Back to [Index](https://github.com/duckduckgo/duckduckgo#index) | [Goodies Overview](goodies_overview.md) | [Spice Overview](spice_overview.md) | [Basic tutorial](general.md#basic-tutorial)**
+
+***
+
+## Goodie Test Files
+[Index](https://github.com/duckduckgo/duckduckgo#index) / [Testing](#testing) / **Goodie Test Files**
+
+---
+
+Every goodie includes a test file in the `t` directory. For example, the **RouterPasswords** goodie uses the the test file `t/RouterPasswords.t`. This test file includes sample queries and answers, and is run automatically before every release to ensure that all goodies are triggering properly with correct answers. The test file is a Perl program that uses the Perl packages `DDG::Test::Goodie` and `Test::More` to function. Here's an annotated excerpt from `t/RouterPasswords.t` that you can use as a base:
+
+```perl
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use Test::More;
+use DDG::Test::Goodie;
+
+# These zci attributes aren't necessary, but if you specify them inside your goodie,
+# you'll need to add matching values here to check against.
+zci answer_type => 'password';
+zci is_cached => 1;
+
+ddg_goodie_test(
+	[
+        # This is the name of the goodie that will be loaded to test.
+		'DDG::Goodie::RouterPasswords'
+    ],
+    # This is a sample query, just like the user will enter into the DuckDuckGo search box
+	'Belkin f5d6130' =>
+        test_zci(
+            # The first argument to test_zci is the plain text (default) returned from a goodie.
+            # If your goodie also returns an HTML version, you can pass that along explicitly as
+            # the second argument. If your goodie is random, you can use regexs instead of
+            # strings to match against.
+            'Default login for the BELKIN F5D6130: Username: (none) Password: password',
+            html => 'Default login for the BELKIN F5D6130:<br><i>Username</i>: (none)<br><i>Password</i>: password'
+        ),
+    # You should include more test cases here. Try to think of ways that your plugin
+    # might break, and add them here to ensure they won't.
+);
+
+done_testing;
+```
+
+Once you've written a test file, you can test it on it's own with `perl -Ilib t/GoodieName.t`.
+
+**Back to [Index](https://github.com/duckduckgo/duckduckgo#index) | [Goodies Overview](goodies_overview.md)**
 
 ***
 
 ## Testing Spice
-[Index](https://github.com/duckduckgo/duckduckgo) / [Spice Overview](spice_overview.md) / **Testing Spice**
+[Index](https://github.com/duckduckgo/duckduckgo#index) / [Testing](#testing) / **Testing Spice**
 
 ---
 
@@ -186,4 +234,4 @@ Once everything is working properly (and you have stuff displayed on screen), yo
 
 Finally, please document as much as possible using in-line comments.
 
-Back to [Index](https://github.com/duckduckgo/duckduckgo) | [Spice Overview](spice_overview.md) | [Basic tutorial](general.md#basic-tutorial)
+**Back to [Index](https://github.com/duckduckgo/duckduckgo#index) | [Spice Overview](spice_overview.md) | [Basic tutorial](general.md#basic-tutorial)**

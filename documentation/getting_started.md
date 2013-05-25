@@ -1,6 +1,6 @@
 
 # Getting Started
-[Index](https://github.com/duckduckgo/duckduckgo/) / **Getting Started**
+[Index](https://github.com/duckduckgo/duckduckgo#index) / **Getting Started**
 
 ---
 
@@ -24,7 +24,7 @@
  * For **Longtail**, check out the Readme in the [longtail repository](https://github.com/duckduckgo/zeroclickinfo-longtail).
  
 ## Determining Plugin Type
-[Index](https://github.com/duckduckgo/duckduckgo/) / [Getting Started](#getting-started) / **Determining Plugin Type**
+[Index](https://github.com/duckduckgo/duckduckgo#index) / [Getting Started](#getting-started) / **Determining Plugin Type**
 
 ---
 
@@ -33,7 +33,7 @@ Check out this flow chart to determine what type of plugin you should create. Al
 ![plugin type flow chart](https://s3.amazonaws.com/ddg-assets/docs/plugin_flow.png)
 
 ## Guidelines
-[Index](https://github.com/duckduckgo/duckduckgo/) / [Getting Started](#getting-started) / **Guidelines**
+[Index](https://github.com/duckduckgo/duckduckgo#index) / [Getting Started](#getting-started) / **Guidelines**
 
 ---
 

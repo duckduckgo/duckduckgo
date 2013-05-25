@@ -2,7 +2,22 @@
 [Index](https://github.com/duckduckgo/duckduckgo/) / **FAQ**
 
 ---
-## Can you help me?
+
+### Why should I make plugins?
+
+We hope you will consider making DuckDuckGo plugins to:
+
+* Improve results in areas you personally search and care about, e.g. [programming documentation](https://duckduckgo.com/?q=perl+split), [gaming](https://duckduckgo.com/?q=roll+3d12+%2B+4) or [entertainment](https://duckduckgo.com/?q=xkcd).
+* Increase usage of your own projects, e.g. data and [APIs](https://duckduckgo.com/?q=cost+of+living+nyc+philadelphia).
+* Learn something new.
+* Attribution [on our site](https://duckduckgo.com/goodies.html) and [Twitter](https://twitter.com/duckduckhack) (working on more).
+* See your code live on a [growing](https://duckduckgo.com/traffic.html) search engine!
+
+### What if I'm not a coder at all?
+
+If you don't code at all and you've ended up here, please go over to [ideas.duckduckhack.com](ideas.duckduckhack.com) and add any plugin ideas that you have. If you're a business and want your data to be utilized, adding your service to [ideas.duckduckhack.com](ideas.duckduckhack.com) is a great way for your API to get picked up by a developer and integrated into the search engine.
+
+### Can you help me?
 
   Of course! Here are the easiest ways to contact someone who can help answer your questions:
 
@@ -50,17 +65,3 @@ Here's what we're working on (in roughly in this order):
 Yes! Check out the [DuckDuckGo API](https://api.duckduckgo.com). Our goal is to make as many plugins as possible
 available through this interface. Fathead and goodie plugins are automatically syndicated through the API, and Spice and Longtail are selectively (due to licensing complications) mixed in.
 
-
-### Why should I make plugins?
-
-We hope you will consider making DuckDuckGo plugins to:
-
-* Improve results in areas you personally search and care about, e.g. [programming documentation](https://duckduckgo.com/?q=perl+split), [gaming](https://duckduckgo.com/?q=roll+3d12+%2B+4) or [entertainment](https://duckduckgo.com/?q=xkcd).
-* Increase usage of your own projects, e.g. data and [APIs](https://duckduckgo.com/?q=cost+of+living+nyc+philadelphia).
-* Learn something new.
-* Attribution [on our site](https://duckduckgo.com/goodies.html) and [Twitter](https://twitter.com/duckduckhack) (working on more).
-* See your code live on a [growing](https://duckduckgo.com/traffic.html) search engine!
-
-### What if I'm not a coder at all?
-
-If you don't code at all and you've ended up here, please go over to [ideas.duckduckhack.com](ideas.duckduckhack.com) and add any plugin ideas that you have. If you're a business and want your data to be utilized, adding your service to [ideas.duckduckhack.com](ideas.duckduckhack.com) is a great way for your API to get picked up by a developer and integrated into the search engine.

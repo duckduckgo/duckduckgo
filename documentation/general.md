@@ -1,12 +1,12 @@
 # General
-[Index](https://github.com/duckduckgo/duckduckgo/) / **General**
+[Index](https://github.com/duckduckgo/duckduckgo#index) / **General**
 
 ---
 This section contains information that is largely agnostic of plugin type and is therefore relevant regardless of the type of plugin that you're working on.
 
 ## Basic Tutorial
 
-[Index](https://github.com/duckduckgo/duckduckgo) / [Spice Overview](spice_overview.md) | [Goodies Overview](goodies_overview.md) / **Basic Tutorial**
+[Index](https://github.com/duckduckgo/duckduckgo#index) / [General](#general) / **Basic Tutorial**
 
 ---
 
@@ -133,12 +133,12 @@ The plugin system works like this at the highest level:
 
 * If the Goodie's handle function outputs an instant answer via a **return** statement, we pass it back to the user.
 
-Back to [Index](https://github.com/duckduckgo/duckduckgo) | [Goodies Overview](goodies_overview.md) | [Spice Overview](spice_overview.md) | [Basic tutorial](#basic-tutorial)
+**Back to [Index](https://github.com/duckduckgo/duckduckgo#index) | [Goodies Overview](goodies_overview.md) | [Spice Overview](spice_overview.md) | [Basic tutorial](#basic-tutorial)**
 
 ***
 
 ## Triggers
-[Index](https://github.com/duckduckgo/duckduckgo) / [Spice Overview](spice_overview.md) | [Goodies Overview](goodies_overview.md) / **Triggers**
+[Index](https://github.com/duckduckgo/duckduckgo#index) / [General](#general) / **Triggers**
 
 ---
 There are two types of triggers, **words** and **regex**. The [basic tutorial](#basic-tutorial) walks through a simple example of a words trigger. While you technically *can* use a regular expression as a trigger, we encourage you to use words triggers first, and then use a regexp to further qualify the query once the plugin has been called, like in the [Xkcd example](https://github.com/duckduckgo/zeroclickinfo-spice#spice-handle-functions) in the Spice Handle Functions section. Words triggers are several orders of magnitude faster than regexp triggers (a hash check vs. a regexp match).
@@ -166,12 +166,12 @@ query_nowhitespace...*query* with no whitespace.
 query_clean..........*query_lc*, but with whitespace and non-alphanumeric ascii removed.
 
 ```
-Back to [Index](https://github.com/duckduckgo/duckduckgo) | [Goodies Overview](goodies_overview.md) | [Spice Overview](spice_overview.md) | [Basic tutorial](#basic-tutorial)
+**Back to [Index](https://github.com/duckduckgo/duckduckgo#index) | [Goodies Overview](goodies_overview.md) | [Spice Overview](spice_overview.md) | [Basic tutorial](#basic-tutorial)**
 
 ***
 
 ## Submitting Plugins
-[Index](https://github.com/duckduckgo/duckduckgo) / [Spice Overview](spice_overview.md) | [Goodies Overview](goodies_overview.md) / **Submitting Plugins**
+[Index](https://github.com/duckduckgo/duckduckgo#index) / [General](#general) / **Submitting Plugins**
 
 ---
 
@@ -200,4 +200,4 @@ Check out the [Metadata README](Metadata.md) for detailed instructions on how to
 **Step 5.**  &nbsp;Go into GitHub and submit a [pull request!](http://help.github.com/send-pull-requests/) That will let us know about your plugin and start the conversation about integrating it into the live search engine.
 
 
-Back to [Index](https://github.com/duckduckgo/duckduckgo) | [Goodies Overview](goodies_overview.md) | [Spice Overview](spice_overview.md) | [Basic tutorial](#basic-tutorial)
+**Back to [Index](https://github.com/duckduckgo/duckduckgo#index) | [Goodies Overview](goodies_overview.md) | [Spice Overview](spice_overview.md) | [Basic tutorial](#basic-tutorial)**

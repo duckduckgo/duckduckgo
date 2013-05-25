@@ -1,12 +1,12 @@
 # Spice
-[Index](https://github.com/duckduckgo/duckduckgo/) / **Spice**
+[Index](https://github.com/duckduckgo/duckduckgo#index) / **Spice**
 
 ---
 
 This documentation section contains spice-specific plugin information. Its contents are relevant if you're doing anything related to spice.
 
 ## Spice Handle Functions
-[Index](https://github.com/duckduckgo/duckduckgo/) / [Spice Overview](spice_overview.md) / **Spice Handle Functions**
+[Index](https://github.com/duckduckgo/duckduckgo#index) / [Spice](#spice) / **Spice Handle Functions**
 
 ---
 Spice plugins have **triggers** and **handle** functions like Goodies, as explained in the [Basic tutorial](http://github.com/duckduckgo/duckduckgo#basic-tutorial). The difference is that Spice handle functions don't return an instant answer directly like Goodies. Instead, they return arguments used to call a JavaScript callback function that then returns the instant answer.
@@ -89,20 +89,20 @@ When the username is returned we then plug it into the **spice to** definition.
 spice to => 'http://twitter.com/status/user_timeline/$1.json?callback={{callback}}';
 ```
 
-The **$uname** value from the return statement will get inserted into the **$1** placeholder in the **spice to** line such that you can plug in parameters to the API call as needed. For passing multiple parameters, check out the [Advanced spice handlers](#advanced-spice-handlers) section.
+The **$uname** value from the return statement will get inserted into the **$1** placeholder in the **spice to** line such that you can plug in parameters to the API call as needed. For passing multiple parameters, check out the [Advanced spice handlers](https://github.com/duckduckgo/zeroclickinfo-spice/blob/master/README.md#advanced-spice-handlers) section.
 
 The **{{callback}}** template gets plugged in automatically with the default callback value of **ddg_spice_twitter**. That last part (twitter) is a lowercase version of the plugin name with different words separated by the **_** character.
 
 At this point the response moves from the backend to the frontend. The external API sends a JSON object to the callback function that you will also define (as explained in the [Spice callback functions](#spice-callback-functions) section).
 
-Back to [Index](https://github.com/duckduckgo/duckduckgo) | [Spice Overview](spice_overview.md) | [Basic tutorial](general.md#basic-tutorial)
+**Back to [Index](https://github.com/duckduckgo/duckduckgo) | [Spice Overview](spice_overview.md) | [Basic tutorial](general.md#basic-tutorial)**
 
 ***
 ## Spice Callback Functions
-[Index](https://github.com/duckduckgo/duckduckgo/) / [Spice Overview](spice_overview.md) / **Spice Callback Functions**
+[Index](https://github.com/duckduckgo/duckduckgo#index) / [Spice](#spice) / **Spice Callback Functions**
 
 ---
-Before reading this section, make sure you've read the [basic tutorial](https://github.com/duckduckgo/duckduckgo#basic-tutorial), the section on [spice handle functions](#spice-handle-functions), and the section on [testing triggers](testing.md#testing-triggers).
+Before reading this section, make sure you've read the [basic tutorial](general.md#basic-tutorial), the section on [spice handle functions](#spice-handle-functions), and the section on [testing triggers](testing.md#testing-triggers).
 
 As explained in the [Spice handle functions](#spice-handle-functions) section, a Spice plugin usually calls an external API and returns a JSON object to a callback function. This section explains what that callback function looks like.
 
@@ -181,5 +181,5 @@ You would usually get the information to make these assignments via the object r
 function ddg_spice_expatistan(ir) {
 ```
 
-Back to [Index](https://github.com/duckduckgo/duckduckgo) | [Spice Overview](spice_overview.md) | [Basic tutorial](general.md#basic-tutorial)
+**Back to [Index](https://github.com/duckduckgo/duckduckgo#index) | [Spice Overview](spice_overview.md) | [Basic tutorial](general.md#basic-tutorial)**
 

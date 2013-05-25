@@ -1,5 +1,5 @@
 # Type Overview
-[Index](https://github.com/duckduckgo/duckduckgo/) / **Type Overview**
+[Index](https://github.com/duckduckgo/duckduckgo#index) / **Type Overview**
 
 ---
 
