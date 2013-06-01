@@ -17,6 +17,8 @@
 
 **Step 4.** &nbsp;Now it's choose-your-own-adventure time!
 
+***Important:*** The documentation contained herein is additive. In order to make a Spice plugin, for example, you must first understand how to make a Goodie plugin. This is because the back-end of a Spice plugin is essentially just a goodie that injects an HTTP call into the client JS instead of returning an answer. 
+
  * For **Goodies**, check out the [Goodies Overview](goodies_overview.md). This will give you a list of links to other pages that will guide you through the goodie process.
  * For **Spice**, proceed to the [Spice Overview](spice_overview.md). This section will walk you through everything you need to build a basic spice plugin.
 
