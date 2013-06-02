@@ -78,16 +78,6 @@ Supported categories are listed at [Information.pm][5]
 Supported attribution methods are listed at [Information.pm][4]
 
 
-## Status
-
-(not implemented yet)
-
-    status "disabled";
-
-In the future, this will indicate the plugin is not live and shouldn't be included in the generated 
-goodies page.
-
-
 [1]:https://github.com/duckduckgo/duckduckgo/blob/master/lib/DDG/Meta/Information.pm
 [2]:https://github.com/duckduckgo/duckduckgo/blob/master/lib/DDG/Meta/ZeroClickInfo.pm
 [3]:http://duckduckgo.com/goodies/
