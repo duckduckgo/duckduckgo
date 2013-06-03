@@ -60,7 +60,7 @@ Here's what we're working on (in roughly in this order):
 * more defined structure for longtail plugins.
 * better testing for longtail plugins.
 
-### Are there other open source projects?### 
+### Are there other open source projects? 
 Yes! Check out the other repositories in [our GitHub account](https://github.com/duckduckgo). You can email open@duckduckgo.com if you have any questions on those.
 
 ### Can I get the instant answers through an API?
