@@ -9,17 +9,17 @@ DuckDuckHack Developer Overview
 If you want to get involved in making DuckDuckGo a better search engine, you've come to the right place! 
 
 * If **you are a developer**, this guide serves as a master jumping-off point for the DuckDuckHack platform.
-* If **you are not a developer**, but would like to become one to help with DuckDuckHack, we recommend the [JavaScript course at Codecademy](http://www.codecademy.com/tracks/javascript). That will help you to get started with the Spice plugin type (explained below).
-* If you have no intention of becoming a developer, there is still a lot you can do at our [ideas companion site](http://ideas.duckduckhack.com/) where you can suggest and comment on plugin ideas such as identifying the best sites and data sources to draw from. Similarly, you can submit [issues about current plugins](https://github.com/duckduckgo/duckduckgo/issues?direction=desc&sort=created&state=open). Both of these activities are very valuable and will help direct community efforts.
+* If **you are not a developer, but would like to become one** to help with DuckDuckHack, we recommend the [JavaScript course at Codecademy](http://www.codecademy.com/tracks/javascript). That will help you to get started with the Spice plugin type (explained below).
+* If **you have no intention of becoming a developer**, there is still a lot you can do at our [ideas companion site](http://ideas.duckduckhack.com/) where you can suggest and comment on plugin ideas such as identifying the best sites and data sources to draw from. Similarly, you can submit [issues about current plugins](https://github.com/duckduckgo/duckduckgo/issues?direction=desc&sort=created&state=open). Both of these activities are very valuable and will help direct community efforts.
 
 The DuckDuckHack platform is constantly changing as community contributors add new features. As a result, some plugin types have better interfaces than others. We will be improving the platform based on [your feedback](https://www.listbox.com/subscribe/?list_id=197814).
-Our long-term goal is to be able to distribute all DuckDuckHack (and internal) instant answers via the [DuckDuckGo API](https://api.duckduckgo.com). 
+Our long-term goal is to be able to distribute all DuckDuckHack (and internal) instant answers via the [DuckDuckGo Instant Answers API](https://api.duckduckgo.com). 
 Currently [fathead](https://github.com/duckduckgo/zeroclickinfo-fathead) and [goodie](#goodies-overview) plugin types 
 automatically flow through. We are working on exposing the other plugin types, which are more complicated to distribute
 and can have licensing restrictions.
 
 * To learn about new plugins, follow [@duckduckhack](https://twitter.com/duckduckhack)
-* For ongoing discussion: [DuckDuckHack list](https://www.listbox.com/subscribe/?list_id=197814)
+* For ongoing discussion, join the [DuckDuckHack list](https://www.listbox.com/subscribe/?list_id=197814)
 
 ## Index
 
