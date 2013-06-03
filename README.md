@@ -36,6 +36,7 @@ and can have licensing restrictions.
   * [Submitting Plugins](documentation/general.md#submitting-plugins)
 * [Testing](documentation/testing.md)
   * [Testing Triggers](documentation/testing.md#testing-triggers)
+      * [Installing DuckPAN](documentation/testing.md#testing-triggers)
   * [Goodie Test Files](documentation/testing.md#goodie-test-files)
   * [Testing Spice](documentation/testing.md#testing-spice)
 * [Spice](documentation/spice.md)
