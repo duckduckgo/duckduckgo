@@ -15,14 +15,16 @@ We hope you will consider making DuckDuckGo plugins to:
 
 ### What if I'm not a coder at all?
 
-If you don't code at all and you've ended up here, please go over to [ideas.duckduckhack.com](ideas.duckduckhack.com) and add any plugin ideas that you have. If you're a business and want your data to be utilized, adding your service to [ideas.duckduckhack.com](ideas.duckduckhack.com) is a great way for your API to get picked up by a developer and integrated into the search engine.
+If you don't code at all and you've ended up here, please go over to our [ideas companion site](http://ideas.duckduckhack.com/) where you can suggest and comment on plugin ideas such as identifying the best sites and data sources to draw from. Similarly, you can submit [issues about current plugins](https://github.com/duckduckgo/duckduckgo/issues?direction=desc&sort=created&state=open). Both of these activities are very valuable and will help direct community efforts.
+
+If you're a business and want your data to be utilized, adding your service to [ideas.duckduckhack.com](http://ideas.duckduckhack.com) is a great way for your API to get picked up by a developer and integrated into the search engine.
+
 
 ### Can you help me?
 
   Of course! Here are the easiest ways to contact someone who can help answer your questions:
 
- * Join us on IRC at [#duckduckgo on Freenode](http://webchat.freenode.net/?channels=duckduckgo).
- * Write the [discussion list](https://www.listbox.com/subscribe/?list_id=197814).
+ * Write us publicly on the [discussion list](https://www.listbox.com/subscribe/?list_id=197814).
  * Write us privately at open@duckduckgo.com.
 
 ### What if I don't know Perl?
@@ -40,8 +42,8 @@ Submit GitHub issues in the [appropriate repo](http://github.com/duckduckgo).
 ### What if there are plugin conflicts?
 The ultimate arbiter is the user, and that's the perspective we take. In other words, we ask "what is best for the user experience?" That said, it often makes sense to combine ideas into one, better plugin.
 
-### Why isn't my plugin in the [DuckDuckGo API](https://api.duckduckgo.com)?
-If your plugin is spice or longtail, sometimes we can't expose it through the DDG API for licensing reasons (e.g. the WolframAlpha plugin), but our
+### Why isn't my plugin in the [DuckDuckGo Instant Answers API](https://api.duckduckgo.com)?
+If your plugin is spice or longtail, sometimes we can't expose it through the API for licensing reasons (e.g. the WolframAlpha plugin), but our
 over-arching goal is to make all of our instant answers available on their own.
 
 ### Can I do something more complicated?
@@ -58,10 +60,12 @@ Here's what we're working on (in roughly in this order):
 * more defined structure for longtail plugins.
 * better testing for longtail plugins.
 
-
-**Are there other open source projects?** &nbsp;Yes! Check out the other repositories in [our GitHub account](https://github.com/duckduckgo). You can email open@duckduckgo.com if you have any questions on those.
+### Are there other open source projects?### 
+Yes! Check out the other repositories in [our GitHub account](https://github.com/duckduckgo). You can email open@duckduckgo.com if you have any questions on those.
 
 ### Can I get the instant answers through an API?
 Yes! Check out the [DuckDuckGo API](https://api.duckduckgo.com). Our goal is to make as many plugins as possible
 available through this interface. Fathead and goodie plugins are automatically syndicated through the API, and Spice and Longtail are selectively (due to licensing complications) mixed in.
 
+### Can I talk to you about a patnership idea?###
+Sure -- check out [our partnerships page](http://help.duckduckgo.com/customer/portal/articles/775109-partnerships).
