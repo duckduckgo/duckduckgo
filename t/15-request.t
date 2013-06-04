@@ -70,9 +70,9 @@ BEGIN {
 			query_parts                       => ['%"test',qq{%\)\(\)%!%§},'+##+tesfsd'],
 			words                             => [qw( test tesfsd )],
 			triggers                  => {
-				0 => ['%"test'],
-				2 => ['%)()%!%§'],
-				4 => ['+##+tesfsd'],
+				0 => ['', ' test', '%"test', 'test'],
+				2 => ['', '%)()%!%§'],
+				4 => ['', ' tesfsd', '+##+tesfsd', 'tesfsd' ],
 			},
 		},
 		'test...test test...Test?'         => {

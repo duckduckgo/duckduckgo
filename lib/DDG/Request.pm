@@ -49,7 +49,6 @@ has query_raw => (
 my $whitespaces = qr{\s+};
 my $whitespaces_matches = qr{($whitespaces)};
 my $whitespaces_dashes = qr{[\s\-]+};
-my $dashes = qr{\-+};
 my $non_alphanumeric_ascii = qr{[\x00-\x1f\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x81\x{a7}]+};
 
 =attr query_raw_parts
@@ -186,15 +185,15 @@ sub generate_triggers {
 	push @parts, lc($part);
 	$part =~ s/\?$//g;
 	push @parts, lc($part);
-	if ($part =~ m/$dashes/) {
-		my @dashparts = split(/$dashes/, $part);
-		for my $dashpart (@dashparts) {
-			push @parts, lc($dashpart);
+	if ($part =~ m/\W+/) {
+		my @boundary_words = split(/\W+/, $part);
+		for my $boundary_word (@boundary_words) {
+			push @parts, lc($boundary_word);
 		}
-		push @parts, lc($_) for @dashparts;
-		my $joined = join('', @dashparts);
+		push @parts, lc($_) for @boundary_words;
+		my $joined = join('', @boundary_words);
 		push @parts, lc($joined);
-		my $space_joined = join(' ', @dashparts);
+		my $space_joined = join(' ', @boundary_words);
 		push @parts, lc($space_joined);
 	}
 	return uniq sort @parts;
