@@ -67,5 +67,5 @@ Yes! Check out the other repositories in [our GitHub account](https://github.com
 Yes! Check out the [DuckDuckGo API](https://api.duckduckgo.com). Our goal is to make as many plugins as possible
 available through this interface. Fathead and goodie plugins are automatically syndicated through the API, and Spice and Longtail are selectively (due to licensing complications) mixed in.
 
-### Can I talk to you about a patnership idea?###
+### Can I talk to you about a partnership idea?###
 Sure -- check out [our partnerships page](http://help.duckduckgo.com/customer/portal/articles/775109-partnerships).
