@@ -185,7 +185,7 @@ sub generate_triggers {
 	push @parts, lc($part);
 	$part =~ s/\?$//g;
 	push @parts, lc($part);
-	if ($part =~ m/\W+/) {
+	if ($part =~ m/(\W+)/ and $1 !~ m/'/) {
 		my @boundary_words = split(/\W+/, $part);
 		for my $boundary_word (@boundary_words) {
 			push @parts, lc($boundary_word);
