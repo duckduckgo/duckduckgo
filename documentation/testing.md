@@ -12,32 +12,7 @@ This section of the documentation walks you through the process of testing every
 Before reading this section, make sure you've at least worked through the [basic tutorial](general.md#basic-tutorial).
 
 
-**Step 1.** &nbsp;Install our DuckDuckHack utility called [duckpan](https://metacpan.org/module/App::DuckPAN):
-
-```bash
-curl http://duckpan.org/install.pl | perl
-```
-
-[This script](https://github.com/duckduckgo/p5-duckpan-installer) will setup [local::lib](https://metacpan.org/module/local::lib), which is a way to install Perl modules without changing your base Perl installation. (If you already use local::lib or [perlbrew](https://metacpan.org/module/perlbrew), don't worry, this script will intelligently use what you already have).
-
-If you didn't have a local::lib before running the install script, you will need to run the script twice. It should tell you when like this:
-
-```txt
-please now re-login to your user account and run it again!
-```
-
-If everything works, you should see this at the end:
-
-```bash
-EVERYTHING OK! You can now go hacking! :)
-```
-
-Note that with local::lib now installed, you can easily install [Perl modules](http://search.cpan.org/) with [cpanm](https://metacpan.org/module/cpanm).
-
-```bash
-cpanm App::DuckPAN
-App::DuckPAN is up to date.
-```
+**Step 1.** &nbsp;Install our DuckDuckHack utility called `duckpan`. You can find instructions [here](https://github.com/duckduckgo/p5-app-duckpan/blob/master/README.md). It is also hosted [here](https://metacpan.org/module/App::DuckPAN) on MetaCPAN.
 
 **Step 2.** &nbsp;Go to your fork of the repository (a directory or folder on your computer).
 
