@@ -103,23 +103,31 @@ Query:
 
 ***
 
-## Goodie Test Files
+## Plugin Test Files
 [Index](https://github.com/duckduckgo/duckduckgo#index) / [Testing](#testing) / **Goodie Test Files**
 
 ---
 
-Every goodie includes a test file in the `t` directory. For example, the **RouterPasswords** goodie uses the the test file `t/RouterPasswords.t`. This test file includes sample queries and answers, and is run automatically before every release to ensure that all goodies are triggering properly with correct answers. The test file is a Perl program that uses the Perl packages `DDG::Test::Goodie` and `Test::More` to function. Here's an annotated excerpt from `t/RouterPasswords.t` that you can use as a base:
+Every plugin includes a test file in the `t` directory. These test files include sample queries and are run automatically before every release to ensure that all goodies are triggering properly. They are also very helpful while developing plugins as a tool to quickly test code iterations. Once you've written a test file, you can test it on it's own with `perl -Ilib t/TestName.t`, or together with all other tests in the repository using `prove -Ilib`.
+
+Goodies and Spice use a similar test structure, but test different things. Here we'll see an examples of testing files, first for Goodies, then Spice:
+
+### Goodies
+
+For this example, we will look at the test file of the **RouterPasswords** Goodie, which is `t/RouterPasswords.t`.
 
 ```perl
 #!/usr/bin/env perl
 
 use strict;
 use warnings;
+
+# These modules are necessary for the functions we'll be running.
 use Test::More;
 use DDG::Test::Goodie;
 
-# These zci attributes aren't necessary, but if you specify them inside your goodie,
-# you'll need to add matching values here to check against.
+# These zci attributes aren't necessary, but if you specify them inside your
+# goodie, you'll need to add matching values here to check against.
 zci answer_type => 'password';
 zci is_cached => 1;
 
@@ -128,24 +136,91 @@ ddg_goodie_test(
         # This is the name of the goodie that will be loaded to test.
 		'DDG::Goodie::RouterPasswords'
     ],
-    # This is a sample query, just like the user will enter into the DuckDuckGo search box
+    # This is a sample query, just like the user will enter into the DuckDuckGo
+    # search box.
 	'Belkin f5d6130' =>
         test_zci(
-            # The first argument to test_zci is the plain text (default) returned from a goodie.
-            # If your goodie also returns an HTML version, you can pass that along explicitly as
-            # the second argument. If your goodie is random, you can use regexs instead of
+            # The first argument to test_zci is the plain text (default)
+            # returned from a goodie.  If your goodie also returns an HTML
+            # version, you can pass that along explicitly as the second
+            # argument. If your goodie is random, you can use regexs instead of
             # strings to match against.
             'Default login for the BELKIN F5D6130: Username: (none) Password: password',
             html => 'Default login for the BELKIN F5D6130:<br><i>Username</i>: (none)<br><i>Password</i>: password'
         ),
-    # You should include more test cases here. Try to think of ways that your plugin
-    # might break, and add them here to ensure they won't.
+    # You should include more test cases here. Try to think of ways that your
+    # plugin might break, and add them here to ensure they won't. Here are a
+    # few others that were thought of for this goodie.
+	'Belkin f5d6130 password default' =>
+        test_zci('Default login for the BELKIN F5D6130: Username: (none) Password: password',
+            html => 'Default login for the BELKIN F5D6130:<br><i>Username</i>: (none)<br><i>Password</i>: password'),
+	'default password Belkin f5d6130' =>
+        test_zci('Default login for the BELKIN F5D6130: Username: (none) Password: password',
+            html => 'Default login for the BELKIN F5D6130:<br><i>Username</i>: (none)<br><i>Password</i>: password'),
+	'Belkin f5d6130 password' =>
+        test_zci('Default login for the BELKIN F5D6130: Username: (none) Password: password',
+            html => 'Default login for the BELKIN F5D6130:<br><i>Username</i>: (none)<br><i>Password</i>: password'),
+	'default BELKIN password f5d6130' =>
+        test_zci('Default login for the BELKIN F5D6130: Username: (none) Password: password',
+            html => 'Default login for the BELKIN F5D6130:<br><i>Username</i>: (none)<br><i>Password</i>: password'),
+	'password bELKIN default f5d6130' =>
+        test_zci('Default login for the BELKIN F5D6130: Username: (none) Password: password',
+            html => 'Default login for the BELKIN F5D6130:<br><i>Username</i>: (none)<br><i>Password</i>: password'),
 );
 
+# This function call is expected by Test::More. It makes sure the program
+# doesn't exit before all the tests have been run.
 done_testing;
 ```
 
-Once you've written a test file, you can test it on it's own with `perl -Ilib t/GoodieName.t`.
+### Spice
+
+For this example, we will look at the test file of the **Xkcd** Spice, which is `t/Xkcd.t`.
+
+```perl
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+# These modules are necessary for the functions we'll be running.
+use Test::More;
+use DDG::Test::Spice;
+
+ddg_spice_test(
+	[
+        # This is the name of the Spice will be loaded to test.
+		'DDG::Spice::Xkcd'
+    ],
+    # This is a sample query, just like the user will enter into the DuckDuckGo
+    # search box.
+    'xkcd' => test_spice(
+        '/js/spice/xkcd/',
+        # This is the Spice calltype. It's almost always set to 'include',
+        # except for some special cases like FlashVersion which don't make a
+        # normal API call.
+        call_type => 'include',
+        # This is the Spice that should be triggered by the query.
+        caller => 'DDG::Spice::Xkcd',
+        # This is the cache value to expect. It's only necessary if you specify
+        # one in your Spice.
+        is_cached => 0
+    ),
+    # You should include more test cases here. Try to think of ways that your
+    # plugin might break, and add them here to ensure they won't. Here are is
+    # another that is tested for this Spice.
+    '619 xkcd' => test_spice(
+        '/js/spice/xkcd/619',
+        call_type => 'include',
+        caller => 'DDG::Spice::Xkcd',
+        is_cached => 0
+    ),
+);
+
+# This function call is expected by Test::More. It makes sure the program
+# doesn't exit before all the tests have been run.
+done_testing;
+```
 
 **Back to [Index](https://github.com/duckduckgo/duckduckgo#index) | [Goodies Overview](goodies_overview.md)**
 
