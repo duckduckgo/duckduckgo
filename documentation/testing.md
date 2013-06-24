@@ -4,7 +4,7 @@
 ---
 This section of the documentation walks you through the process of testing everything that you've written so far, and is crucial to ensuring a smooth integration process. Don't forget to write your test files!
 
-## Testing Triggers
+## Interactive Testing
 [Index](https://github.com/duckduckgo/duckduckgo#index) / [Testing](#testing) / **Testing Triggers**
 
 ---
@@ -226,8 +226,8 @@ done_testing;
 
 ***
 
-## Testing Spice
-[Index](https://github.com/duckduckgo/duckduckgo#index) / [Testing](#testing) / **Testing Spice**
+## Testing Spice HTML
+[Index](https://github.com/duckduckgo/duckduckgo#index) / [Testing](#testing) / **Testing Spice HTML**
 
 ---
 
