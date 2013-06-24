@@ -12,7 +12,7 @@ This section of the documentation walks you through the process of testing every
 Before reading this section, make sure you've at least worked through the [basic tutorial](general.md#basic-tutorial).
 
 
-**Step 1.** &nbsp;Install our DuckDuckHack utility called `duckpan`. You can find instructions [here](https://github.com/duckduckgo/p5-app-duckpan/blob/master/README.md). It is also hosted [here](https://metacpan.org/module/App::DuckPAN) on MetaCPAN.
+**Step 1.** &nbsp;Install our DuckDuckHack utility called [DuckPAN](https://github.com/duckduckgo/p5-app-duckpan). You can find instructions [here](https://github.com/duckduckgo/p5-app-duckpan/blob/master/README.md). It is also hosted [here](https://metacpan.org/module/App::DuckPAN) on MetaCPAN.
 
 **Step 2.** &nbsp;Go to your fork of the repository (a directory or folder on your computer).
 
