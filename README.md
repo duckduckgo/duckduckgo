@@ -45,4 +45,5 @@ and can have licensing restrictions.
   * [Spice Handle Functions](documentation/spice.md#spice-handle-functions)
   * [Spice Callback Functions](documentation/spice.md#spice-callback-functions)
   * [Advanced Spice](https://github.com/duckduckgo/zeroclickinfo-spice#advanced-spice)
+* [Location API](documentation/location_api.md)
 * [FAQ](documentation/faq.md)
