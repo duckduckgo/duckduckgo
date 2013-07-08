@@ -10,6 +10,19 @@ use DDG::Request;
 BEGIN {
 
 	my @t = (
+		''                            => {
+			query_raw                 => '',
+			query                     => '',
+			query_lc                  => '',
+			query_nowhitespace        => '',
+			query_nowhitespace_nodash => '',
+			query_clean               => '',
+			wordcount                 => 0,
+			query_raw_parts           => [],
+			query_parts               => [],
+			words                     => [],
+			triggers                  => {},
+		},
 		'   !bang test'                   => {
 			query_raw                 => '   !bang test',
 			query                     => '!bang test',

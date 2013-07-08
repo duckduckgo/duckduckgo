@@ -158,6 +158,7 @@ has triggers => (
 sub _build_triggers {
 	my ( $self ) = @_;
 	my @parts = @{$self->query_raw_parts};
+	return {} if not scalar @parts;
 	my $x = $parts[0] eq '' ? 2 : 0;
 	my %triggers;
 	for ($x..(scalar @parts-1)) {
