@@ -194,7 +194,7 @@ git push
 ```
 
 **Step 4.** Add your info to the plugin so we can give you credit for it on the [Goodies page](https://duckduckgo.com/goodies). You'll see your name or handle on the live site!
-Check out the [Metadata README](Metadata.md) for detailed instructions on how to include your name and links.
+Check out the [Metadata README](metadata.md) for detailed instructions on how to include your name and links.
 
 
 **Step 5.**  &nbsp;Go into GitHub and submit a [pull request!](http://help.github.com/send-pull-requests/) That will let us know about your plugin and start the conversation about integrating it into the live search engine.
