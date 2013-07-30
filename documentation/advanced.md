@@ -55,15 +55,15 @@ This way, we get the speed of the word trigger and still ensure that the search 
 
 If you want to see some test cases where these types are enumerated check out our [internal test file](https://github.com/duckduckgo/duckduckgo/blob/master/t/15-request.t) that tests they are generated properly.
 
-**Two-word+ triggers** &nbsp;Right now trigger words only operate on single words. If you want to operate on a two or more word trigger, you have a couple of options.
-
- * Use a regular expression trigger like in the [Expatistan Spice](https://github.com/duckduckgo/zeroclickinfo-spice/blob/master/lib/DDG/Spice/Expatistan.pm).
+**Multi-word triggers**. &nbsp;Triggering also supports the use of trigger "phrases". An example of this usage can be seen in the [Hacker News](https://github.com/duckduckgo/zeroclickinfo-spice/blob/master/lib/DDG/Spice/HackerNews.pm) plugin.
 
 ```perl
-triggers query_lc => qr/cost of living/;
+triggers startend => "hn", "hackernews", "hacker news", "hn search", "hnsearch", "hacker news search", "news.yc", "news.ycombinator.com", "hackernews search";
 ```
 
- * Use single word queries and then further qualify the query within the handle function as explained in the [Advanced handle functions](#advanced-handle-functions) section.
+Just like single word triggers, if a phrase is used when handling the remainder, the entire phrase will be stripped away from the query.
+
+Alternatively to using a trigger phrase a you could also use a word trigger and then further qualify the query within the handle function as explained in the [Advanced handle functions](#advanced-handle-functions) section.
 
 ## Advanced Handle Functions
 
