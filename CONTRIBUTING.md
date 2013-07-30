@@ -26,7 +26,7 @@ If submitting a **pull request** (bugfix/addition):
     ```
 
 * Make sure you have added the necessary tests for your changes.
-* Run `dzil test` to assure nothing else was accidentally broken (when needed).
+* Run `dzil test` (executes all tests in t/) to assure nothing else was accidentally broken
 
 ## Submitting Changes
 
