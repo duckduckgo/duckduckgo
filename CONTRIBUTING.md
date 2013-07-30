@@ -6,7 +6,7 @@ At DuckDuckGo, we truly appreciate our community members taking the time to cont
 
 * Make sure you have a [GitHub account](https://github.com/signup/free)
 
-If submitting a **bug*** or **suggestion**:
+If submitting a **bug** or **suggestion**:
 * Check the DuckDuckGo (Core) [issues](https://github.com/duckduckgo/duckduckgo/issues) to see if an issue already exists for the given bug or suggestion
     * If one doesn't exist, create a GitHub issue in the DuckDuckGo (Core) repository
         * Clearly describe the bug/improvemnt, including steps to reproduce when it is a bug
@@ -22,13 +22,7 @@ If submitting a **pull request** (bugfix/addition):
 * Make sure your commit messages effectively explain what changes have been made, and please identify which plugin or file has been modified:
 
     ```
-    CONTRIBUTING.md - Added the example commit message because it was missing
-    ```
-
-     is much better than:
-
-    ```
-    <bad\_commit\_example>
+    Request.pm - added check to not seperate words on apostrophe
     ```
 
 * Make sure you have added the necessary tests for your changes.
