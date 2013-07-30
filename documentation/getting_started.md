@@ -47,10 +47,11 @@ Check out this flow chart to determine what type of plugin you should create. Al
 
 * **No false positives**. A false positive is an irrelevant instant answer. Only return an instant answer when you know it is good, and otherwise return nothing. For example, the [Quixey plugin](http://ddg.gg/?q=flight+search+app) shouldn't show an answer for a query like "How to write an app."
 
-* **Minimize vertical space**.  Only include the most important information and then offer the user to click through for more if needed. 
+* **Minimize vertical space**.  Only include the most important information and then offer the user to click through for more if needed.
 ![minimize space](https://s3.amazonaws.com/ddg-assets/docs/minimize_space.png)
 
-* **Readable answers**.  If textual, create sentences or short statements that users can actually read. ![readable answer](https://s3.amazonaws.com/ddg-assets/docs/readable.png)
+* **Readable answers**.  If textual, create sentences or short statements that users can actually read.
+![readable answer](https://s3.amazonaws.com/ddg-assets/docs/readable.png)
 
 * **Consistent design**.  When in doubt, copy what already exists or ask us! We already have [a](http://ddg.gg/?q=garlic+steak+recipe) [few](http://ddg.gg/?q=xkcd) [cool](http://ddg.gg/?q=movies) [designs](http://ddg.gg/?q=flight+search+app).
 
