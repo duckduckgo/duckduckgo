@@ -54,10 +54,10 @@ $goodie = DDGTest::Goodie::TriggerOverlap->new( block => undef );
 isa_ok($goodie,'DDGTest::Goodie::TriggerOverlap');
 
 is_deeply(DDGTest::Goodie::TriggerOverlap->get_triggers,{
-	start => [ "myTrigger", "myTrigger start" ],
-	end => [ "myTrigger", "end myTrigger" ],
-	any => [ "myTrigger" ],
-	# startend => [ "myTrigger", "myTrigger startend" ],
+	start => [ "mytrigger", "mytrigger start" ],
+	end => [ "mytrigger", "end mytrigger" ],
+	any => [ "mytrigger" ],
+	# startend => [ "mytrigger", "mytrigger startend" ],
 },'Checking resulting get_triggers of DDGTest::Goodie::TriggerOverlap');
 
 done_testing;

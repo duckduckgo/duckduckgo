@@ -2,10 +2,10 @@ package DDGTest::Goodie::TriggerOverlap;
 
 use DDG::Goodie;
 
-triggers start => 'myTrigger start';
-triggers end => 'end myTrigger';
-triggers any => 'myTrigger';
-# triggers startend => 'myTrigger', 'myTrigger startend';
+triggers start => 'mytrigger start';
+triggers end => 'end mytrigger';
+triggers any => 'mytrigger';
+# triggers startend => 'mytrigger', 'mytrigger startend';
 
 handle remainder => sub { $_ };
 

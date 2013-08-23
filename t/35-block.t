@@ -59,6 +59,7 @@ BEGIN {
 		DDGTest::Goodie::WoBlockArr
 		DDGTest::Goodie::CollideOne
 		DDGTest::Goodie::CollideTwo
+		DDGTest::Goodie::TriggerOverlap
 	)];
 	my $before_wp = 0;
 	my $after_wp = 0;
