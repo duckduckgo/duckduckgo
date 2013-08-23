@@ -240,7 +240,38 @@ BEGIN {
 		my @words_result = $query_change->request($request);
 		is($request->query_raw,'duckduckgo ios','Query is still fine after query_change block');
 	}
-		
+	
+
+	# Test that `triggers start/end` doesn't kill `triggers any`
+	my $trigger_overlap_words_block = DDG::Block::Words->new({ plugins => [qw( DDGTest::Goodie::TriggerOverlap )] });
+
+	my @trigger_overlap = (
+		'mytrigger start overlap' => {
+			wo => [zci('overlap','triggeroverlap')],
+			re => [],
+		},
+		'overlap end mytrigger' => {
+			wo => [zci('overlap','triggeroverlap')],
+			re => [],
+		},
+		'mytrigger overlap' => {
+			wo => [zci('overlap','triggeroverlap')],
+			re => [],
+		},
+		'overlap mytrigger' => {
+			wo => [zci('overlap','triggeroverlap')],
+			re => [],
+		},
+	);
+	
+	while (@trigger_overlap) {
+		my $query = shift @trigger_overlap;
+		my $expect = shift @trigger_overlap;
+		my $request = DDG::Request->new({ query_raw => $query });
+		my @words_result = $one_words_block->request($request);
+		is_deeply(\@words_result,$expect->{wo} ? $expect->{wo} : [],'Testing words block result of query "'.$query.'"');
+	}
+
 }
 
 done_testing;

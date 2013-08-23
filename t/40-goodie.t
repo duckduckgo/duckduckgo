@@ -47,4 +47,16 @@ eval q{
 };
 like($@, qr/You must be using words matching for remainder handler/, 'Checking DDGTest::Goodie::WrongFour for crashing proper');
 
+# Check for overlapping triggers
+my $goodie = DDGTest::Goodie::TriggerOverlap->new( block => undef );
+
+isa_ok($goodie,'DDGTest::Goodie::TriggerOverlap');
+
+is_deeply(DDGTest::Goodie::TriggerOverlap->get_triggers,{
+	start => [ "myTrigger", "myTrigger start" ],
+	end => [ "myTrigger", "myTrigger end" ],
+	any => [ "myTrigger" ],
+	# startend => [ "myTrigger", "myTrigger startend" ],
+},'Checking resulting get_triggers of DDGTest::Goodie::TriggerOverlap');
+
 done_testing;
