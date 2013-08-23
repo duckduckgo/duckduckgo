@@ -9,6 +9,7 @@ use lib "$Bin/lib";
 
 use DDGTest::Goodie::Words;
 use DDGTest::Goodie::Regexp;
+use DDGTest::Goodie::TriggerOverlap;
 
 my $goodie = DDGTest::Goodie::Words->new( block => undef );
 
@@ -47,14 +48,14 @@ eval q{
 };
 like($@, qr/You must be using words matching for remainder handler/, 'Checking DDGTest::Goodie::WrongFour for crashing proper');
 
-# Check for overlapping triggers
-my $goodie = DDGTest::Goodie::TriggerOverlap->new( block => undef );
+# Check that overlapping triggers are created
+$goodie = DDGTest::Goodie::TriggerOverlap->new( block => undef );
 
 isa_ok($goodie,'DDGTest::Goodie::TriggerOverlap');
 
 is_deeply(DDGTest::Goodie::TriggerOverlap->get_triggers,{
 	start => [ "myTrigger", "myTrigger start" ],
-	end => [ "myTrigger", "myTrigger end" ],
+	end => [ "myTrigger", "end myTrigger" ],
 	any => [ "myTrigger" ],
 	# startend => [ "myTrigger", "myTrigger startend" ],
 },'Checking resulting get_triggers of DDGTest::Goodie::TriggerOverlap');
