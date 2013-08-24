@@ -45,14 +45,16 @@ sub _set_end_word_plugin { shift->_set_endword_word_plugin('end',@_) }
 
 sub _set_endword_word_plugin {
 	my ( $self, $type, $word, $plugin ) = @_;
-	my @words = split(/\s+/,$word);
+	$word = lc $word;
+	my @words = split(/\s+/, $word);
 	$word = join(' ',@words);
 	$self->_set_word_plugin($type,pop @words,$word,$plugin);
 }
 
 sub _set_beginword_word_plugin {
 	my ( $self, $type, $word, $plugin ) = @_;
-	my @words = split(/\s+/,$word);
+	$word = lc $word;
+	my @words = split(/\s+/, $word);
 	$word = join(' ',@words);
 	$self->_set_word_plugin($type,shift @words,$word,$plugin);
 }
