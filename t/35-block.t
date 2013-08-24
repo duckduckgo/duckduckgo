@@ -60,6 +60,7 @@ BEGIN {
 		DDGTest::Goodie::CollideOne
 		DDGTest::Goodie::CollideTwo
 		DDGTest::Goodie::TriggerOverlap
+		DDGTest::Goodie::CaseSensitive
 	)];
 	my $before_wp = 0;
 	my $after_wp = 0;
@@ -198,7 +199,22 @@ BEGIN {
 			wo => [zci('overlap','triggeroverlap')],
 			re => [],
 		},
-
+		'notcasesensitive sentence' => {
+			wo => [zci('sentence','casesensitive')],
+			re => [],	
+		},
+		'NOTCASESENSITIVE sentence' => {
+			wo => [zci('sentence','casesensitive')],
+			re => [],	
+		},
+		'match on ALLCAPS' => {
+			wo => [zci('match on','casesensitive')],
+			re => [],	
+		},
+		'match on allcaps' => {
+			wo => [zci('match on','casesensitive')],
+			re => [],	
+		},
 	);
 	
 	while (@queries) {
