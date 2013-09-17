@@ -5,11 +5,11 @@
 #Index
 - [Overview](#overview)
     - [Tech](#tech)
-- [Example #1: NPM (Basic Plugin)](#example-1---npm-basic-plugin)
-- [Example #2: Alternative.To (Basic Carousel Plugin)](#example-2---alternativeto-basic-carousel-plugin)
-- [Example #3: Movie (Advanced Plugin)](#example-3---movie-advance-plugin)
-- [Example #4: Quixey (Advanced Carousel Plugin)](#example-4---quixey-advanced-carousel-plugin)
-- [Example #5: Dictionary (More Advanced Plugin)](#example-5---dictionary-more-advanced-plugin)
+- [Example #1: NPM (Basic Instant Answer)](#example-1---npmAbasic-instant-answer)
+- [Example #2: Alternative.To (Basic Carousel Instant AnAwer)](#example-2---alternativeto-basic-carousel-instant-answer)
+- [Example #3: Movie (Advanced Instant Answer)](#example-3--Amovie-advance-instant-answer)
+- [Example #4: Quixey (Advanced Carousel Instant Answer)](#exaAple-4---quixey-advanced-carousel-instant-answer)
+- [Example #5: Dictionary (More Advanced Instant Answer)](#exaAple-5---dictionary-more-advanced-instant-answer)
 - [Advanced Techniques](#advanced-techniques)
     - [Slurping Multiple Trigger Words](#slurping-multiple-trigger-words...)
     - [Using API Keys](#using-api-keys)
@@ -35,9 +35,9 @@
 
 
 ##Overview
-The Spice frontend is the code that is triggered by the Perl backend (which we learned about in the previous tutorial) for your spice plugin. It mainly consists of a function (the Spice "callback" function) that takes a JSON formatted, API response as its input, specifies which template format you'd like your result to have and uses the data to render a Spice result at the top of the DuckDuckGo search results page.
+The Spice frontend is the code that is triggered by the Perl backend (which we learned about in the previous tutorial) for your spice instant answer. It mainly consists of a function (the Spice "callback" function) that takes a JSON formatted, API response as its input, specifies which template format you'd like your result to have and uses the data to render a Spice result at the top of the DuckDuckGo search results page.
 
-The Perl part of the plugins go in lib directory: `lib/DDG/Spice/PluginName.pm`, while all of the frontend files discussed below should go in the share directory: `share/spice/plugin_name/`.
+The Perl part of the instant answers go in lib directory: `lib/DDG/Spice/instantAnswerName.pm`, while all of the frontend files discussed below should go in the share directory: `share/spice/instant_answer_name/`.
 
 **\*\*Note** : The file and folder names must adhere to our [naming conventions](#naming-conventions) in order for everything to function properly.
 
@@ -46,15 +46,15 @@ The Spice frontend uses [Handlebars](http://handlebarsjs.com) for templates and 
 
 If you're not already familiar with Handlebars, *please* read the [Handlebars documentation](http://handlebarsjs.com) before continuing on. Don't worry if you don't fully understand how to use Handlebars; the examples will explain it to you. But you should, at the very least, familiarize yourself with Handlebars concepts and terminology before moving on. (Don't worry, it should only take a few minutes to read!)
 
-Below, we will walk you through several examples ranging from simple to complicated, which will explain how to use the template system and make your plugins look awesome.
+Below, we will walk you through several examples ranging from simple to complicated, which will explain how to use the template system and make your instant answers look awesome.
 
 
 ------------------------
 
 
-##Example #1 - NPM (Basic Plugin)
+##Example #1 - NPM (Basic Instant Answer)
 
-The NPM plugin [[link](https://duckduckgo.com/?q=npm+uglify-js)] [[code](https://github.com/duckduckgo/zeroclickinfo-spice/tree/master/share/spice/npm)] is a great example of a basic Spice implementation. Let's walk through it line-by-line:
+The NPM instant answer [[link](https://duckduckgo.com/?q=npm+uglify-js)] [[code](https://github.com/duckduckgo/zeroclickinfo-spice/tree/master/share/spice/npm)] is a great example of a basic Spice implementation. Let's walk through it line-by-line:
 
 #####npm.js
 ```javascript
@@ -73,7 +73,7 @@ function ddg_spice_npm (api_result) {
 }
 ```
 
-As mentioned, every plugin requires a Spice callback function, for the *NPM* plugin, the callback is the `ddg_spice_npm()` function that we defined here in *npm.js*. The *NPM* Perl module we wrote specifies this as the callback by using the name of the package `DDG::Spice::NPM` and gives this *ddg_spice_npm* name to the API call so that this funtion will be executed when the API responds using the data returned from the upstream (API) provider as the function's input.
+As mentioned, every instant answer requires a Spice callback function, for the *NPM* instant answer, the callback is the `ddg_spice_npm()` function that we defined here in *npm.js*. The *NPM* Perl module we wrote specifies this as the callback by using the name of the package `DDG::Spice::NPM` and gives this *ddg_spice_npm* name to the API call so that this funtion will be executed when the API responds using the data returned from the upstream (API) provider as the function's input.
 
 #####npm.js (continued)
 ```javascript 
@@ -94,9 +94,9 @@ Spice.render({
 });
 ```
 
-Alright, so here is the bulk of the plugin, but it's very simple:
+Alright, so here is the bulk of the instant answer, but it's very simple:
 
-- `Spice.render()` is a function that the plugin system has already defined. You pass an object to it that specifies a bunch of important parameters. 
+- `Spice.render()` is a function that the instant answer system has already defined. You pass an object to it that specifies a bunch of important parameters. 
 
 - `data` is perhaps the most important parameter. The object given here will be the object that is passed along to the Handlebars template. In this case, the context of the NPM template will be the **api_result** object. This is very important to understand because **only the data passed along to the template is accessible to the template**. In most cases the `data` parameter should be set to 
 `api_result` so all the data returned from the API is accessible to the template. 
@@ -105,17 +105,17 @@ Alright, so here is the bulk of the plugin, but it's very simple:
 
 - `header1` is the text of this header, i.e. the text displayed inside the large grey bar. 
 
-- `source_name` is the name of the source for the "More at <source>" link that's displayed below the text of the plugin for attribution purposes. 
+- `source_name` is the name of the source for the "More at <source>" link that's displayed below the text of the instant answer for attribution purposes. 
 
 - `source_url` is the target of the "More at" link. It's the page that the user will click through to. 
 
-- `template_normal` is the name of the Handlebars template that contains the structure information for your plugin.
+- `template_normal` is the name of the Handlebars template that contains the structure information for your instant answer.
 
-- `template_small` is the name of the Handlebars template to be used when you plugin is displayed in a stacked state. This isn't required, but if your plugin can provide a succint, one or two line answer this template should be used in the event that the plugin appears in the stacked state. If no template is given the stacked result will simply show the header of the spice result 
+- `template_small` is the name of the Handlebars template to be used when you instant answer is displayed in a stacked state. This isn't required, but if your instant answer can provide a succint, one or two line answer this template should be used in the event that the instant answer appears in the stacked state. If no template is given the stacked result will simply show the header of the spice result 
 
 ----
 
-Now, let's look at the NPM plugin's Handlebars template:
+Now, let's look at the NPM instant answer's Handlebars template:
 
 ######npm.handlebars
 ```html
@@ -131,9 +131,9 @@ As you can see, this is a special type of HTML template. Within the template, yo
 We've created two files in the Spice share directory (`share/spice/npm/`) :
 
 1. `npm.js` - which delegates the API's response and calls `Spice.render()`
-2. `npm.handlebars` - which specifies the plugin's HTML structure and determines which attributes of the API response are placed in the HTML result
+2. `npm.handlebars` - which specifies the instant answer's HTML structure and determines which attributes of the API response are placed in the HTML result
 
-You may notice other plugins also include a css file. For **NPM** the use of CSS wasn't necessary and this is also true for many other plugins. If however CSS is needed it can be added. Please refer to the [Spice FAQ](#faq) for more inforamtion about custom css.
+You may notice other instant answers also include a css file. For **NPM** the use of CSS wasn't necessary and this is also true for many other instant answers. If however CSS is needed it can be added. Please refer to the [Spice FAQ](#faq) for more inforamtion about custom css.
 
 ##Example #2 - Alternative.To (Basic Carousel Instant Answer)
 The Alternative.To instant answer is very similar to NPM in that it is also relatively basic, however, it uses the **Carousel** Spice Template. Let's take a look at the code and see how this is done:
@@ -674,8 +674,8 @@ Handlebars.registerHelper("quixey_star", function() {
 
 This helper is also very simple, but it is important because it uses the `DDG.get_asset_path()` function which returns the URI for an asset stored in a instant answer's share folder. This is necessary because Spice instant answers and their content are versioned internally. So the URI returned by this function will contain the proper version number, which is required to access any assets.
 
-##Example #5 - Dictionary (More Advanced Plugin)
-The dictionary plugin is a more advanced plugin than the previous examples, because it requires multiple endpoints (which means it has multiple perl modules -`.pm` files) in order to function properly. You will notice the `definition` endpoint is a subdirectory of the `dictionary` directory: `zeroclickinfo-spice/share/spice/dictionary/definition/`. In the case of the **Dictionary** plugin, its Perl modules work together as one plugin, however if the other endpoints worked seperately from the `definition` endpoint, such as they do in the **[Last.FM](https://github.com/duckduckgo/zeroclickinfo-spice/tree/spice2/share/spice/lastfm)** plugin, they too would each have their own subdirectories and would also each have their own respective JavaScript, Handlebars and CSS files. 
+##Example #5 - Dictionary (More Advanced Instant Answer)
+The dictionary instant answer is a more advanced instant answer than the previous examples, because it requires multiple endpoints (which means it has multiple perl modules -`.pm` files) in order to function properly. You will notice the `definition` endpoint is a subdirectory of the `dictionary` directory: `zeroclickinfo-spice/share/spice/dictionary/definition/`. In the case of the **Dictionary** instant answer, its Perl modules work together as one instant answer, however if the other endpoints worked seperately from the `definition` endpoint, such as they do in the **[Last.FM](https://github.com/duckduckgo/zeroclickinfo-spice/tree/spice2/share/spice/lastfm)** instant answer, they too would each have their own subdirectories and would also each have their own respective JavaScript, Handlebars and CSS files. 
 
 To begin, lets look at the first callback function definition in the Dictionary javascript:
 
@@ -699,7 +699,7 @@ To begin, lets look at the first callback function definition in the Dictionary 
 
 The comments at the beginning of the file explain what the various callbacks are for. Each of these callback functions is connected to a different endpoint, meaning they each belong to a different Perl module. As you can see, the name of each callback corellates to the name of the perlmodule. So `dictionary_definition()` is the callback for `DDG::Spice::Dictionary::Definition`, likewise `dictionary_audio` is for `DDG::Spice::Dictionary::Audio`, etc.
 
-Each of these endpoints are used to make different API calls (either to a different endpoint or possibly even a different API altogether), which can only be done by creating a different Perl module for each endpoint. We can make these endpoints work together for a given plugin by using the jQuery `getScript()` function which makes an ajax call to a given endpoint, which results in a call to that endpoint's callback function. This function needs to be defined before it is called, so the Dictionary plugin defines all **four** callback functions in **dictionary_definition.js**
+Each of these endpoints are used to make different API calls (either to a different endpoint or possibly even a different API altogether), which can only be done by creating a different Perl module for each endpoint. We can make these endpoints work together for a given instant answer by using the jQuery `getScript()` function which makes an ajax call to a given endpoint, which results in a call to that endpoint's callback function. This function needs to be defined before it is called, so the Dictionary instant answer defines all **four** callback functions in **dictionary_definition.js**
 
 Moving on, let's take a look at the implementation of the `Spice.render()` call and the `dictionary_definition()`  callback:
 
@@ -734,7 +734,7 @@ function ddg_spice_dictionary_definition (api_result) {
     };
 ```
 
-We begin by wrapping the `Spice.render()` call in a function which also does a little extra work. Specifically after rendering the result it calls the Wordnik API, this time using two different API endpoints. The first gets the pronounciation text, the second gets the audio file for the pronounciation of the word. As mentioned these endpoints are used to work together as one plugin so using the returns from the seperate API calls we construct one dictionary plugin result which contains the word definition, the pronounciation text and the audio recording of the pronounciation.
+We begin by wrapping the `Spice.render()` call in a function which also does a little extra work. Specifically after rendering the result it calls the Wordnik API, this time using two different API endpoints. The first gets the pronounciation text, the second gets the audio file for the pronounciation of the word. As mentioned these endpoints are used to work together as one instant answer so using the returns from the seperate API calls we construct one dictionary instant answer result which contains the word definition, the pronounciation text and the audio recording of the pronounciation.
 
 The reason for wrapping the `Spice.render()` call in a function is because we need to be able to call our `render()` function from both the `dictionary_defintion()` callback as well as the `dictionary_reference()` callback, as you will see below:
 
@@ -753,7 +753,7 @@ The reason for wrapping the `Spice.render()` call in a function is because we ne
     // Check if we have results we need.
     if (api_result && api_result.length > 0) {
 
-        // Wait, before we display the plugin, let's check if it's a plural
+        // Wait, before we display the instant answer, let's check if it's a plural
         // such as the word "cacti."
         var singular = api_result[0].text.match(/^(?:A )?plural (?:form )?of <xref>([^<]+)<\/xref>/i);
 
@@ -763,7 +763,7 @@ The reason for wrapping the `Spice.render()` call in a function is because we ne
             ddg_spice_dictionary_definition.pluralOf = api_result[0].word;
             $.getScript(path + "/reference/" + singular[1]);
         } else {
-            // Render the plugin if everything is fine.
+            // Render the instant answer if everything is fine.
             render(api_result, api_result[0].word, api_result[0].word);
         }
     }
@@ -792,7 +792,7 @@ function ddg_spice_dictionary_reference (api_result) {
         api_result[0].pluralOf = word;
         api_result[0].word = ddg_spice_dictionary_definition.pluralOf;
 
-        // Render the plugin.
+        // Render the instant answer.
         render(api_result, api_result[0].word, word);
     }
 };
@@ -916,9 +916,9 @@ The callback then verifies the API returned a pronunciation of the queried word 
     };
 ```
 
-Here, we define a function, `loadSound()` that uses the [**SoundManager**](http://www.schillmania.com/projects/soundmanager2/) JavasScript library to load the audio file and also allows us to easily control the playing of the audio. An important piece of this `loadSound()` function is the use of our audio proxy: `url: "/audio/?u=" + url`. Similarly to any images used in a plugin, any audio files must also be proxied through DuckDuckGo to ensure our users' privacy.
+Here, we define a function, `loadSound()` that uses the [**SoundManager**](http://www.schillmania.com/projects/soundmanager2/) JavasScript library to load the audio file and also allows us to easily control the playing of the audio. An important piece of this `loadSound()` function is the use of our audio proxy: `url: "/audio/?u=" + url`. Similarly to any images used in a instant answer, any audio files must also be proxied through DuckDuckGo to ensure our users' privacy.
 
-**\*\*Note:** The use of the SoundManager library for this plugin shouldn't be taken lightly. We chose to use a JavaScript library to ensure cross-browser compatabilty but the use of 3rd party libraries is not something we advocate, however since this was an internally written plugin, we decided to use the SoundManager library for this plugin as well as all others which utilize audio (eg. [Forvo](https://duckduckgo.com/?q=pronounce+awesome)).
+**\*\*Note:** The use of the SoundManager library for this instant answer shouldn't be taken lightly. We chose to use a JavaScript library to ensure cross-browser compatabilty but the use of 3rd party libraries is not something we advocate, however since this was an internally written instant answer, we decided to use the SoundManager library for this instant answer as well as all others which utilize audio (eg. [Forvo](https://duckduckgo.com/?q=pronounce+awesome)).
 
 ```javascript
     // Initialize the soundManager object.
@@ -1042,9 +1042,9 @@ Handlebars.registerHelper("format", function(text) {
 });
 ```
 
-This helper is used to create hyperlinks within the word definition text. The Wordnik API we are using for this plugin provides definitions which often contain words or phrases that are wrapped in `<xref>` tags indicating that Wordnik also has a definition for that word or phrase. This helper is used to replace the `<xref>` tags with `<a>` tags that link to a search for that particular word on **Wordnik.com**.
+This helper is used to create hyperlinks within the word definition text. The Wordnik API we are using for this instant answer provides definitions which often contain words or phrases that are wrapped in `<xref>` tags indicating that Wordnik also has a definition for that word or phrase. This helper is used to replace the `<xref>` tags with `<a>` tags that link to a search for that particular word on **Wordnik.com**.
 
-Now that we have seen the Handlebars template and all looked over all the JavaScript related to the dictionary plugin, lets take a look at the CSS used to style the display of the result:
+Now that we have seen the Handlebars template and all looked over all the JavaScript related to the dictionary instant answer, lets take a look at the CSS used to style the display of the result:
 
 ###### dictionary_definition.css
 ```css
@@ -1109,21 +1109,21 @@ Now that we have seen the Handlebars template and all looked over all the JavaSc
 }
 ```
 
-Understanding this CSS isn't terribly important in this case because most of it has been borrowed from the [Skeleton](http://getskeleton.com) framework's button styling. The most important part about this CSS file is noticing that we have targetted every CSS rule to only apply to elements found within the element with an ID of **#spice\_dictionary\_definition**. Every spice plugin is automatically wrapped in a div with an ID of "#spice_spiceCallbackName". This allows you to force any/all CSS to only apply to the elements on the page related to the Spice instant answer.
+Understanding this CSS isn't terribly important in this case because most of it has been borrowed from the [Skeleton](http://getskeleton.com) framework's button styling. The most important part about this CSS file is noticing that we have targetted every CSS rule to only apply to elements found within the element with an ID of **#spice\_dictionary\_definition**. Every spice instant answer is automatically wrapped in a div with an ID of "#spice_spiceCallbackName". This allows you to force any/all CSS to only apply to the elements on the page related to the Spice instant answer.
 
 As you can see, most of this CSS is specific to the `.widget-button` class and is used to style the look of the play button. Also its worth mentioning that this particular CSS has been written to be very cross-browser compatible as you can see by the comments which indicate the browsers each line has been written for.
 
 As you can see, the Dictionary instant answer is one of the most involved Spice instant answers we have due to its use of multiple endpoints and their respective callback functions. Most instant answers however shouldn't need to be so complex in order to function, so we greatly prefer that instant answers are built as simple and straightforward as possible.
 
 ##Conclusion
-Now that you have completed the walk through you should have the required knowledge to go on and build your own plugins. More information about writing plugins is available below.
+Now that you have completed the walk through you should have the required knowledge to go on and build your own instant answers. More information about writing instant answers is available below.
 
 ------
 
 ##Advanced Techniques
 
 ###Slurping Multiple Trigger Words
-Some plugins, such as the [**Zanran**](https://github.com/duckduckgo/zeroclickinfo-spice/blob/spice2/lib/DDG/Spice/Zanran.pm) and [**ExpandURL**](https://github.com/duckduckgo/zeroclickinfo-spice/blob/spice2/lib/DDG/Spice/ExpandURL.pm) plugins require a large list of trigger words due to the nature of the plugin. However, listing all those triggers in the Perl code can make it very difficult to read. As an easy fix, we have opted to list all the possible trigger words for each plugin in a `triggers.txt` file located in each plugin's respective share folder.
+Some instant answers, such as the [**Zanran**](https://github.com/duckduckgo/zeroclickinfo-spice/blob/spice2/lib/DDG/Spice/Zanran.pm) and [**ExpandURL**](https://github.com/duckduckgo/zeroclickinfo-spice/blob/spice2/lib/DDG/Spice/ExpandURL.pm) instant answers require a large list of trigger words due to the nature of the instant answer. However, listing all those triggers in the Perl code can make it very difficult to read. As an easy fix, we have opted to list all the possible trigger words for each instant answer in a `triggers.txt` file located in each instant answer's respective share folder.
 
 ###Using API Keys
 (tbd)
@@ -1139,9 +1139,9 @@ Some plugins, such as the [**Zanran**](https://github.com/duckduckgo/zeroclickin
 
 ###Using Custom CSS
 (tbd)
-**\*\*Note**: Every Spice plugin result is wrapped in a `<div>` with an id of `spice_<spice_name>`.
+**\*\*Note**: Every Spice instant answer result is wrapped in a `<div>` with an id of `spice_<spice_name>`.
 
-For example the NPM plugin will have: `<div id="spice_npm">`. This allows any custom CSS you write to be scoped by addressing this id first for all your CSS rules. So, if the NPM plugin needed any CSS you could write it like so:
+For example the NPM instant answer will have: `<div id="spice_npm">`. This allows any custom CSS you write to be scoped by addressing this id first for all your CSS rules. So, if the NPM instant answer needed any CSS you could write it like so:
 
 ```css
 #spice_npm pre {
@@ -1208,7 +1208,7 @@ Email them! - If you explain what it's for, they might be willing to create and 
 Sorry, but **no**. We currently don't support XML. We're considering it though...
 
 ###Can I use an API that returns HTML or a String? 
-If the response is a single string, then yes - you can use `zci wrap_jsonp_callback`. You can read more about that [here](#). Or take a look at the [Automeme](https://github.com/duckduckgo/zeroclickinfo-spice/blob/spice2/lib/DDG/Spice/Automeme.pm#L8) plugin. If the response is more complicated, then sorry but **no**.
+If the response is a single string, then yes - you can use `zci wrap_jsonp_callback`. You can read more about that [here](#). Or take a look at the [Automeme](https://github.com/duckduckgo/zeroclickinfo-spice/blob/spice2/lib/DDG/Spice/Automeme.pm#L8) instant answer. If the response is more complicated, then sorry but **no**.
 
 ###Can I move the carousel detail area above the carousel?
 Yup - Checkout the [**Khan Academy Spice**](https://github.com/duckduckgo/zeroclickinfo-spice/blob/spice2/share/spice/khan_academy/khan_academy.js) for an example.
@@ -1227,10 +1227,10 @@ $("#ddgc_detail").prependTo("#my_unique_name");
 
 This snippet uses jQuery to grab the **#ddgc\_detail** `<div>` from the DOM, and then moves it right in front of the **#my_unique_name** `<div>`.  
 
-**\*\*Note**: In order to move the carouse detail area, the `prependTo()` method must be used ***after*** the `Spice.render()` call because before that call, none of the `<div>`'s related to your Spice plugin exist in the DOM!
+**\*\*Note**: In order to move the carouse detail area, the `prependTo()` method must be used ***after*** the `Spice.render()` call because before that call, none of the `<div>`'s related to your Spice instant answer exist in the DOM!
 
 ###Can I use the 'X', 'Y' or 'Z' JavaScript library?
-Probably not. Maybe, if it is very small. But we prefer that no third party, extra libraries are used. ***Please*** ask us first before writing a plugin that is **dependent** on an extra library - we don't want you to waste your time and energy on something we can't accept!
+Probably not. Maybe, if it is very small. But we prefer that no third party, extra libraries are used. ***Please*** ask us first before writing a instant answer that is **dependent** on an extra library - we don't want you to waste your time and energy on something we can't accept!
 
 ###Can I use Coffeescript?
 No.
@@ -1282,13 +1282,13 @@ Nope. Just use JavaScript, please and thanks.
 (tbd)
 
 ###Spice wrap_jsonp_callback
-If the API used for your plugin does not support JSONP (ie. it doesn't provide a URI parameter to indicate the callback function to be used on the API response), set `wrap_jsonp_callback` to true and the API response will automatically be wrapped in the appropriate function call for your plugin.
+If the API used for your instant answer does not support JSONP (ie. it doesn't provide a URI parameter to indicate the callback function to be used on the API response), set `wrap_jsonp_callback` to true and the API response will automatically be wrapped in the appropriate function call for your instant answer.
 
 ###Spice proxy_cache_valid 
 (tbd)
 
 ###Spice is_unsafe
-If your plugin has the potential to return unsafe results (eg. contains vulgar words, crude humour) the `is_unsafe` flag must be set to true. Any plugins that have `is_unsafe` set to true can only be seen when a user has safe-search turned off, or when they add the phrase `!safeoff` to their query (eg. "automeme !safeoff").
+If your instant answer has the potential to return unsafe results (eg. contains vulgar words, crude humour) the `is_unsafe` flag must be set to true. Any instant answers that have `is_unsafe` set to true can only be seen when a user has safe-search turned off, or when they add the phrase `!safeoff` to their query (eg. "automeme !safeoff").
 
 ------
 
