@@ -6,7 +6,7 @@
 - [Overview](#overview)
     - [Tech](#tech)
 - [Example #1: NPM (Basic Instant Answer)](#example-1---npmAbasic-instant-answer)
-- [Example #2: Alternative.To (Basic Carousel Instant AnAwer)](#example-2---alternativeto-basic-carousel-instant-answer)
+- [Example #2: Alternative.To (Basic Carousel Instant Answer)](#example-2---alternativeto-basic-carousel-instant-answer)
 - [Example #3: Movie (Advanced Instant Answer)](#example-3--Amovie-advance-instant-answer)
 - [Example #4: Quixey (Advanced Carousel Instant Answer)](#exaAple-4---quixey-advanced-carousel-instant-answer)
 - [Example #5: Dictionary (More Advanced Instant Answer)](#exaAple-5---dictionary-more-advanced-instant-answer)
