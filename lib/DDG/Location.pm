@@ -19,17 +19,13 @@ sub new_from_geo_ip_record {
 		}
 
         # add short location summary string: postal_code if it exists, otherwise 'city, country' or 'region, country'
-        my $loc_str = '';
         my $city = $geo_ip_record->city || $geo_ip_record->region_name;
 
         if ($city) {
             $city .= ', ' . $geo_ip_record->country_name if $geo_ip_record->country_name;
-        } else {
-            $city = '';
         }
 
-        $args{loc_str} = $geo_ip_record->postal_code || $city;
-
+        $args{loc_str} = $geo_ip_record->postal_code || $city || '';
 
 		return $class->new(
 			geo_ip_record => $geo_ip_record,
