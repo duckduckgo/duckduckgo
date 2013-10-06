@@ -1,0 +1,19 @@
+---
+before_install:
+  - export HARNESS_OPTIONS=j10:c HARNESS_TIMER=1
+  - rm .travis.yml
+  - git config --global user.name "Dist Zilla Plugin TravisCI"
+  - git config --global user.email $HOSTNAME":not-for-mail@travis-ci.org"
+install:
+  - cpanm  --quiet  --notest --skip-satisfied Dist::Zilla
+  - dzil authordeps | grep -ve '^\W' | xargs -n 5 -P 10 cpanm  --quiet   --notest  --skip-satisfied
+  - dzil listdeps | grep -ve '^\W' | cpanm  --quiet   --notest  --skip-satisfied
+language: perl
+perl:
+  - 5.18
+  - 5.16
+  - 5.14
+  - 5.12
+  - 5.10
+script:
+  - dzil smoke --release --author
