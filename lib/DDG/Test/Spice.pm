@@ -8,6 +8,7 @@ use Test::More;
 use DDG::Test::Block;
 use DDG::ZeroClickInfo::Spice;
 use Package::Stash;
+use Data::Dumper;
 
 =head1 DESCRIPTION
 
@@ -39,10 +40,10 @@ L<call of the DDG::ZeroClickInfo::Spice|DDG::ZeroClickInfo::Spice/call>
 	);
 
 	$stash->add_symbol('&test_spice', sub {
-		my $call = shift;
-		ref $_[0] eq 'HASH'
-			? DDG::ZeroClickInfo::Spice->new(%spice_params, %{$_[0]}, call => $call )
-			: DDG::ZeroClickInfo::Spice->new(%spice_params, @_, call => $call )
+		my ( $call, %opts ) = shift;
+		%opts = ref $_[0] eq 'HASH' ? %{$_[0]} : @_;
+		$opts{call_type} = 'include' if not defined $opts{call_type};
+		DDG::ZeroClickInfo::Spice->new(%spice_params, %opts, call => $call )
 	});
 
 =keyword spice
