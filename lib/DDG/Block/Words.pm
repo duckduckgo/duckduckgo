@@ -176,7 +176,7 @@ sub request {
 							}
 						}
 					}
-					my @next_poses_key = grep { $_ >= 0 } $begin ? ($cnt+1)..($cnt+$word_count-1) : ($cnt-$word_count-1)..($cnt-1);
+					my @next_poses_key = grep { $_ >= 0 } $begin ? ($cnt+1)..($cnt+$word_count-1) : ($cnt-$word_count+1)..($cnt-1);
 					my @next_poses = grep { defined $_ && defined $triggers{$_} } @poses[@next_poses_key];
 					@next_poses = reverse @next_poses unless $begin;
 					for my $next_pos (@next_poses) {
