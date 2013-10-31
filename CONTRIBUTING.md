@@ -25,11 +25,30 @@ If submitting a **pull request** (bugfix/addition):
     Request.pm - added check to not seperate words on apostrophe
     ```
 
-* Make sure you have added the necessary tests for your changes.
-* Run `dzil test` (executes all tests in t/) to assure nothing else was accidentally broken
+* Make sure you have added the necessary tests for your changes
+* Run `dzil test` (executes all tests in t/) to ensure nothing else was accidentally broken
 
 ## Submitting Changes
 
-* Push your changes to your fork of the repository.
-* Submit a pull request to the DuckDuckGo (Core) repository.
-    * Make sure to use the DuckDuckGo (Core) repository's Pull Request template
+**Step 1.** Commit your changes.
+
+```bash
+git commit -a -m "My first plugin that does X is ready to go!"
+```
+
+**Step 2.** Get your commit history [how you like it](http://book.git-scm.com/4_interactive_rebasing.html).
+
+```
+git rebase -i origin/master
+```
+
+**Step 3.** Push your forked repository back to GitHub.
+
+```
+git push
+```
+
+**Step 4.** Add your info to the plugin so we can give you credit for it on the [Goodies page](https://duckduckgo.com/goodies). You'll see your name or handle on the live site!
+Check out the [Metadata README](metadata.md) for detailed instructions on how to include your name and links.
+
+**Step 5.** Go into GitHub and submit a [pull request!](http://help.github.com/send-pull-requests/) to the **DuckDuckGo** repository, **making sure to use the **DuckDuckGo** repository's [Pull Request template](#link-to-file)**. This will let us know about your changes and start the conversation about integrating it into the live code.
