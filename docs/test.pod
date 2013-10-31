@@ -1,7 +1,0 @@
-=head1 TEST
-
-=begin html
-
-<img src="https://raw.github.com/duckduckgo/duckduckgo/master/docs/ddg_request.png" alt="The big picture of DDG::Request" />
-
-=end html
