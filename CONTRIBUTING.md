@@ -67,4 +67,4 @@ If you're submitting a **pull request** (bugfix/addition):
 4. Add your info to the instant answer so we can give you credit for it on the [Goodies page](https://duckduckgo.com/goodies). You'll see your name or handle on the live site!
 Check out the [Metadata README](metadata.md) for detailed instructions on how to include your name and links.
 
-5. Go into GitHub and submit a [pull request!](http://help.github.com/send-pull-requests/) to the **DuckDuckGo** repository, making sure to use the **DuckDuckGo** repository's **[Pull Request Template](#link-to-file)**. This will let us know about your changes and start the conversation about integrating it into the live code.
+5. Go into GitHub and submit a [pull request!](http://help.github.com/send-pull-requests/) to the **DuckDuckGo** repository, making sure to use the **DuckDuckGo** repository's **[Pull Request Template](https://github.com/duckduckgo/duckduckgo/blob/master/duckduckgo_pr_template.md)**. This will let us know about your changes and start the conversation about integrating it into the live code.
