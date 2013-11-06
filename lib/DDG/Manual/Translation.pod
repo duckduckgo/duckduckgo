@@ -3,16 +3,12 @@
 
 =encoding utf-8
 
-=head1 THE MISSION
+=head1 THE MISSION #Shouldn't this be renamed "Difficulties in realising this project"?
 
-Making the translation of a complex and growing system like DuckDuckGo is not an
-easy task. The system is scattered in many subcomponents, which get connected
-together over the user browser mostly. Many HTML snippets are combined via code,
-coming from different system parts, combined with many JavaScript and other
-microsolutions to solve specific components. On the other side, there is the
-pure problem of management and the translation itself. We are a small team -
-that limits our options - so we are required to coordinate the community
-together for making this all happen.
+Translating a complex and growing system like DuckDuckGo is not an
+easy task. The system is scattered across many subcomponents, which only come together to form a whole in the user's browser (for the most part). On a coding level, many disparate elements have to combine to give the final product: HTML snippets located in various parts of the system, many elements of JavaScript as well as other
+microsolutions which have been put in place to add specific functionality. The complexity doesn't arise solely from the coding aspect of the translation platform, but also from the need to effectively and efficiently manage the translation, and ensure that it is high quality. We are a small team, which
+ limits what we can do; we are therefore relying on the community to help us in this endeavour, and managing a community of volunteers is more complex and difficult than relying on a dedicated team.
 
 =head2 ANALYZING THE MARKET
 
