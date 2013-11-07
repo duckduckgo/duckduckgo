@@ -5,27 +5,43 @@
 
 =head1 THE MISSION 
 
-Translating a complex and growing system like DuckDuckGo is not an
-easy task. The system is scattered across many subcomponents, which only come together to form a whole in the user's browser (for the most part). On a coding level, many disparate elements have to combine to give the final product: HTML snippets located in various parts of the system, many elements of JavaScript as well as other
-microsolutions which have been put in place to add specific functionality. The complexity doesn't arise solely from the coding aspect of the translation platform, but also from the need to effectively and efficiently manage the translation, and ensure that it is high quality. We are a small team, which
- limits what we can do; we are therefore relying on the community to help us in this endeavour, and managing a community of volunteers is more complex and difficult than relying on a dedicated team.
+Translating a complex and growing system like DuckDuckGo is not an easy task.
+The system is scattered across many subcomponents, which only come together to
+form a whole in the user's browser (for the most part). On a coding level,
+many disparate elements have to combine to give the final product: 
+HTML snippets located in various parts of the system, many elements 
+of JavaScript as well as other microsolutions which have been put
+in place to add specific functionality. The complexity doesn't arise
+solely from the coding aspect of the translation platform, but also
+from the need to effectively and efficiently manage the translation,
+and ensure that it is high quality. We are a small team, which
+limits what we can do; we are therefore relying on the community
+to help us in this endeavour, and managing a community of volunteers
+is more complex and difficult than relying on a dedicated team.
 
-=head2 ANALYZING THE MARKET
+=head2 Own platform vs Existing Solutions
 
-We tried to use existing solutions for achieving this task, but felt not like
-the solutions on the market were fulfilling our needs. Even when I (Getty)
-look back, I still think our biggest problems are coordination and defining
-proper processes for the translation flows, which are of course much easier to
-tune with our own system. The biggest lag in the systems we found at
-this point was the lag of context and comments for the tokens. Also we want to
-introduce translation of pictures and other media, and also offer a special way
-of translating long texts, which was lagging on all platforms.
+We originally tried to use existing solutions to help us in translating,
+DuckDuckGo, but did not feel that anything on the market met our needs.
+The biggest flaw in the systems we attmpted to use was the lack of 
+context specificity, as well as the commenting system for the tokens.
+Furthermore, as we wanted a feature for the translation of images and
+other media, as well as a way of translating long pieces of text, we
+were disappointed to note that these were lacking on all existing
+solutions on all of the platforms that we tested.
+
+As it stands, our biggest issues are coordinating the translation effort 
+and defining proper processes for the translation flows — both of which
+could easily be solved by using our own system. This is what we have
+ended up doing.
 
 =head1 WHAT IS TRANSLATION?
 
-Many people who never dived into the topic of translations, especially native
-English speaking people, are not aware of the problems to face on
-translations. We would like to explain some of the base problems.
+People who have never attempted a translation project might not be
+aware of the problems which can arise. We would like to explain
+some of the fundamental difficulties, many of which are particularly
+applicable to native English speakers who have not studied a foreign
+language.
 
 =head2 Order of text
 
