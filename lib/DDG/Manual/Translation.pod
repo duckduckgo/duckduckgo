@@ -43,19 +43,34 @@ some of the fundamental difficulties, many of which are particularly
 applicable to native English speakers who have not studied a foreign
 language.
 
-=head2 Order of text
+=head2 Word order
 
-You shouldn't think that the order of text is always the same in every
-language. You could easily compare this with the option in your own language to
-write a sentence in different ways, to imply or underline different topics from
-it. Those ways to promote specific parts are defined differently in many
-languages, also there are many things that are like very culturally specific that
-could hit the sentence. As a developer you might think you can do it like:
+The importance of word order varies significantly from language to language. 
+In some, a case system might make sentence structure very clear with little 
+importance placed on the order of words; in others, word order might be key to
+conveying a particular message. In fact, even within languages, word order is 
+important: two very disparate messages can be inferred from the same sentence
+with different emphasis or word placement. The lack of endings in English make
+a strict word order very important: "The dog eats the cat" is not the same as
+"the cat eats the dog", though the words themselves do not appear different
+whether they are the subject or object of the sentence. This makes translation
+of blocks of texts difficult to standardise, as any approximation is likely
+to be relevant only to one language. Furthermore, idioms add a further level
+of complexity to translation of text in general, but particularly translation
+of blocks of text. Word order, therefore, cannot be conserved between the source
+document and the final document, as it may be completely different in the target
+language.
 
-  'You have ' + messages + ' messages' # THIS IS WRONG!
+As another example, consider the sentence "You have x messages". This could be
+broken down into
 
-But this is not translatable. We will explain the solutions for this problem
-later.
+  'You have ' + $count + ' messages'
+
+Unfortunately, this would lead to issues further down the line. Translating
+only the first and last snippets and reintroducing them into the original
+sentence, with the original order, might not yield a coherent sentence in
+the target language,  again because of the way in which different languages
+work, and the way in which words are ordered.
 
 =head2 No direct translations possible
 
