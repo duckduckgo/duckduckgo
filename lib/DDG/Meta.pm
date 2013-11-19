@@ -105,32 +105,6 @@ sub apply_spice_keywords {
 	},'DDG::IsSpice');
 }
 
-=method apply_spice_endpoint_keywords
-
-This function applies a huge amount of keywords of other meta classes into
-the package of the given target classname. Please see:
-
-L<DDG::Meta::ZeroClickInfoSpice>, L<DDG::Meta::ShareDir>, L<DDG::Meta::Block>,
-L<DDG::Meta::Attribution>, L<DDG::Meta::Helper>, L<DDG::Meta::Helper>,
-L<DDG::Meta::RequestHandler>
-
-The spice request handler is supposed to give back an array of 
-L<DDG::ZeroClickInfo::Spice> objects or an empty array for nothing.
-
-=cut
-
-sub apply_spice_endpoint_keywords {
-	my ( $class, $target ) = @_;
-	DDG::Meta::ZeroClickInfoSpice->apply_keywords($target);
-	DDG::Meta::ShareDir->apply_keywords($target);
-	DDG::Meta::Information->apply_keywords($target);
-	DDG::Meta::Helper->apply_keywords($target);
-    DDG::Meta::AnyBlock->apply_keywords($target);
-	DDG::Meta::RequestHandler->apply_keywords($target,sub {
-		shift->spice_new(@_);
-	},'DDG::IsSpice');
-}
-
 =method apply_fathead_keywords
 
 =cut
