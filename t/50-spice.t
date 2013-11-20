@@ -17,6 +17,7 @@ use DDGTest::Spice::Regexp;
 use DDGTest::Spice::Data;
 use DDGTest::Spice::Cached;
 use DDGTest::Spice::ChangeCached;
+use DDGTest::Spice::EndpointOnly;
 
 use DDG::ZeroClickInfo::Spice;
 
@@ -53,6 +54,16 @@ is(DDGTest::Spice::Regexp->get_nginx_conf,'location ^~ /js/spice/regexp/ {
 	proxy_pass http://some.api:80/;
 	proxy_intercept_errors on;
 	error_page 403 404 500 502 503 504 =200 /js/failed/ddgtest_spice_regexp;
+}
+',"Checking standard nginx_conf");
+
+my $endpoint_only = DDGTest::Spice::EndpointOnly->new( block => undef );
+
+isa_ok($endpoint_only,'DDGTest::Spice::EndpointOnly');
+
+is(DDGTest::Spice::EndpointOnly->get_nginx_conf,'location ^~ /js/spice/endpoint_only/ {
+	rewrite ^/js/spice/endpoint_only/(.*)  break;
+	proxy_pass http://api.website.com:80/;
 }
 ',"Checking standard nginx_conf");
 
