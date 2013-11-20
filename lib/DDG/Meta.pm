@@ -111,13 +111,12 @@ sub apply_spice_keywords {
 =cut
 
 sub apply_fathead_keywords {
-    my ( $class, $target ) = @_;
-    DDG::Meta::ZeroClickInfo->apply_keywords($target);
+	my ( $class, $target ) = @_;
+	DDG::Meta::ZeroClickInfo->apply_keywords($target);
 	DDG::Meta::ShareDir->apply_keywords($target);
-    DDG::Meta::Fathead->apply_keywords($target);
-    DDG::Meta::Information->apply_keywords($target);    
-    DDG::Meta::AnyBlock->apply_keywords($target);
-    Moo::Role->apply_role_to_package($target, "DDG::IsFathead");
+	DDG::Meta::Fathead->apply_keywords($target);
+	DDG::Meta::Information->apply_keywords($target);
+	Moo::Role->apply_role_to_package($target, "DDG::IsFathead");
 }
 
 =method apply_longtail_keywords
@@ -125,12 +124,11 @@ sub apply_fathead_keywords {
 =cut
 
 sub apply_longtail_keywords {
-    my ( $class, $target ) = @_;
-    DDG::Meta::ZeroClickInfo->apply_keywords($target);
+	my ( $class, $target ) = @_;
+	DDG::Meta::ZeroClickInfo->apply_keywords($target);
 	DDG::Meta::ShareDir->apply_keywords($target);
-    DDG::Meta::Information->apply_keywords($target);
-    DDG::Meta::AnyBlock->apply_keywords($target);
-    Moo::Role->apply_role_to_package($target, "DDG::IsLongtail");
+	DDG::Meta::Information->apply_keywords($target);
+	Moo::Role->apply_role_to_package($target, "DDG::IsLongtail");
 }
 
 1;
