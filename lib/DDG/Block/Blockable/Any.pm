@@ -1,18 +1,20 @@
 package DDG::Block::Blockable::Any;
-# ABSTRACT: Role for something blockable that has no triggers
+# ABSTRACT: A package which reflects a blockable plugin with no triggers.
 
-use Moo::Role;
+use Moo;
+use Carp;
 
-with 'DDG::Block::Blockable';
+has triggers => (
+	is => 'ro',
+	default => sub {{}}
+);
 
-sub get_triggers {}
-sub triggers {}
+has block_type => (
+	is => 'rw',
+	predicate => 'has_block_type',
+	default => sub { 'Any' }
+);
 
-sub has_triggers { 0 }
-sub triggers_block_type { 'Any' }
-
-=head1 DESCRIPTION
-
-=cut 
+sub get { }
 
 1;
