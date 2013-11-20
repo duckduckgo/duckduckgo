@@ -15,6 +15,7 @@ use DDG::Test::Spice;
 use DDGTest::Spice::Words;
 use DDGTest::Spice::Regexp;
 use DDGTest::Spice::Data;
+use DDGTest::Spice::EndpointOnly;
 
 use DDG::ZeroClickInfo::Spice;
 
@@ -49,6 +50,16 @@ is_deeply(DDGTest::Spice::Regexp->get_triggers,{
 is(DDGTest::Spice::Regexp->get_nginx_conf,'location ^~ /js/spice/regexp/ {
 	rewrite ^/js/spice/regexp/(.*) / break;
 	proxy_pass http://some.api:80/;
+}
+',"Checking standard nginx_conf");
+
+my $endpoint_only = DDGTest::Spice::EndpointOnly->new( block => undef );
+
+isa_ok($endpoint_only,'DDGTest::Spice::EndpointOnly');
+
+is(DDGTest::Spice::EndpointOnly->get_nginx_conf,'location ^~ /js/spice/endpoint_only/ {
+	rewrite ^/js/spice/endpoint_only/(.*)  break;
+	proxy_pass http://api.website.com:80/;
 }
 ',"Checking standard nginx_conf");
 
