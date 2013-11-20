@@ -5,6 +5,7 @@ use strict;
 use warnings;
 use Carp;
 use DDG::Block::Blockable::Triggers;
+use DDG::Block::Blockable::Any;
 use Package::Stash;
 require Moo::Role;
 
@@ -40,15 +41,19 @@ Gives back the block type for this plugin
 
 =cut
 
-	$stash->add_symbol('&triggers_block_type',sub { $triggers->block_type });
+	$stash->add_symbol('&triggers_block_type',sub {
+		$triggers = DDG::Block::Blockable::Any->new unless $triggers;
+		$triggers->block_type;
+	});
 
 =keyword get_triggers
 
-
-
 =cut
 
-	$stash->add_symbol('&get_triggers',sub { $triggers->get });
+	$stash->add_symbol('&get_triggers',sub {
+		$triggers = DDG::Block::Blockable::Any->new unless $triggers;
+		$triggers->get;
+	});
 
 =keyword has_triggers
 

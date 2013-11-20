@@ -13,7 +13,6 @@ use DDG::Meta::ShareDir;
 use DDG::Meta::Block;
 use DDG::Meta::Information;
 use DDG::Meta::Helper;
-use DDG::Meta::AnyBlock;
 
 use MooX ();
 
