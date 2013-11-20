@@ -75,7 +75,8 @@ sub apply_goodie_keywords {
 			scalar @_ == 1 && ref $_[0] eq 'HASH' ? $_[0] :
 				@_ % 2 ? ( answer => @_ ) : @_
 		);
-	},'DDG::IsGoodie');
+	});
+	Moo::Role->apply_role_to_package($target, "DDG::IsGoodie");
 }
 
 =method apply_spice_keywords
@@ -101,7 +102,8 @@ sub apply_spice_keywords {
 	DDG::Meta::Helper->apply_keywords($target);
 	DDG::Meta::RequestHandler->apply_keywords($target,sub {
 		shift->spice_new(@_);
-	},'DDG::IsSpice');
+	});
+	Moo::Role->apply_role_to_package($target, "DDG::IsSpice");
 }
 
 =method apply_fathead_keywords
