@@ -15,6 +15,8 @@ use DDG::Test::Spice;
 use DDGTest::Spice::Words;
 use DDGTest::Spice::Regexp;
 use DDGTest::Spice::Data;
+use DDGTest::Spice::Cached;
+use DDGTest::Spice::ChangeCached;
 
 use DDG::ZeroClickInfo::Spice;
 
@@ -65,6 +67,8 @@ ddg_spice_test(
 	[qw(
 		DDGTest::Spice::Data
 		DDGTest::Spice::Regexp
+		DDGTest::Spice::Cached
+		DDGTest::Spice::ChangeCached
 	)],
 	'data test' => test_spice( 
 		'/js/spice/data/test',
@@ -76,6 +80,24 @@ ddg_spice_test(
 		'/js/spice/regexp/test.a/DDG%3A%3ARequest',
 		call_type => 'include',
 		caller => 'DDGTest::Spice::Regexp'
+	),
+	'testing cached' => test_spice( 
+		'/js/spice/cached/testing',
+		call_type => 'include',
+		caller => 'DDGTest::Spice::Cached',
+		is_cached => 1
+	),
+	'test changed caching' => test_spice( 
+		'/js/spice/change_cached/test',
+		call_type => 'include',
+		caller => 'DDGTest::Spice::ChangeCached',
+		is_cached => 1
+	),
+	'not caching changed caching' => test_spice( 
+		'/js/spice/change_cached/not%20caching',
+		call_type => 'include',
+		caller => 'DDGTest::Spice::ChangeCached',
+		is_cached => 0
 	),
 	# 'flash version' => test_spice( 
 	# 	'/js/spice/flashtest',
