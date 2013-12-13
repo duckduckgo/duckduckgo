@@ -139,15 +139,20 @@ sub apply_keywords {
 		my ( $self ) = @_;
 		$spice_js = "";
 
-		if ($target->can('module_share_dir') 
+		if ($target->can('module_share_dir')
 			&& ($spice_js_file = $target->can('share')->("$file_name.js")) 
 			&& -f $spice_js_file) {
 
 			$spice_js .= io($spice_js_file)->slurp;
 			$spice_js .= "\n";
 		}
+		
 		if ($target->spice_call_type eq 'self') {
-			$spice_js .= $target->callback."();";
+			
+			# 12-13-2013
+			# View.pm does not utilize this but DuckPAN can
+			# For now will keep manually adding this line to Spice JS
+			# $spice_js .= $target->callback."();";
 		}
 		return $spice_js;
 	});
