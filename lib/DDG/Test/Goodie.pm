@@ -72,9 +72,9 @@ With this function you can easily generate a small own L<DDG::Block> for
 testing your L<DDG::Goodie> alone or in combination with others.
 
   ddg_goodie_test(
-    [qw( DDG::Goodie::MyGoodie )],
-    'mygooodie data' => test_zci('data', html => '<div>data</div>'),
-    'mygooodie data2' => test_zci('data2', html => '<div>data2</div>'),
+	[qw( DDG::Goodie::MyGoodie )],
+	'mygooodie data' => test_zci('data', html => '<div>data</div>'),
+	'mygooodie data2' => test_zci('data2', html => '<div>data2</div>'),
   );
 
 =cut
@@ -84,13 +84,13 @@ testing your L<DDG::Goodie> alone or in combination with others.
 			my $answer = shift;
 			my $zci = shift;
 			if ($answer) {
-                                # Check regex tests
-                                for (qw/answer html heading/) {
-                                    if (ref $zci->$_ eq 'Regexp') {
-                                            like($answer->$_,$zci->$_,"Regexp check against $_ for $query");
-                                            $zci->{$_} = $answer->$_;
-                                    }
-                                }
+				# Check regex tests
+				for (qw/answer html heading/) {
+					if (ref $zci->$_ eq 'Regexp') {
+							like($answer->$_,$zci->$_,"Regexp check against $_ for $query");
+							$zci->{$_} = $answer->$_;
+					}
+				}
 				is_deeply($answer,$zci,'Testing query '.$query);
 			} else {
 				fail('Expected result but dont get one on '.$query) unless defined $answer;
