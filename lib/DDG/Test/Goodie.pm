@@ -84,14 +84,13 @@ testing your L<DDG::Goodie> alone or in combination with others.
 			my $answer = shift;
 			my $zci = shift;
 			if ($answer) {
-				if (ref $zci->answer eq 'Regexp') {
-					like($answer->answer,$zci->answer,'Regexp check against text for '.$query);
-					$zci->{answer} = $answer->answer;
-				}
-				if (ref $zci->html eq 'Regexp') {
-					like($answer->html,$zci->html,'Regexp check against html for '.$query);
-					$zci->{html} = $answer->html;
-				}
+                                # Check regex tests
+                                for (qw/answer html heading/) {
+                                    if (ref $zci->$_ eq 'Regexp') {
+                                            like($answer->$_,$zci->$_,"Regexp check against $_ for $query");
+                                            $zci->{$_} = $answer->$_;
+                                    }
+                                }
 				is_deeply($answer,$zci,'Testing query '.$query);
 			} else {
 				fail('Expected result but dont get one on '.$query) unless defined $answer;
