@@ -14,8 +14,6 @@ sub request {
 		if ( $plugin->does('HasRequestHandler') ) {
 			push @results, $self->handle_request_matches($plugin,$request,0);
 			return @results if $self->return_one && @results;
-		} else {
-			@results = ()
 		}
 	}
 	return @results;
