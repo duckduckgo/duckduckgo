@@ -103,6 +103,11 @@ has proxy_ssl_session_reuse => (
 	predicate => 'has_proxy_ssl_session_reuse',
 );
 
+has proxy_x_forwarded_for => (
+        is => 'ro',
+        default => sub { 'X-Forwarded-For $proxy_add_x_forwarded_for' }
+);
+
 has nginx_conf => (
 	is => 'ro',
 	lazy => 1,
@@ -119,6 +124,7 @@ sub _build_nginx_conf {
 	my $uri_path = $self->parsed_to;
 	$uri_path =~ s!$scheme://$host:$port!!;
 	$uri_path =~ s!$scheme://$host!!;
+	my $is_duckduckgo = $host =~ /(?:127\.0\.0\.1|duckduckgo\.com)/;
 
     # wrap various other things into jsonp
     croak "Cannot use wrap_jsonp_callback and wrap_string callback at the same time!" if $self->wrap_jsonp_callback && $self->wrap_string_callback;
@@ -131,6 +137,7 @@ sub _build_nginx_conf {
 	$cfg .= "\techo_before_body '".$self->callback.qq|("';\n| if $wrap_string_callback;
 	$cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")." ".$uri_path." break;\n";
 	$cfg .= "\tproxy_pass ".$scheme."://".$host.":".$port."/;\n";
+	$cfg .= "\tproxy_set_header ".$self->proxy_x_forwarded_for.";\n" if $is_duckduckgo;
 	$cfg .= "\tproxy_cache_valid ".$self->proxy_cache_valid.";\n" if $self->has_proxy_cache_valid;
 	$cfg .= "\tproxy_ssl_session_reuse ".$self->proxy_ssl_session_reuse.";\n" if $self->has_proxy_ssl_session_reuse;
 	$cfg .= "\techo_after_body ');';\n" if $wrap_jsonp_callback;

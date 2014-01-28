@@ -106,4 +106,18 @@ is($minrewrite_with_port->nginx_conf,'location ^~ /js/test2/ {
 }
 ','Checking generated nginx.conf');
 
+my $localhostrewrite = DDG::Rewrite->new(
+       path => '/js/test/',
+       to => 'https://127.0.0.1',
+);
+isa_ok($localhostrewrite,'DDG::Rewrite');
+like($localhostrewrite->nginx_conf,qr/X-Forwarded-For/,'Checking localhost rewrite');
+
+my $ddgrewrite = DDG::Rewrite->new(
+       path => '/js/test/',
+       to => 'https://duckduckgo.com',
+);
+isa_ok($ddgrewrite,'DDG::Rewrite');
+like($ddgrewrite->nginx_conf,qr/X-Forwarded-For/,'Checking DuckDuckGo rewrite');
+
 done_testing;
