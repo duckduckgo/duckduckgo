@@ -6,6 +6,8 @@ use warnings;
 use Carp;
 use Test::More;
 use Class::Load ':all';
+use Set::Scalar;
+use List::AllUtils qw/pairkeys/;
 use DDG::Request;
 use DDG::Block::Words;
 use DDG::Block::Regexp;
@@ -28,9 +30,8 @@ informations.
 =cut
 
 	$stash->add_symbol('&block_test',sub {
-		my $result_callback = shift;
-		my $plugins_ref = shift;
-		my @plugins = @{$plugins_ref};
+		my ($result_callback, $plugins, @queries) = @_;
+        my @queries_copy = @queries;
 		my @regexp; my @words;
 		foreach my $plugin (@plugins) {
 			load_class($plugin);
@@ -44,8 +45,8 @@ informations.
 		}
 		my $words_block = @words ? DDG::Block::Words->new( plugins => [@words]) : undef;
 		my $regexp_block = @regexp ? DDG::Block::Regexp->new( plugins => [@regexp]) : undef;
-		while (@_) {
-			my $query = shift;
+		while (@queries) {
+			my $query = shift @queries;
 			my $request;
 			if (ref $query eq 'DDG::Request') {
 				$request = $query;
@@ -57,7 +58,7 @@ informations.
 					language => test_language('us'),
 				);
 			}
-			my $target = shift;
+			my $target = shift @queries;
 			my $answer = undef;
 			( $answer ) = $words_block->request($request) if $words_block;
 			( $answer ) = $regexp_block->request($request) if $regexp_block && !$answer;
@@ -69,8 +70,28 @@ informations.
 				is($answer,$target,'Checking for not matching on '.$query);
 			}
 		}
+        $class->require_tests_for_example_queries($plugins, \@queries_copy);
 	});
 
+}
+
+sub require_tests_for_example_queries {
+    my ($class, $plugins, $queries) = @_;
+
+    my $meta = $plugins->[0]->get_meta_information;
+    my @example_queries = (
+        @{ $meta->{primary_example_queries}   },
+        @{ $meta->{secondary_example_queries} },
+    );
+
+    my $difference = Set::Scalar->new(@example_queries) - 
+                     Set::Scalar->new(pairkeys @$queries);
+
+    my $note = "\n  Tests for the following queries are missing:\n    " .
+        join("\n    ", $difference->elements) if $difference->elements;
+
+    ok( $difference->size == 0, "Tests for example queries exist") ||
+        note $note;
 }
 
 1;
