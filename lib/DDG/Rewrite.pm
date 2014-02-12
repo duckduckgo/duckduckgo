@@ -10,8 +10,8 @@ sub BUILD {
 	my $to = $self->to;
 	my $callback = $self->has_callback ? $self->callback : "";
 	croak "Missing callback attribute for {{callback}} in to" if ($to =~ s/{{callback}}/$callback/g && !$self->has_callback);
-    # Make sure we replace "{{dollar}}"" with "{dollar}".
-    $to =~ s/{{dollar}}/\$\{dollar\}/g;
+	# Make sure we replace "{{dollar}}"" with "{dollar}".
+	$to =~ s/{{dollar}}/\$\{dollar\}/g;
 	my @missing_envs;
 	for ($to =~ m/{{ENV{(\w+)}}}/g) {
 		if (defined $ENV{$_}) {
@@ -126,14 +126,21 @@ sub _build_nginx_conf {
 	$uri_path =~ s!$scheme://$host!!;
 	my $is_duckduckgo = $host =~ /(?:127\.0\.0\.1|duckduckgo\.com)/;
 
-    # wrap various other things into jsonp
-    croak "Cannot use wrap_jsonp_callback and wrap_string callback at the same time!" if $self->wrap_jsonp_callback && $self->wrap_string_callback;
+	# wrap various other things into jsonp
+	croak "Cannot use wrap_jsonp_callback and wrap_string callback at the same time!" if $self->wrap_jsonp_callback && $self->wrap_string_callback;
 	my $wrap_jsonp_callback = $self->has_callback && $self->wrap_jsonp_callback;
 	my $wrap_string_callback = $self->has_callback && $self->wrap_string_callback;
+	my $uses_echo_module = $wrap_jsonp_callback || $wrap_string_callback;
 
 	my $cfg = "location ^~ ".$self->path." {\n";
 	$cfg .= "\tproxy_set_header Accept '".$self->accept_header."';\n" if $self->accept_header;
-	$cfg .= "\tproxy_set_header Accept-Encoding '';\n" if $wrap_jsonp_callback;
+
+	# we need to make sure we have plain text coming back until we have a way
+	# to unilaterally gunzip responses from the upstream since the echo module
+	# will intersperse plaintext with gzip which results in encoding errors.
+	# https://github.com/agentzh/echo-nginx-module/issues/30
+	$cfg .= "\tproxy_set_header Accept-Encoding '';\n" if $uses_echo_module;
+
 	$cfg .= "\techo_before_body '".$self->callback."(';\n" if $wrap_jsonp_callback;
 	$cfg .= "\techo_before_body '".$self->callback.qq|("';\n| if $wrap_string_callback;
 	$cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")." ".$uri_path." break;\n";
