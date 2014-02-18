@@ -218,8 +218,12 @@ sub request {
 				}
 			}
 
+			unless ( @hits ) {
+				$self->trace("No hit with","'".$word."'");
+			}
+
 			# iterate over each type of trigger match for the current word
-			# this allows us to consider multiple `start`, `end` and `any`
+			# this allows us to consider combinations of `start`, `end` and `any`
 			# triggers for the current word
 			while (my $hitref = shift @hits) {
 
@@ -298,7 +302,6 @@ sub request {
 					}
 				}
 			}
-			$self->trace("No hit with","'".$word."'");
 		}
 	}
 	return @results;
