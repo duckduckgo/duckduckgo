@@ -17,6 +17,7 @@ use DDGTest::Spice::Regexp;
 use DDGTest::Spice::Data;
 use DDGTest::Spice::Cached;
 use DDGTest::Spice::ChangeCached;
+use DDGTest::Spice::MultiTriggerType;
 
 use DDG::ZeroClickInfo::Spice;
 
@@ -69,6 +70,7 @@ ddg_spice_test(
 		DDGTest::Spice::Regexp
 		DDGTest::Spice::Cached
 		DDGTest::Spice::ChangeCached
+		DDGTest::Spice::MultiTriggerType
 	)],
 	'data test' => test_spice( 
 		'/js/spice/data/test',
@@ -98,6 +100,30 @@ ddg_spice_test(
 		call_type => 'include',
 		caller => 'DDGTest::Spice::ChangeCached',
 		is_cached => 0
+	),
+	'firstword secondword multitrigger test' => test_spice( 
+		'/js/spice/multi_trigger_type/multitrigger%20test',
+		call_type => 'include',
+		caller => 'DDGTest::Spice::MultiTriggerType',
+		is_cached => 1
+	),
+	'firstword multitrigger test' => test_spice( 
+		'/js/spice/multi_trigger_type/multitrigger%20test',
+		call_type => 'include',
+		caller => 'DDGTest::Spice::MultiTriggerType',
+		is_cached => 1
+	),
+	'multitrigger test secondword thirdword' => test_spice(  
+		'/js/spice/multi_trigger_type/multitrigger%20test',
+		call_type => 'include',
+		caller => 'DDGTest::Spice::MultiTriggerType',
+		is_cached => 1
+	),
+		'multitrigger test thirdword' => test_spice(  
+		'/js/spice/multi_trigger_type/multitrigger%20test',
+		call_type => 'include',
+		caller => 'DDGTest::Spice::MultiTriggerType',
+		is_cached => 1
 	),
 	# 'flash version' => test_spice( 
 	# 	'/js/spice/flashtest',
