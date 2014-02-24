@@ -35,7 +35,7 @@ like($@, qr/Please define triggers before you define a handler/, 'Checking DDGTe
 eval q{
 	use DDGTest::Goodie::WrongTwo;
 };
-like($@, qr/you can't add trigger types of the other block-type/, 'Checking DDGTest::Goodie::WrongTwo for crashing proper');
+like($@, qr/You can't add trigger types of the other block-type/, 'Checking DDGTest::Goodie::WrongTwo for crashing proper');
 
 eval q{
 	use DDGTest::Goodie::WrongThree;
