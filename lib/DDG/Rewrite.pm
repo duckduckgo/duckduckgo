@@ -139,7 +139,10 @@ sub _build_nginx_conf {
 	# to unilaterally gunzip responses from the upstream since the echo module
 	# will intersperse plaintext with gzip which results in encoding errors.
 	# https://github.com/agentzh/echo-nginx-module/issues/30
-	$cfg .= "\tproxy_set_header Accept-Encoding '';\n" if $uses_echo_module;
+	if($uses_echo_module) {
+	    $cfg .= "\tproxy_set_header Accept-Encoding '';\n";
+	    $cfg .= "\tinclude /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;\n";
+	}
 
 	$cfg .= "\techo_before_body '".$self->callback."(';\n" if $wrap_jsonp_callback;
 	$cfg .= "\techo_before_body '".$self->callback.qq|("';\n| if $wrap_string_callback;

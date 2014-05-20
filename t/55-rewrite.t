@@ -46,6 +46,7 @@ isa_ok($rewrite,'DDG::Rewrite');
 is($rewrite->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
 is($rewrite->nginx_conf,'location ^~ /js/test/ {
 	proxy_set_header Accept-Encoding \'\';
+	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
 	echo_before_body \'test(\';
 	rewrite ^/js/test/([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|) /$1/?a=$2&b=$3&cb=test&ak=1 break;
 	proxy_pass http://some.api:80/;
