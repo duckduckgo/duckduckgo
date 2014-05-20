@@ -134,13 +134,14 @@ sub _build_nginx_conf {
 
 	my $cfg = "location ^~ ".$self->path." {\n";
 	$cfg .= "\tproxy_set_header Accept '".$self->accept_header."';\n" if $self->accept_header;
-
+	
 	# we need to make sure we have plain text coming back until we have a way
 	# to unilaterally gunzip responses from the upstream since the echo module
 	# will intersperse plaintext with gzip which results in encoding errors.
 	# https://github.com/agentzh/echo-nginx-module/issues/30
-	if($uses_echo_module) {
-	    $cfg .= "\tproxy_set_header Accept-Encoding '';\n";
+	$cfg .= "\tproxy_set_header Accept-Encoding '';\n" if $uses_echo_module;
+
+	if($uses_echo_module || $self->accept_header || $is_duckduckgo) {
 	    $cfg .= "\tinclude /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;\n";
 	}
 
