@@ -135,7 +135,6 @@ sub _build_nginx_conf {
 	my $cfg = "location ^~ ".$self->path." {\n";
 	$cfg .= "\tproxy_set_header Accept '".$self->accept_header."';\n" if $self->accept_header;
 	
-
 	# we need to make sure we have plain text coming back until we have a way
 	# to unilaterally gunzip responses from the upstream since the echo module
 	# will intersperse plaintext with gzip which results in encoding errors.
