@@ -135,11 +135,20 @@ sub _build_nginx_conf {
 	my $cfg = "location ^~ ".$self->path." {\n";
 	$cfg .= "\tproxy_set_header Accept '".$self->accept_header."';\n" if $self->accept_header;
 	
-	# we need to make sure we have plain text coming back until we have a way
-	# to unilaterally gunzip responses from the upstream since the echo module
-	# will intersperse plaintext with gzip which results in encoding errors.
-	# https://github.com/agentzh/echo-nginx-module/issues/30
-	$cfg .= "\tproxy_set_header Accept-Encoding '';\n" if $uses_echo_module;
+        if($uses_echo_module) {
+            # we need to make sure we have plain text coming back until we have a way
+            # to unilaterally gunzip responses from the upstream since the echo module
+            # will intersperse plaintext with gzip which results in encoding errors.
+            # https://github.com/agentzh/echo-nginx-module/issues/30
+            $cfg .= "\tproxy_set_header Accept-Encoding '';\n";
+
+            # This is a workaround that deals with endpoints that don't support callback functions.
+            # So endpoints that don't support callback functions return a content-type of 'application/json'
+            # because what they're returning is not meant to be executed in the first place.
+            # Setting content-type to application/javascript for those endpoints solves blocking due to 
+            # mime type mismatches.
+            $cfg .= "\tmore_set_headers 'Content-Type: application/javascript; charset=utf-8';\n";
+        }
 
 	if($uses_echo_module || $self->accept_header || $is_duckduckgo) {
 	    $cfg .= "\tinclude /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;\n";
