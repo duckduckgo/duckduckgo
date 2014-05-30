@@ -32,12 +32,12 @@ informations.
 		my $plugins_ref = shift;
 		my @plugins = @{$plugins_ref};
 		my @regexp; my @words;
-		for (@plugins) {
-			load_class($_);
-			if ($_->triggers_block_type eq 'Words') {
-				push @words, $_;
-			} elsif ($_->triggers_block_type eq 'Regexp') {
-				push @regexp, $_;
+		foreach my $plugin (@plugins) {
+			load_class($plugin);
+			if ($plugin->triggers_block_type eq 'Words') {
+				push @words, $plugin;
+			} elsif ($plugin->triggers_block_type eq 'Regexp') {
+				push @regexp, $plugin;
 			} else {
 				croak "Unknown plugin type";
 			}
