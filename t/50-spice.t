@@ -51,6 +51,8 @@ is_deeply(DDGTest::Spice::Regexp->get_triggers,{
 is(DDGTest::Spice::Regexp->get_nginx_conf,'location ^~ /js/spice/regexp/ {
 	rewrite ^/js/spice/regexp/(.*) / break;
 	proxy_pass http://some.api:80/;
+	proxy_intercept_errors on;
+	error_page 403 404 500 502 503 504 =200 /js/failed/ddgtest_spice_regexp;
 }
 ',"Checking standard nginx_conf");
 
