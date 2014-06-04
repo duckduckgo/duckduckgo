@@ -154,15 +154,6 @@ sub _build_nginx_conf {
 	    $cfg .= "\tinclude /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;\n";
 	}
 
-        # proxy_intercept_errors is used to handle endpoints that don't return 200 OK
-        # When we get errors from the endpoint, instead of replying a blank page, it should reply the function instead with no parameters,
-        # e.g., ddg_spice_dictionary_definition();. The benefit of doing that is that we know for sure that the Spice failed, and we can do
-        # something about it (we know that the Spice failed because it should return Spice.failed('...') when the parameters are not valid).
-        if($self->callback) {
-            $cfg .= "\tproxy_intercept_errors on;\n";
-            $cfg .= "\terror_page 403 404 500 502 503 504 =200 /js/failed/".$self->callback.";\n";
-    	}
-
 	$cfg .= "\techo_before_body '".$self->callback."(';\n" if $wrap_jsonp_callback;
 	$cfg .= "\techo_before_body '".$self->callback.qq|("';\n| if $wrap_string_callback;
 	$cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")." ".$uri_path." break;\n";
@@ -172,6 +163,16 @@ sub _build_nginx_conf {
 	$cfg .= "\tproxy_ssl_session_reuse ".$self->proxy_ssl_session_reuse.";\n" if $self->has_proxy_ssl_session_reuse;
 	$cfg .= "\techo_after_body ');';\n" if $wrap_jsonp_callback;
 	$cfg .= "\techo_after_body '\");';\n" if $wrap_string_callback;
+
+        # proxy_intercept_errors is used to handle endpoints that don't return 200 OK
+        # When we get errors from the endpoint, instead of replying a blank page, it should reply the function instead with no parameters,
+        # e.g., ddg_spice_dictionary_definition();. The benefit of doing that is that we know for sure that the Spice failed, and we can do
+        # something about it (we know that the Spice failed because it should return Spice.failed('...') when the parameters are not valid).
+        if($self->callback) {
+            $cfg .= "\tproxy_intercept_errors on;\n";
+            $cfg .= "\terror_page 403 404 500 502 503 504 =200 /js/failed/".$self->callback.";\n";
+    	}
+
 	$cfg .= "}\n";
 	return $cfg;
 }

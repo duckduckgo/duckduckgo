@@ -48,13 +48,13 @@ is($rewrite->nginx_conf,'location ^~ /js/test/ {
 	proxy_set_header Accept-Encoding \'\';
 	more_set_headers \'Content-Type: application/javascript; charset=utf-8\';
 	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
-	proxy_intercept_errors on;
-	error_page 403 404 500 502 503 504 =200 /js/failed/test;
 	echo_before_body \'test(\';
 	rewrite ^/js/test/([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|) /$1/?a=$2&b=$3&cb=test&ak=1 break;
 	proxy_pass http://some.api:80/;
 	proxy_cache_valid 418 1d;
 	echo_after_body \');\';
+	proxy_intercept_errors on;
+	error_page 403 404 500 502 503 504 =200 /js/failed/test;
 }
 ','Checking generated nginx.conf');
 
