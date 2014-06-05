@@ -64,6 +64,8 @@ isa_ok($endpoint_only,'DDGTest::Spice::EndpointOnly');
 is(DDGTest::Spice::EndpointOnly->get_nginx_conf,'location ^~ /js/spice/endpoint_only/ {
 	rewrite ^/js/spice/endpoint_only/(.*)  break;
 	proxy_pass http://api.website.com:80/;
+	proxy_intercept_errors on;
+	error_page 403 404 500 502 503 504 =200 /js/failed/ddgtest_spice_endpoint_only;
 }
 ',"Checking standard nginx_conf");
 
