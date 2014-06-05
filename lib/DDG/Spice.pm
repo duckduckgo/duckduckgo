@@ -6,7 +6,7 @@ use warnings;
 use DDG::Meta;
 
 sub import {
-	my ( $class ) = @_;
+	my ( $class, %params ) = @_;
 	my $target = caller;
 
 	DDG::Meta->apply_base_to_package($target);

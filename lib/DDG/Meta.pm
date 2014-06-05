@@ -13,7 +13,6 @@ use DDG::Meta::ShareDir;
 use DDG::Meta::Block;
 use DDG::Meta::Information;
 use DDG::Meta::Helper;
-use DDG::Meta::AnyBlock;
 
 use MooX ();
 
@@ -76,7 +75,8 @@ sub apply_goodie_keywords {
 			scalar @_ == 1 && ref $_[0] eq 'HASH' ? $_[0] :
 				@_ % 2 ? ( answer => @_ ) : @_
 		);
-	},'DDG::IsGoodie');
+	});
+	Moo::Role->apply_role_to_package($target, "DDG::IsGoodie");
 }
 
 =method apply_spice_keywords
@@ -102,7 +102,8 @@ sub apply_spice_keywords {
 	DDG::Meta::Helper->apply_keywords($target);
 	DDG::Meta::RequestHandler->apply_keywords($target,sub {
 		shift->spice_new(@_);
-	},'DDG::IsSpice');
+	});
+	Moo::Role->apply_role_to_package($target, "DDG::IsSpice");
 }
 
 =method apply_fathead_keywords
@@ -110,13 +111,13 @@ sub apply_spice_keywords {
 =cut
 
 sub apply_fathead_keywords {
-    my ( $class, $target ) = @_;
-    DDG::Meta::ZeroClickInfo->apply_keywords($target);
+	my ( $class, $target ) = @_;
+	DDG::Meta::ZeroClickInfo->apply_keywords($target);
 	DDG::Meta::ShareDir->apply_keywords($target);
-    DDG::Meta::Fathead->apply_keywords($target);
-    DDG::Meta::Information->apply_keywords($target);    
-    DDG::Meta::AnyBlock->apply_keywords($target);
-    Moo::Role->apply_role_to_package($target, "DDG::IsFathead");
+	DDG::Meta::Block->apply_keywords($target);
+	DDG::Meta::Fathead->apply_keywords($target);
+	DDG::Meta::Information->apply_keywords($target);
+	Moo::Role->apply_role_to_package($target, "DDG::IsFathead");
 }
 
 =method apply_longtail_keywords
@@ -124,12 +125,12 @@ sub apply_fathead_keywords {
 =cut
 
 sub apply_longtail_keywords {
-    my ( $class, $target ) = @_;
-    DDG::Meta::ZeroClickInfo->apply_keywords($target);
+	my ( $class, $target ) = @_;
+	DDG::Meta::ZeroClickInfo->apply_keywords($target);
 	DDG::Meta::ShareDir->apply_keywords($target);
-    DDG::Meta::Information->apply_keywords($target);
-    DDG::Meta::AnyBlock->apply_keywords($target);
-    Moo::Role->apply_role_to_package($target, "DDG::IsLongtail");
+	DDG::Meta::Block->apply_keywords($target);
+	DDG::Meta::Information->apply_keywords($target);
+	Moo::Role->apply_role_to_package($target, "DDG::IsLongtail");
 }
 
 1;

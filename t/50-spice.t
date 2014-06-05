@@ -56,6 +56,16 @@ is(DDGTest::Spice::Regexp->get_nginx_conf,'location ^~ /js/spice/regexp/ {
 }
 ',"Checking standard nginx_conf");
 
+my $endpoint_only = DDGTest::Spice::EndpointOnly->new( block => undef );
+
+isa_ok($endpoint_only,'DDGTest::Spice::EndpointOnly');
+
+is(DDGTest::Spice::EndpointOnly->get_nginx_conf,'location ^~ /js/spice/endpoint_only/ {
+	rewrite ^/js/spice/endpoint_only/(.*)  break;
+	proxy_pass http://api.website.com:80/;
+}
+',"Checking standard nginx_conf");
+
 my $zci_spice = DDG::ZeroClickInfo::Spice->new(
 	caller => 'DDGTest::Spice::SomeThing',
 	call => '/js/spice/some_thing/a%23%23a/b%20%20b/c%23%3F%3Fc',
