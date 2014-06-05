@@ -49,7 +49,7 @@ The importance of word order varies significantly from language to language.
 In some, a case system might make sentence structure very clear with little 
 importance placed on the order of words; in others, word order might be key to
 conveying a particular message. In fact, even within languages, word order is 
-important: two very disparate messages can be inferred from the same sentence
+important: two very different messages can be inferred from the same sentence
 with different emphasis or word placement. The lack of endings in English make
 a strict word order very important: "The dog eats the cat" is not the same as
 "the cat eats the dog", though the words themselves do not appear different
@@ -72,40 +72,45 @@ sentence, with the original order, might not yield a coherent sentence in
 the target language,  again because of the way in which different languages
 work, and the way in which words are ordered.
 
-=head2 No direct translations possible
+=head2 The issue with direct translation
 
-Not every word can be 1:1 translated into another language. There are many
-cases where a specific context might change the meaning of a word, or you have
-lots of bigger diversity in the words than you have in the language you use as
-reference. A common reference people make here, is the amount of L<Eskimo words
-for snow|http://en.wikipedia.org/wiki/Eskimo_words_for_snow>, which says that
-there are more than 50 different words for snow in the language eskimos are
-speaking. This is sadly a hoax, so we can't refer to it as an example, but
-something you might stumble upon on airports in Germany is the sentence:
+Not every word has a direct translation in every language. There are many
+cases where the meaning of a word will vary greatly because of the context
+that the word is in. Furthermore, some words may have more than one corresponding
+word—the well known myth of the number of <Eskimo words for snow|
+http://en.wikipedia.org/wiki/Eskimo_words_for_snow>, wis relevant here.
+A concept which may be defined by a single word in the original
+language may have many different corresponding words in the target language,
+be it because the target language is more nuanced in general or because the 
+specific subject is particularly well-defined in the target language.
 
-  Bitte anschnallen!
+An example of the issues with direct translation is shown below.
 
-Which is the english translation for:
+In German airlines, it is quite common to read the following:
 
-  Fasten your seat belts!
+  "Bitte anschnallen!"
 
-If you would translate the German words "directly" to English, you would
-get the sentence:
+The meaning of this sentence is equivalent to the following English sentence:
 
-  Please fasten!
+  "Fasten your seat belts!"
 
-No English speaker would ever say this that way. You may think that it misses
-out information, but that is all right for germans, they understand exactly
-what you mean. A german would never say:
+However, translating "Bitte anschnallen!" to English would yield this sentence:
 
-  Bitte festschnallen mit ihrem Sicherheitsgurt!
+  "Please fasten!"
 
-which would be the "direct" translation of the english version. It would
-just be very very bad German to translate it that way, no German speaker would ever do
-that. So the context of the words is very important sometimes, to get a real
-"human touch" in the translation you offer. Else we would use automatic
-translation systems, which are unable to find these kinds of specialities in
-nearly all cases.
+This sentence is clearly lacking, and whilst the meaning can be inferred from
+context, it would sounds unnatural to most native English speakers. 
+This is not to say that the sentence in the original language is similarly
+laching; in fact, a native German speaker would be very unlikely to
+use the direct translation of the English sentence:
+
+  "Bitte festschnallen mit ihrem Sicherheitsgurt!"
+  
+This sounds just as unnatural to German speaker as "Please fasten!" does to English
+speakers. To make the translation sound more fluid and "human" requires, unsurprisingly,
+a human element. Translation software is currently unable to take into account
+context and select from a list of translations, leading to "errors" such as in the
+examples above.
 
 A small subexample that directly comes up: Yes, B<anschnallen> and
 B<festschnallen> are actually the same word in english: B<fasten>. B<fasten>

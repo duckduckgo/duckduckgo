@@ -69,10 +69,10 @@ sub add_triggers {
 		push @triggers, ref $_ eq 'CODE' ? $_->() : $_;
 	}
 	if (grep { $_ eq $trigger_type } @words_types) {
-		croak "you cant add trigger types of the other block-type" if $self->has_block_type && $self->block_type ne 'Words';
+		croak "You can't add trigger types of the other block-type" if $self->has_block_type && $self->block_type ne 'Words';
 		$self->block_type('Words');
 	} elsif (grep { $_ eq $trigger_type } @regexp_types) {
-		croak "you cant add trigger types of the other block-type" if $self->has_block_type && $self->block_type ne 'Regexp';
+		croak "You can't add trigger types of the other block-type" if $self->has_block_type && $self->block_type ne 'Regexp';
 		$self->block_type('Regexp');
 		for (@triggers) {
 			croak 'You may only give compiled regexps to regexp trigger types (like qr/reverse (.*)/i)' unless ref $_ eq 'Regexp';
