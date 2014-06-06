@@ -62,8 +62,10 @@ my $endpoint_only = DDGTest::Spice::EndpointOnly->new( block => undef );
 isa_ok($endpoint_only,'DDGTest::Spice::EndpointOnly');
 
 is(DDGTest::Spice::EndpointOnly->get_nginx_conf,'location ^~ /js/spice/endpoint_only/ {
-	rewrite ^/js/spice/endpoint_only/(.*)  break;
-	proxy_pass http://api.website.com:80/;
+	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
+	rewrite ^/js/spice/endpoint_only/(.*) /?q=$1&format=json&pretty=1 break;
+	proxy_pass https://api.duckduckgo.com:443/;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	proxy_intercept_errors on;
 	error_page 403 404 500 502 503 504 =200 /js/failed/ddgtest_spice_endpoint_only;
 }
