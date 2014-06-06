@@ -55,8 +55,7 @@ This function applies a huge amount of keywords of other meta classes into
 the package of the given target classname. Please see:
 
 L<DDG::Meta::ZeroClickInfo>, L<DDG::Meta::ShareDir>, L<DDG::Meta::Block>,
-L<DDG::Meta::Attribution>, L<DDG::Meta::Helper>, L<DDG::Meta::Helper>,
-L<DDG::Meta::RequestHandler>
+L<DDG::Meta::Information>, L<DDG::Meta::Helper>, L<DDG::Meta::RequestHandler>
 
 The goodie request handler is supposed to give back an array of 
 L<DDG::ZeroClickInfo> objects or an empty array for nothing.
@@ -85,8 +84,7 @@ This function applies a huge amount of keywords of other meta classes into
 the package of the given target classname. Please see:
 
 L<DDG::Meta::ZeroClickInfoSpice>, L<DDG::Meta::ShareDir>, L<DDG::Meta::Block>,
-L<DDG::Meta::Attribution>, L<DDG::Meta::Helper>, L<DDG::Meta::Helper>,
-L<DDG::Meta::RequestHandler>
+L<DDG::Meta::Information>, L<DDG::Meta::Helper>, L<DDG::Meta::RequestHandler>
 
 The spice request handler is supposed to give back an array of 
 L<DDG::ZeroClickInfo::Spice> objects or an empty array for nothing.
