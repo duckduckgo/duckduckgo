@@ -15,6 +15,6 @@ has block_type => (
 	default => sub { 'Any' }
 );
 
-sub get { }
+sub get { return; }
 
 1;
