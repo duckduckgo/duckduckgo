@@ -45,13 +45,29 @@ isa_ok($rewrite,'DDG::Rewrite');
 
 is($rewrite->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
 is($rewrite->nginx_conf,'location ^~ /js/test/ {
+	proxy_set_header Accept-Encoding \'\';
+	more_set_headers \'Content-Type: application/javascript; charset=utf-8\';
+	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
 	echo_before_body \'test(\';
 	rewrite ^/js/test/([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|) /$1/?a=$2&b=$3&cb=test&ak=1 break;
 	proxy_pass http://some.api:80/;
 	proxy_cache_valid 418 1d;
 	echo_after_body \');\';
+	proxy_intercept_errors on;
+	error_page 403 404 500 502 503 504 =200 /js/failed/test;
 }
 ','Checking generated nginx.conf');
+
+my $dollarrewrite = DDG::Rewrite->new(
+	path => '/js/test/',
+	to => 'http://some.api/{{dollar}}',
+);
+
+is($dollarrewrite->nginx_conf,'location ^~ /js/test/ {
+	rewrite ^/js/test/(.*) /${dollar} break;
+	proxy_pass http://some.api:80/;
+}
+','Checking {{dollar}} replacement');
 
 my $minrewrite = DDG::Rewrite->new(
 	path => '/js/test/',
@@ -94,5 +110,19 @@ is($minrewrite_with_port->nginx_conf,'location ^~ /js/test2/ {
 	proxy_pass http://some.api:3000/;
 }
 ','Checking generated nginx.conf');
+
+my $localhostrewrite = DDG::Rewrite->new(
+       path => '/js/test/',
+       to => 'https://127.0.0.1',
+);
+isa_ok($localhostrewrite,'DDG::Rewrite');
+like($localhostrewrite->nginx_conf,qr/X-Forwarded-For/,'Checking localhost rewrite');
+
+my $ddgrewrite = DDG::Rewrite->new(
+       path => '/js/test/',
+       to => 'https://duckduckgo.com',
+);
+isa_ok($ddgrewrite,'DDG::Rewrite');
+like($ddgrewrite->nginx_conf,qr/X-Forwarded-For/,'Checking DuckDuckGo rewrite');
 
 done_testing;

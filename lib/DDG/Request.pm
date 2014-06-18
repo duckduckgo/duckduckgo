@@ -49,7 +49,6 @@ has query_raw => (
 my $whitespaces = qr{\s+};
 my $whitespaces_matches = qr{($whitespaces)};
 my $whitespaces_dashes = qr{[\s\-]+};
-my $dashes = qr{\-+};
 my $non_alphanumeric_ascii = qr{[\x00-\x1f\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x81\x{a7}]+};
 
 =attr query_raw_parts
@@ -159,6 +158,7 @@ has triggers => (
 sub _build_triggers {
 	my ( $self ) = @_;
 	my @parts = @{$self->query_raw_parts};
+	return {} if not scalar @parts;
 	my $x = $parts[0] eq '' ? 2 : 0;
 	my %triggers;
 	for ($x..(scalar @parts-1)) {
@@ -186,15 +186,15 @@ sub generate_triggers {
 	push @parts, lc($part);
 	$part =~ s/\?$//g;
 	push @parts, lc($part);
-	if ($part =~ m/$dashes/) {
-		my @dashparts = split(/$dashes/, $part);
-		for my $dashpart (@dashparts) {
-			push @parts, lc($dashpart);
+	if ($part =~ m/(\W+)/ and $1 !~ m/'/) {
+		my @boundary_words = split(/\W+/, $part);
+		for my $boundary_word (@boundary_words) {
+			push @parts, lc($boundary_word);
 		}
-		push @parts, lc($_) for @dashparts;
-		my $joined = join('', @dashparts);
+		push @parts, lc($_) for @boundary_words;
+		my $joined = join('', @boundary_words);
 		push @parts, lc($joined);
-		my $space_joined = join(' ', @dashparts);
+		my $space_joined = join(' ', @boundary_words);
 		push @parts, lc($space_joined);
 	}
 	return uniq sort @parts;
@@ -349,6 +349,21 @@ has wordcount => (
 	builder => '_build_wordcount',
 );
 sub _build_wordcount { scalar @{shift->words} }
+
+=attr seen_plugins
+
+This array contains all the plugins which already worked with this request.
+This means all the plugins which are triggered. If they gave back a result or
+not, doesn't matter here. This list is used by L<DDG::Block/allow_duplicate>.
+
+=cut
+
+has seen_plugins => (
+	is => 'rw',
+	lazy => 1,
+	builder => '_build_seen_plugins',
+);
+sub _build_seen_plugins {[]}
 
 #
 # LANGUAGE / LOCATION / IP

@@ -57,6 +57,8 @@ BEGIN {
 		DDGTest::Goodie::WoBlockTwo
 		DDGTest::Goodie::WoBlockThree
 		DDGTest::Goodie::WoBlockArr
+		DDGTest::Goodie::CollideOne
+		DDGTest::Goodie::CollideTwo
 	)];
 	my $before_wp = 0;
 	my $after_wp = 0;
@@ -85,6 +87,7 @@ BEGIN {
 
 	my $words_block = DDG::Block::Words->new({
 		plugins => $words_plugins,
+		return_one => 0,
 		before_build => sub {
 			my ( $self, $class ) = @_;
 			ok($class eq $words_plugins->[$before_wp],'$class should be '.$words_plugins->[$before_wp]);
@@ -103,7 +106,7 @@ BEGIN {
 
 	my @queries = (
 		'aROUNd two' => {
-			wo => [zci('two','woblockone')],
+			wo => [zci('two','woblockone'),zci('aROUNd','woblocktwo')],
 			re => [],
 		},
 		'wikipedia blub' => {
@@ -170,6 +173,15 @@ BEGIN {
 			wo => [zci('a|or|b|or|c','woblockarr')],
 			re => [],
 		},
+		'collide' => {
+			wo => [zci('collide','collideone'),zci('collide','collidetwo')],
+			re => [],
+		},
+	    'or two' => {
+			wo => [zci('or|two','woblockarr'), zci('or','woblocktwo')], 
+			re => [],
+	    },
+
 	);
 	
 	while (@queries) {
@@ -181,7 +193,54 @@ BEGIN {
 		my @re_result = $re_block->request($request);
 		is_deeply(\@re_result,$expect->{re} ? $expect->{re} : [],'Testing regexp block result of query "'.$query.'"');
 	}
+
+
+	my $one_words_block = DDG::Block::Words->new({
+		plugins => $words_plugins,
+		return_one => 1,
+	});
+
+	my @one_queries = (
+		'aROUNd two' => {
+			wo => [zci('two','woblockone')],
+			re => [],
+		},
+		'  a    or     b   or        c  ' => {
+			wo => [zci('a|or|b|or|c','woblockarr')],
+			re => [],
+		},
+		'collide' => {
+			wo => [zci('collide','collideone')],
+			re => [],
+		},
+	    'or two' => {
+			wo => [zci('or|two','woblockarr')], 
+			re => [],
+	    },
+
+	);
 	
+	while (@one_queries) {
+		my $query = shift @one_queries;
+		my $expect = shift @one_queries;
+		my $request = DDG::Request->new({ query_raw => $query });
+		my @words_result = $one_words_block->request($request);
+		is_deeply(\@words_result,$expect->{wo} ? $expect->{wo} : [],'Testing words block result of query "'.$query.'"');
+	}
+
+	# evil test for a plugin that somehow manages to change the query
+	# on the processing...
+	{
+		my $query_change = DDG::Block::Words->new({
+			plugins => [qw( DDGTest::Goodie::Changequery )],
+			return_one => 1,
+		});
+		my $request = DDG::Request->new({ query_raw => 'duckduckgo ios' });
+		is($request->query_raw,'duckduckgo ios','Query is fine before query_change block');
+		my @words_result = $query_change->request($request);
+		is($request->query_raw,'duckduckgo ios','Query is still fine after query_change block');
+	}
+		
 }
 
 done_testing;

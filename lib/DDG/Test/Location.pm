@@ -30,6 +30,7 @@ our %locations = (
 		area_code => '610',
 		continent_code => 'NA',
 		metro_code => '504',
+	loc_str => '19460'
 	},
 	'de' => {
 		country_code => 'DE',
@@ -44,6 +45,7 @@ our %locations = (
 		area_code => 0,
 		continent_code => 'EU',
 		metro_code => 0,
+	loc_str => 'Mönchengladbach, Germany',
 	},
 	'my' => {
 		country_code => 'MY',
@@ -57,6 +59,7 @@ our %locations = (
 		area_code => 0,
 		continent_code => 'AS',
 		metro_code => 0,
+	loc_str => 'Kuala Lumpur, Malaysia',
 	},
 	'in' => {
 		country_code => 'IN',
@@ -70,6 +73,20 @@ our %locations = (
 		time_zone => 'Asia/Calcutta',
 		area_code => 0,
 		continent_code => 'AS',
+		metro_code => 0,
+	loc_str => 'New Delhi, India',
+	},
+	'au' => {
+		country_code => 'AU',
+		country_code3 => 'AUS',
+		country_name => 'Australia',
+		region => 'SA',
+		region_name => 'South Australia',
+		city => 'Adelaide',
+		latitude => '-34.5544',
+		longitude => '138.3636',
+		area_code => 0,
+		continent_code => 'AU',
 		metro_code => 0,
 	},
 );

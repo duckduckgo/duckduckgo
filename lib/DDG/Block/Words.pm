@@ -7,7 +7,7 @@ with qw( DDG::Block );
 
 sub BUILD {
 	my ( $self ) = @_;
-	for (reverse @{$self->plugin_objs}) {
+	for (@{$self->plugin_objs}) {
 		my $triggers = $_->[0];
 		my $plugin = $_->[1];
 		for (@{$triggers}) {
@@ -32,10 +32,55 @@ sub BUILD {
 
 =head1 DESCRIPTION
 
-...
+The BUILD function is used to build a hash which maps trigger positions (start, any, end)
+to trigger words to trigger phrase length to plugins.
 
-On construction it fills up its own cache in L<words_plugins> by analyzing the
-given plugins and their triggers.
+Eg. Given triggers:
+
+	START: "khan", "khan academy";
+	ANY  : "forecast", "weather forecast";
+	END  : "video", "youtube videos";
+
+This would produce the following hash:
+
+_words_plugins = {
+
+	start => {
+
+		'khan' => {
+			1 => [ DDG::Spice::KhanAcademy ],
+			2 => {
+				'khan academy' => [ DDG::Spice::KhanAcademy ]
+			}
+		}
+	},
+
+	any => {
+
+		'forecast' => {
+			1 => [ DDG::Spice::Forecast, DDG::Spice::Foo ]
+		},
+
+		'weather' => {
+			2 => {
+				'weather forecast' => [ DDG::Spice::Forecast ]
+			}
+		}
+	},
+
+	end => {
+
+		'video' => {
+			1 => [ DDG::Spice::Video ]
+		},
+
+		'videos' => {
+			2 => {
+				'youtube videos' => [ DDG::Spice::Video ]
+			}
+		}
+	}
+}
 
 =cut
 
@@ -43,6 +88,8 @@ sub _set_start_word_plugin { shift->_set_beginword_word_plugin('start',@_) }
 sub _set_any_word_plugin { shift->_set_beginword_word_plugin('any',@_) }
 sub _set_end_word_plugin { shift->_set_endword_word_plugin('end',@_) }
 
+# Grab trigger word (or FIRST word from trigger phrase)
+# to use as hash key for `start` and `any` trigger hashes
 sub _set_endword_word_plugin {
 	my ( $self, $type, $word, $plugin ) = @_;
 	my @words = split(/\s+/,$word);
@@ -50,6 +97,8 @@ sub _set_endword_word_plugin {
 	$self->_set_word_plugin($type,pop @words,$word,$plugin);
 }
 
+# Grab trigger word (or LAST word from trigger phrase)
+# to use as hash key for `end` trigger hash
 sub _set_beginword_word_plugin {
 	my ( $self, $type, $word, $plugin ) = @_;
 	my @words = split(/\s+/,$word);
@@ -63,10 +112,12 @@ sub _set_word_plugin {
 	my $word_count = scalar @split_word;
 	$self->_words_plugins->{$type}->{$key} = {} unless defined $self->_words_plugins->{$type}->{$key};
 	if ($word_count eq 1) {
-		$self->_words_plugins->{$type}->{$key}->{1} = $plugin;
+		$self->_words_plugins->{$type}->{$key}->{1} = [] unless defined $self->_words_plugins->{$type}->{$key}->{$word_count};
+		push @{$self->_words_plugins->{$type}->{$key}->{1}}, $plugin;
 	} else {
 		$self->_words_plugins->{$type}->{$key}->{$word_count} = {} unless defined $self->_words_plugins->{$type}->{$key}->{$word_count};
-		$self->_words_plugins->{$type}->{$key}->{$word_count}->{$word} = $plugin;
+		$self->_words_plugins->{$type}->{$key}->{$word_count}->{$word} = [] unless defined $self->_words_plugins->{$type}->{$key}->{$word_count}->{$word};
+		push @{$self->_words_plugins->{$type}->{$key}->{$word_count}->{$word}}, $plugin;
 	}
 }
 
@@ -98,13 +149,45 @@ sub _build__words_plugins {{
 sub request {
 	my ( $self, $request ) = @_;
 	my @results;
+	#
+	# Mapping positions of keywords in the request
+	# to a flat array which access stepwise.
+	#
+	# @poses is an array of the positions inside
+	# the triggers hash.
+	#
+	################################################
 	my %triggers = %{$request->triggers};
 	my $max = scalar keys %triggers;
 	my @poses = sort { $a <=> $b } keys %triggers;
+	$self->trace( "Trigger word positions: ", @poses );
 	for my $cnt (0..$max-1) {
+		#
+		# Split into a flat array so we can easily
+		# determine if the query is starting, ending
+		# or still in the beginning, this is very essential
+		# for the following steps.
+		#
 		my $start = $cnt == 0 ? 1 : 0;
 		my $end = $cnt == $max-1 ? 1 : 0;
 		for my $word (@{$request->triggers->{$poses[$cnt]}}) {
+			$self->trace( "Testing word:", "'".$word."'" );
+			#
+			# Checking if any of the IA's have this specific word
+			# as (part of) a start, end or any trigger. Start and end
+			# of course only if its first or last word in the query.
+			#
+			# It gives back a touple of 2 elements, a bool which defines
+			# if there COULD BE more words after it (so this fits for
+			# any and start triggers), the second is the part of the
+			# prepared trigger set of the blocks which is responsible
+			# for this word.
+			#
+			# The keys inside the hitstruct define the words count it
+			# additional carries. This allows to kick out the ones which
+			# are not fitting anymore into the length of the query (by
+			# wordcount)
+			#
 			if (my ( $begin, $hitstruct ) =
 					$start && defined $self->_words_plugins->{start}->{$word}
 						? ( 1 => $self->_words_plugins->{start}->{$word} )
@@ -113,14 +196,43 @@ sub request {
 							: defined $self->_words_plugins->{any}->{$word}
 								? ( 1 => $self->_words_plugins->{any}->{$word} )
 								: undef) {
+				######################################################
+				$self->trace("Got a hit with","'".$word."'","!", $begin ? "And it's just the beginning..." : "");
+
+				# $cnt is the specific position inside our flat array of
+				# positions inside the query.
 				my $pos = $poses[$cnt];
+
+				# This `for` loop is only executed if we have a partial
+				# match on a trigger phrase i.e. the first word in a `start`
+				# or `any` trigger phrase, or the last word in an `end`
+				# trigger phrase. In this case it iterates through all
+				# those different combination and tries to match it
+				# with the request of the query.
+				#
 				for my $word_count (sort { $b <=> $a } grep { $_ > 1 } keys %{$hitstruct}) {
+				############################################################
+					$self->trace( "Checking additional multiword triggers with length of", $word_count);
 					my @sofar_words = @{$triggers{$pos}};
-					for (@sofar_words) {
-						push @results, $hitstruct->{$word_count}->{$_}->handle_request_matches($request,$pos) if defined $hitstruct->{$word_count}->{$_};
-						return @results if $self->return_one && @results;
+					for my $sofar_word (@sofar_words) {
+						if (defined $hitstruct->{$word_count}->{$sofar_word}) {
+							for (@{$hitstruct->{$word_count}->{$sofar_word}}) {
+								push @results, $self->handle_request_matches($_,$request,$pos);
+								if ($self->return_one && @results) {
+									$self->trace("Got return_one and ".(scalar @results)." results, finishing here");
+									return @results;
+								}
+							}
+						}
 					}
-					my @next_poses_key = grep { $_ >= 0 } $begin ? ($cnt+1)..($cnt+$word_count-1) : ($cnt-$word_count-1)..($cnt-1);
+					# Here we take the index of the partially matched trigger phrase and
+					# calculate where the trigger should start or end (based on whether 
+					# it's a start or end trigger) to verify if the partial match is a
+					# full match against
+					#
+					# Then we check if the next/previous word in the string matches
+					# the next/previous word in the trigger phrase (again, based on whether it's a start or end trigger)
+					my @next_poses_key = grep { $_ >= 0 } $begin ? ($cnt+1)..($cnt+$word_count-1) : ($cnt-$word_count+1)..($cnt-1);
 					my @next_poses = grep { defined $_ && defined $triggers{$_} } @poses[@next_poses_key];
 					@next_poses = reverse @next_poses unless $begin;
 					for my $next_pos (@next_poses) {
@@ -131,16 +243,34 @@ sub request {
 								my $new_next_word = $begin
 									? join(" ",$current_sofar_word,$next_trigger)
 									: join(" ",$next_trigger,$current_sofar_word);
-								push @results, $hitstruct->{$word_count}->{$new_next_word}->handle_request_matches($request,( $pos < $next_pos ) ? ( $pos,$next_pos ) : ( $next_pos,$pos ) ) if defined $hitstruct->{$word_count}->{$new_next_word};
-								return @results if $self->return_one && @results;
+								if (defined $hitstruct->{$word_count}->{$new_next_word}) {
+									for (@{$hitstruct->{$word_count}->{$new_next_word}}) {
+										push @results, $self->handle_request_matches($_,$request,( $pos < $next_pos ) ? ( $pos,$next_pos ) : ( $next_pos,$pos ));
+										if ($self->return_one && @results) {
+											$self->trace("Got return_one and ".(scalar @results)." results, finishing here");
+											return @results;
+										}
+									}
+								}
 								push @new_next_words, $new_next_word;
 							}
 						}
 						push @sofar_words, @new_next_words;
 					}
 				}
-				push @results, $hitstruct->{1}->handle_request_matches($request,$poses[$cnt]) if defined $hitstruct->{1};
-				return @results if $self->return_one && @results;
+
+				# Check if we have match on a single trigger word
+				if (defined $hitstruct->{1}) {
+					for (@{$hitstruct->{1}}) {
+						push @results, $self->handle_request_matches($_,$request,$poses[$cnt]);
+						if ($self->return_one && @results) {
+							$self->trace("Got return_one and ".(scalar @results)." results, finishing here");
+							return @results;
+						}
+					}
+				}
+			} else {
+				$self->trace("No hit with","'".$word."'");
 			}
 		}
 	}

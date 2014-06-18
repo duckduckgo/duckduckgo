@@ -1,0 +1,13 @@
+# PODNAME: DDG::Manual
+# ABSTRACT: Overview of all documentations
+
+=head1 NAME
+
+DDG::Manual - Overview of opensource documentations of DuckDuckGo
+
+=head1 GENERAL TOPICS
+
+ * L<Overview of our translation system|DDG::Manual::Translation>
+
+ * L<Overview of DuckPAN|DDG::Manual::DuckPAN> B<TODO>
+

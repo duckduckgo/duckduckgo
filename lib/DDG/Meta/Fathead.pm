@@ -43,7 +43,7 @@ sub apply_keywords {
 
 =cut
 
-    $stash->add_symbol('&zci', sub {
+    $stash->add_symbol('&fathead', sub {
         if (ref $_[0] eq 'HASH') {
             for (keys %{$_[0]}) {
                 $zci_params{check_fathead_key($_)} = $_[0]->{$_};

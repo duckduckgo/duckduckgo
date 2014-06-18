@@ -15,6 +15,8 @@ use DDG::Test::Spice;
 use DDGTest::Spice::Words;
 use DDGTest::Spice::Regexp;
 use DDGTest::Spice::Data;
+use DDGTest::Spice::Cached;
+use DDGTest::Spice::ChangeCached;
 
 use DDG::ZeroClickInfo::Spice;
 
@@ -49,6 +51,8 @@ is_deeply(DDGTest::Spice::Regexp->get_triggers,{
 is(DDGTest::Spice::Regexp->get_nginx_conf,'location ^~ /js/spice/regexp/ {
 	rewrite ^/js/spice/regexp/(.*) / break;
 	proxy_pass http://some.api:80/;
+	proxy_intercept_errors on;
+	error_page 403 404 500 502 503 504 =200 /js/failed/ddgtest_spice_regexp;
 }
 ',"Checking standard nginx_conf");
 
@@ -65,6 +69,8 @@ ddg_spice_test(
 	[qw(
 		DDGTest::Spice::Data
 		DDGTest::Spice::Regexp
+		DDGTest::Spice::Cached
+		DDGTest::Spice::ChangeCached
 	)],
 	'data test' => test_spice( 
 		'/js/spice/data/test',
@@ -76,6 +82,24 @@ ddg_spice_test(
 		'/js/spice/regexp/test.a/DDG%3A%3ARequest',
 		call_type => 'include',
 		caller => 'DDGTest::Spice::Regexp'
+	),
+	'testing cached' => test_spice( 
+		'/js/spice/cached/testing',
+		call_type => 'include',
+		caller => 'DDGTest::Spice::Cached',
+		is_cached => 1
+	),
+	'test changed caching' => test_spice( 
+		'/js/spice/change_cached/test',
+		call_type => 'include',
+		caller => 'DDGTest::Spice::ChangeCached',
+		is_cached => 1
+	),
+	'not caching changed caching' => test_spice( 
+		'/js/spice/change_cached/not%20caching',
+		call_type => 'include',
+		caller => 'DDGTest::Spice::ChangeCached',
+		is_cached => 0
 	),
 	# 'flash version' => test_spice( 
 	# 	'/js/spice/flashtest',

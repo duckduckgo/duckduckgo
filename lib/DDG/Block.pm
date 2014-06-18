@@ -4,6 +4,7 @@ package DDG::Block;
 use Moo::Role;
 use Carp;
 use Class::Load ':all';
+use POSIX qw(strftime);
 
 requires qw(
 	request
@@ -12,6 +13,12 @@ requires qw(
 sub BUILD {
 	my ( $self ) = @_;
 	$self->_plugin_objs;
+	$self->trace('Loaded block',
+		ref $self,
+		map {
+			$_.':'.( $self->$_ ? 1 : 0 ),
+		} qw( return_one allow_missing_plugins allow_duplicate ),
+	);
 }
 
 =head1 SYNOPSIS
@@ -79,19 +86,6 @@ has plugins => (
 
 sub _build_plugins { die (ref shift)." requires plugins" }
 
-=attr return_one
-
-This attribute defines if the block should stop if there is a hit which gives
-a result. By default this is on.
-
-=cut
-
-has allow_missing_plugins => (
-	#isa => 'Bool',
-	is => 'ro',
-	default => sub { 0 },
-);
-
 =attr allow_missing_plugins
 
 This attribute defines if the block should die on missing plugins, or if he
@@ -101,11 +95,56 @@ default this is disabled.
 
 =cut
 
+has allow_missing_plugins => (
+	#isa => 'Bool',
+	is => 'ro',
+	default => sub { 0 },
+);
+
+=attr return_one
+
+This attribute defines if the block should stop if there is a hit which gives
+a result. By default this is on.
+
+=cut
+
 has return_one => (
 	#isa => 'Bool',
 	is => 'ro',
 	default => sub { 1 },
 );
+
+=attr allow_duplicate
+
+This attribute defines if the block is only allowing one instance of every
+plugin be called once, even if they hit cause of several cases. By default
+this is off, and should stay off.
+
+=cut
+
+has allow_duplicate => (
+	#isa => 'Bool',
+	is => 'ro',
+	default => sub { 0 },
+);
+
+=attr debug_trace
+
+=cut
+
+has debug_trace => (
+	#isa => 'Bool',
+	is => 'ro',
+	default => sub { defined $ENV{DDG_BLOCK_TRACE} && $ENV{DDG_BLOCK_TRACE} ? 1 : 0 },
+);
+
+sub trace {
+	my $self = shift;
+	return unless $self->debug_trace;
+	print STDERR ("[".$self->trace_name."] ",join(" ",map { defined $_ ? $_ : 'undef' } @_),"\n");
+}
+
+sub trace_name { ref(shift) }
 
 =attr before_build
 
@@ -251,12 +290,44 @@ sub parse_trigger { shift; shift; }
 
 =method empty_trigger
 
-Ggets called, if the plugin doesnt deliver any trigger, here you can wrap this to your own specific
+Gets called, if the plugin doesnt deliver any trigger, here you can wrap this to your own specific
 definition. Its so far only used in the L<DDG::Block::Words>, to disallow empty triggers totally. By default
 it returns B<undef>.
 
 =cut
 
 sub empty_trigger { return undef }
+
+=method handle_request_matches
+
+This function is used for calling I<handle_request_matches> on the plugin,
+which is implemented there via L<DDG::Meta::RequestHandler>.
+
+=cut
+
+sub handle_request_matches {
+	my ( $self, $plugin, $request, @args ) = @_;
+	my $plugin_class = ref $plugin;
+	$self->trace('Handle request matches:',$plugin_class,"'".$request->query_raw."'",@args);
+	unless ($self->allow_duplicate) {
+		if (grep { $_ eq $plugin_class } @{$request->seen_plugins}) {
+			$self->trace("The request already saw",$plugin_class);
+			return ();
+		}
+	}
+	push @{$request->seen_plugins}, $plugin_class;
+	my @results = $plugin->handle_request_matches($request, @args);
+	$self->trace("Got",scalar @results,"results");
+	return @results;
+}
+
+around request => sub {
+	my $orig = shift;
+	my ( $self, $request ) = @_;
+	$self->trace( "Query raw:", "'".$request->query_raw."'" );
+	my @results = $orig->(@_);
+	$self->trace( "Query", "'".$request->query_raw."'", "produced", scalar @results, "results" );
+	return @results;
+};
 
 1;

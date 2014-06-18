@@ -3,7 +3,15 @@ package DDG::Language;
 
 use Moo;
 
-my @language_attributes = qw( flagicon flag_url name_in_local rtl locale nplurals name_in_english );
+my @language_attributes = qw(
+  flagicon
+  flag_url
+  name_in_local
+  rtl
+  locale
+  nplurals
+  name_in_english
+);
 
   # 'en_US' => {
   #              'flagicon' => 'us',
@@ -21,5 +29,10 @@ has $_ => (
 	is => 'ro',
 	default => sub { '' }
 ) for (@language_attributes);
+
+use overload '""' => sub {
+  my $self = shift;
+  return $self->locale;
+}, fallback => 1;
 
 1;

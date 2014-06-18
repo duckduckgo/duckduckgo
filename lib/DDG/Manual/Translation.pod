@@ -1,0 +1,729 @@
+# PODNAME: DDG::Manual::Translation
+# ABSTRACT: Overview of the translation system of DuckDuckGo
+
+=encoding utf-8
+
+=head1 THE MISSION 
+
+Translating a complex and growing system like DuckDuckGo is not an easy task.
+The system is scattered across many subcomponents, which only come together to
+form a whole in the user's browser (for the most part). On a coding level,
+many disparate elements have to combine to give the final product: 
+HTML snippets located in various parts of the system, many elements 
+of JavaScript as well as other microsolutions which have been put
+in place to add specific functionality. The complexity doesn't arise
+solely from the coding aspect of the translation platform, but also
+from the need to effectively and efficiently manage the translation,
+and ensure that it is high quality. We are a small team, which
+limits what we can do; we are therefore relying on the community
+to help us in this endeavour, and managing a community of volunteers
+is more complex and difficult than relying on a dedicated team.
+
+=head2 Own platform vs Existing Solutions
+
+We originally tried to use existing solutions to help us in translating,
+DuckDuckGo, but did not feel that anything on the market met our needs.
+The biggest flaw in the systems we attmpted to use was the lack of 
+context specificity, as well as the commenting system for the tokens.
+Furthermore, as we wanted a feature for the translation of images and
+other media, as well as a way of translating long pieces of text, we
+were disappointed to note that these were lacking on all existing
+solutions on all of the platforms that we tested.
+
+As it stands, our biggest issues are coordinating the translation effort 
+and defining proper processes for the translation flows — both of which
+could easily be solved by using our own system. This is what we have
+ended up doing.
+
+=head1 WHAT IS TRANSLATION?
+
+People who have never attempted a translation project might not be
+aware of the problems which can arise. We would like to explain
+some of the fundamental difficulties, many of which are particularly
+applicable to native English speakers who have not studied a foreign
+language.
+
+=head2 Word order
+
+The importance of word order varies significantly from language to language. 
+In some, a case system might make sentence structure very clear with little 
+importance placed on the order of words; in others, word order might be key to
+conveying a particular message. In fact, even within languages, word order is 
+important: two very different messages can be inferred from the same sentence
+with different emphasis or word placement. The lack of endings in English make
+a strict word order very important: "The dog eats the cat" is not the same as
+"the cat eats the dog", though the words themselves do not appear different
+whether they are the subject or object of the sentence. This makes translation
+of blocks of texts difficult to standardise, as any approximation is likely
+to be relevant only to one language. Furthermore, idioms add a further level
+of complexity to translation of text in general, but particularly translation
+of blocks of text. Word order, therefore, cannot be conserved between the source
+document and the final document, as it may be completely different in the target
+language.
+
+As another example, consider the sentence "You have x messages". This could be
+broken down into
+
+  'You have ' + $count + ' messages'
+
+Unfortunately, this would lead to issues further down the line. Translating
+only the first and last snippets and reintroducing them into the original
+sentence, with the original order, might not yield a coherent sentence in
+the target language,  again because of the way in which different languages
+work, and the way in which words are ordered.
+
+=head2 The issue with direct translation
+
+Not every word has a direct translation in every language. There are many
+cases where the meaning of a word will vary greatly because of the context
+that the word is in. Furthermore, some words may have more than one corresponding
+word—the well known myth of the number of <Eskimo words for snow|
+http://en.wikipedia.org/wiki/Eskimo_words_for_snow>, wis relevant here.
+A concept which may be defined by a single word in the original
+language may have many different corresponding words in the target language,
+be it because the target language is more nuanced in general or because the 
+specific subject is particularly well-defined in the target language.
+
+An example of the issues with direct translation is shown below.
+
+In German airlines, it is quite common to read the following:
+
+  "Bitte anschnallen!"
+
+The meaning of this sentence is equivalent to the following English sentence:
+
+  "Fasten your seat belts!"
+
+However, translating "Bitte anschnallen!" to English would yield this sentence:
+
+  "Please fasten!"
+
+This sentence is clearly lacking, and whilst the meaning can be inferred from
+context, it would sounds unnatural to most native English speakers. 
+This is not to say that the sentence in the original language is similarly
+laching; in fact, a native German speaker would be very unlikely to
+use the direct translation of the English sentence:
+
+  "Bitte festschnallen mit ihrem Sicherheitsgurt!"
+  
+This sounds just as unnatural to German speaker as "Please fasten!" does to English
+speakers. To make the translation sound more fluid and "human" requires, unsurprisingly,
+a human element. Translation software is currently unable to take into account
+context and select from a list of translations, leading to "errors" such as in the
+examples above.
+
+A small subexample that directly comes up: Yes, B<anschnallen> and
+B<festschnallen> are actually the same word in english: B<fasten>. B<fasten>
+actually translates to L<12 different words in
+german|http://dict.leo.org/ende?searchLoc=-1&searchLocRelinked=-1&lp=ende&search=fasten&lp=ende&lang=de&searchLoc=0&searchLocRelinked=1&search=>.
+
+=head2 Right to left
+
+Yes, really, there are languages in the world, which are written right to left.
+Beside the mess this brings to your hand if you are right handed, this is also
+a huge difference in the web interface. You can see how a right to left page
+looks like L<here|http://www.i18nguy.com/unicode/shma.html>. This also changes
+about most punctuations and of course the flow of the page itself, even if you
+force a specific order, you must revert it from right to left.
+
+=head2 Grammatical numbers
+
+  In most languages (like English), there are 2 so called grammatical
+cases for numbers: B<singular> and B<plural>. In those languages B<plural> is used, if you
+have none, or many. And B<singular> is only used if you have just one:
+
+  You have 1 message.
+  You have 2 messages. (or also 0 or more than 2)
+
+In other languages, there are up to 5 different cases for B<plural>. It Sometimes depends
+on complex maths which we don't like to explain, but luckily the world
+has defined logic for this. This is a concept implemented in gettext, so this
+form is what we actually use, because our implementation is on top of gettext
+for most base infrastructure. The English (and most other languages) plural
+definition for gettext is:
+
+  nplurals=2; plural=(n != 1)
+
+This describes the logic we've mentioned above, that we have 2 grammatical
+numbers (B<singular> and B<plural>), and the first plural form is used, if the
+amount described is not 1.
+
+Don't be scared! All those definitions are fixed, you can find them on this
+awesome page, and you don't need to define them any more (Except if you want to define a
+fantasy language) L<http://translate.sourceforge.net/wiki/l10n/pluralforms>.
+
+In Slovak (the language spoken in L<Slovakia|https://duckduckgo.com/Slovakia>)
+there are 3 "plural forms", defined by this gettext definition:
+
+  nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2
+
+So the text above would require 3 cases:
+
+  Mas 1 spravu.
+  Mas 2 spravy. (or 3 and 4)
+  Mas 5 sprav. (or also 0 and more than 5)
+
+=head2 Gender cases
+
+Also relevant in most languages, is the gender, which might have influence on
+the case of the word. We just mention it in this documentation as an element
+that could be taken into concern. So far our system is not able to handle this
+problem.
+
+=head1 TRANSLATION SYSTEM
+
+After understanding those base problems that come up, you might see that it is
+very intense, in terms of resources, to handle every problem of translations. We don't want
+to reinvent the wheel here, but the existing solutions are not covering all of our
+needs, which means we need to make our own translation system, by trying to
+use as many existing solutions as possible, to reduce the amount of work.
+
+We use our own community platform for managing all the translations. This
+allows us to make very individual concepts and workflows specifically for our
+needs. Especially, integrating the translation with socializing components and
+more visualization options is a key that allows us to give people who
+translate the texts the optimum environment for understanding the deeper
+meaning of the text to translate.
+
+You should make an account at the L<community platform|https://dukgo.com/>, if
+you want to follow all steps of this documentation. This account is required
+for working with the translation system, but as long as you don't make your
+account public (you have an option for this in your account menu), noone will
+see any information about you, not even the username, only your translations
+will be stored in the database, so that the users can vote for it.
+
+The following sections explain all relevant components in detail.
+
+=head2 Storage
+
+I<This section is very technical, and can be skipped, if you are not interested
+in the technical decisions we made. Just go directly to L</Tokens>.>
+
+The storage for the translations is a very important topic, it defines most of
+the decisions you have to make afterwards. The storage must be really fast and
+effective, especially inside the code. Replicating existing concepts here would
+produce a massive overhead, which would lead to the analyzis of the existing libraries
+for this topic which are fast enough for our requirements. Sadly, we also had
+to think about a solution that works inside JavaScript, so that we can
+integrate it easily into our JavaScript code, which drives most of the
+visuals on a modern browser on DuckDuckGo.
+
+There are some pretty interesting solutions in Perl which allow us to really
+cover up all cases, like gender, but those solutions are specific to Perl
+and can't work in JavaScript. In the end we decided "down" to the very common
+L<gettext|http://www.gnu.org/software/gettext/> system, which also has a
+L<JavaScript implementation|http://jsgettext.berlios.de/> and is covered with
+implementations in all languages, like Perl, Ruby, Python and other languages
+where we might need to integrate translation.
+
+Especially, the existence of a very wide used and accepted plain C
+implementation makes it also reliable in many ways. The C library delivers
+directly a commandline tool to convert text based datafiles for the
+translations (the so called po files) to highly effective binary files, to make
+this data accessible very quickly (the binary file is called mo). This tool is
+called B<msgfmt> and included in the B<gettext> package of your distribution.
+
+In the JavaScript implementation we have a small Perl program B<po2json> which
+converts the same text datafile into a json format that is more usable in
+JavaScript. Sadly this datafile must be of course loaded in the browser, you
+might see that big JavaScript file on the load of DuckDuckGo which integrates
+the translations together with the libraries for using those. We compress this
+to make it smaller for the bandwidth. More optimization options are open here.
+
+In the end gettext is able to solve the problems with the non direct
+translations and the grammatical number cases. It is by itself not able to
+solve the gender case or the order of text problems, especially with combined elements that have to be translated independently. The possibility to
+extend our system to manage the gender case too is open, but we are not heading
+towards this yet.
+
+=head2 Locale::Simple
+
+Many people who never did translation before, but heard of I<gettext>, think 
+that I<gettext> itself directly handles everything you need for the
+translation, but it has no real concept for combined tokens or placeholders for
+dynamic text. I<gettext> works only as storage and accessor for the
+translations you need. It solves lots of problems that you really can't easily solve
+alone, but it misses those very important details.
+
+We still need to wrap I<gettext> with L<sprintf|https://duckduckgo.com/sprintf>
+to make it really useful. This will allow us to combine tokens with HTML and
+other formats. We will describe this in the next section.
+
+We released this wrapping, which has the exactly same API for Perl, Python
+and JavaScript on L<CPAN|http://cpan.org/> and L<pypi|http://pypi.python.org/>.
+You can install it with cpan or your favorite CPAN package installer for Perl,
+like L<App::cpanminus|https://metacpan.org/module/App::cpanminus>:
+
+  cpanm Locale::Simple
+
+or for python with pip2 in your userspace:
+
+  pip2 install --user locale-simple
+
+Inside the Perl distribution, you find also all the JavaScript required, if you
+want to use it for your own project someday. If you want to play around with
+Perl in general, please consider installing L<perlbrew|http://www.perlbrew.pl/>
+first. It's not required to install any of this to contribute.
+
+=head2 Tokens
+
+The storage also determines the way we define the base of our workflow with
+the translations. These are the so called B<tokens>, which are the main part of
+all the flows about translation. The coders are making tokens in the code, the
+templates or wherever it's needed. Those tokens define the texts that have to
+get translated. So, a very important point here is to understand that the
+text that has to be translated is the token. Let's see some examples of 
+templates that make it easier to understand this system.
+
+=head3 Simple token
+
+  <: l('Monthly newsletter:') :>
+
+This defines a simple token with the text 'Monthy newsletter:'. So
+I<gettext>, our translation storage actually has no data file for these so
+called tokens itself, because the text data file only contains the token AND a
+translation. But, to have a good normalization, we store this in our database
+under the same fieldnames as expected by I<gettext>, so I display it to you now
+like a "partly" I<po> file without the translation, this makes it easier to
+understand it:
+
+  msgid "Monthly newsletter:"
+
+Those tokens we store in the database of our community platform at
+L<https://dukgo.com/translate/do/index>. For the token itself, there exists no page,
+but here is the page for this specific token in german:
+L<https://dukgo.com/translate/tokenlanguage/26811>.
+
+In the general translation interface of the community platform, you normally
+see a list of those tokens, but we will explain the translation interface
+later, not to make it too complex for the moment. You can see the text to translate
+right next to the word "Singular" on top. Below you see the translations of other
+users for it, there is (right now) only one for german.
+
+When there is no translation found, the system always gives back the token
+itself. At DuckDuckGo all tokens are given in English of the United States.
+
+=head3 Token with context
+
+As you can see here, this is a very simple token, it is just text, it does not
+really concern any of our problem cases. Another problem case would be, for
+example, the token I<Medium>. This is a very very vague word, you need a bit of
+a context to really find the right translation, even if you think that it is very clear in english, you can imagine that a lonely I<Medium> can be in lots of
+different kinds of context. I<gettext> offers here the option to give a so
+called B<context> additional to a token, which allows us to give a bit more
+"context" without changing the token itself. In the template it would look like
+this:
+
+  <: lp('size','Medium') :>
+
+and in the I<gettext> storage:
+
+  msgctxt "size"
+  msgid "Medium"
+
+This means that we want the token "Medium" in the context of "size". The
+advantage here is now, if there would be for example:
+
+  <: lp('weight','Medium') :>
+
+Then there are 2 tokens in the system to translate, both with different
+context. Here you can see the page for the German translation of this shown
+token L<https://dukgo.com/translate/tokenlanguage/26671>. As you see, above the
+word that has to be translated, you see B<Context>, which SHOULD not be taken as
+a real description for the context, on contrary this context helps everyone
+working with the tokens to find this specific token in the code, templates or
+wherever it needs to be coordinated, and it should be a much clearer
+description in the notes for this token.
+
+So here is already a very first thing to take care of, if you are
+responsible for working with tokens, you can't give everything a context, else
+the reusage of tokens is much harder, but you also can't expect that everything
+works fine without using any context for specific words, especially if they are
+very lonely.
+
+=head3 Placeholders in tokens
+
+Placeholders in tokens are giving many options to make the displaying of the
+text more finetuned. Often it is required that inside the text itself you put
+a special wrapping for the display, like HTML; this can be achieved with
+placeholders. They are also used to allow number specific case decision, the
+problem described in L</Grammatical numbers> section. Here is a simple example of a
+dynamic text inside a token:
+
+  <: l("Hello %s!",$username) :>
+
+This allows to give a username to the token, but still allows the
+translator to move the dynamic text to another place, which is more proper in
+his language (like if it would be right to left, the placeholder might be more
+left). 2 things are happening now in the translation system:
+
+At first I<gettext> will try to find the translation for this given token, and
+in the translation the translator also keeps this placeholder B<%s>. After this
+translation is found, for example going B<Pirate>:
+
+  %s, ahoi! hrrr
+
+Given this translation example, the translated text for a user switched to
+L<Pirate|https://duckduckgo.com/?kad=pirate_XX>, with the username B<yegg>,
+would be:
+
+  yegg, ahoi! hrrr
+
+=head3 Placeholders and grammatical numbers
+
+Additionally to placeholders for text, we always cover combined with I<gettext>
+the option for dynamic numbered cases, which requires to decide for the proper
+grammatical numbers case in the language, and replace the placeholder for the
+number with the number given for the case. Here is an example for a numbered case
+of a token in the template (or code, or JavaScript):
+
+  <: ln("You have %d message.","You have %d messages.",$messages) :>
+
+This is used to define a token which is based on the number for the specific
+token. In the definition in the I<gettext> storage it ends like this:
+
+  msgid "You have %d message."
+  msgid_plural "You have %d messages."
+
+Just to directly show that this can, of course, be combined with a B<context>:
+
+  <: lnp("email","You have %d message.","You have %d messages.",$messages) :>
+
+which ends up in this form in I<gettext>:
+
+  msgctxt "email"
+  msgid "You have %d message."
+  msgid_plural "You have %d messages."
+
+First, I<gettext> will check with the current plural definitions (see above),
+what specific plural case is required for this translation. As mentioned on the
+section L</Grammatical numbers>, some languages might have more than 2 forms
+for this. But whatever it is, I<gettext> handles this with the translation
+datafile for the given language. I will present a translated example later.
+
+After I<gettext> has picked the correct translated text, it will put this
+translation towards L<sprintf|https://duckduckgo.com/sprintf>, which replaces
+the placeholders with the proper values.
+
+If we have B<$messages> like B<3> on the above example, the output would be:
+
+  You have 3 messages.
+
+The combination of I<gettext> and I<sprintf> here sadly has the disadvantage
+to force the amount that defines the plural form to be the first placeholder.
+This makes problems in the combination with combined tokens. We will explain the
+problem in the section L</Combined tokens>, later in this manual.
+
+The following section about sprintf describes more deeply how the placeholders
+are functioning, but normally this is only relevant for developers who generate
+tokens for the system.
+
+=head4 sprintf
+
+I<This section is very technical, and can be skipped. Just go directly to
+L</Combined tokens>.>
+
+sprintf is a C function that defines the so called printf conventions for
+formatting a text with dynamic data. You will find it in every language, so you
+can always refer to the usage via your favorite programming language
+documentation. Some of the most relevant overview I will describe here:
+
+sprintf is made to take a format definition and some values for the dynamic
+parts in this definition to produce a new string. A simple example in Perl
+would be:
+
+  perl -e'print sprintf("%s is my search engine!","DuckDuckGo")."\n";'
+
+The output of this will be:
+
+  DuckDuckGo is my search engine!
+
+The B<%s> in the first parameter of sprintf is replaced with the second
+parameter we have given to the sprintf call. This is a very simple example,
+B<%s> means B<string> in this case. Alternative options are:
+
+  %%    a percent sign
+  %c    a character with the given number
+  %s    a string
+  %d    a signed integer, in decimal
+  %u    an unsigned integer, in decimal
+  %o    an unsigned integer, in octal
+  %x    an unsigned integer, in hexadecimal
+  %e    a floating-point number, in scientific notation
+  %f    a floating-point number, in fixed decimal notation
+  %g    a floating-point number, in %e or %f notation
+
+You will normally only face B<%s> and probably B<%d> in the context of
+DuckDuckGo, so don't be scared about the other options.
+
+B<%d> is specific to display a number, as decimal, so if you would say:
+
+  sprintf("%d bottles of beer",99.0);
+
+In your language, where 99.0 defines a float number, you would still get back:
+
+  "99 bottles of beer"
+
+A very important point here is the possibility to give several parameters, AND
+reorder them in the usage, for example:
+
+  sprintf("From %s to %s",'A','B');
+  # returns "From A to B"
+
+This seems to force always B<$from> in the first %s that appears, and B<$to> in
+the second appearance of %s. If in some languages for example the order for this
+case gets "other around", then we can't change the order in the code of course,
+nor make a switch. Luckily sprintf allows us to use the data in other orders than
+given, as you can see on this example:
+
+  sprintf("To %2$s from %1$s",'A','B');
+  # returns "To B from A"
+
+This tells sprintf to put the first extra value into the B<%1$s> and the second
+extra value into B<%2$s>. So, if a translation that hits several placeholders,
+needs a different order for them, it can use this syntax to achieve this.
+
+If you want to know more about sprintf, you can checkout the L<perldoc to
+sprintf|http://perldoc.perl.org/functions/sprintf.html>, but for anything
+related to tokens, you leave the placeholders always like it is in the tokens.
+Deeper knowledge of sprintf is only required for people who define tokens.
+
+=head3 Combined tokens
+
+With the understanding of sprintf, we are now able to make tokens specific for
+special visual needs, like if they need additional HTML. An example could be:
+
+  <: l('%s for more info!', '<a href="...">' ~ l('Click here') ~ '</a>' :>
+
+Would give out:
+
+  <a href="...">Click here</a> for more info!
+
+Which allows us to exclude the HTML from the translation, and still gives the
+translator enough freedom to define which part of his text is the text that
+should be clickable (or colored differently or whatever).
+
+A bigger problem exists, if we combine those placeholders with
+number placeholders, explained in the section L</Placeholders and grammatical
+numbers>, this concept forces to get the amount that is used to determine the
+proper plural form that must be set to the first position. It could lead to a
+problem, like in this case:
+
+  $username has $count message.
+  $username has $count messages.
+
+If we would try to convert this to B<"%s has %d messages.">, we would run into
+the problem that the first placeholder would be B<$username> and not
+B<$count>. To avoid this we can use the method of I<sprintf> to change the
+order of the values given for the placeholders. The right solution would be:
+
+  <: ln("%2$s has %1$d message.","%2$s has %1$d messages.",$count,$username) :>
+
+The very big disadvantage here is the organizational part. It is really complex
+to have all those tokens in the database and still refering which ones are
+staying together. It always requires lots of comments and further information.
+In some very awkward cases, you may have a real extreme cascading of the tokens. In those
+cases it is really essential to generate B<context>, here is a bigger example
+from our JavaScript:
+
+  lp('webelieve','%s believe in %s AND %s.',
+    '<a href="/about">' + lp('webelieve','We') + '</a>',
+    '<a href="/goodies">' + lp('webelieve','better search') + '</a>',
+    '<a href="http://donttrack.us">' + lp('webelieve','no tracking') + '</a>'
+  );
+
+Which is written like this in gettext:
+
+  msgctxt "webelieve"
+  msgid "%s believe in %s AND %s."
+
+  msgctxt "webelieve"
+  msgid "We"
+
+  msgctxt "webelieve"
+  msgid "better search"
+
+  msgctxt "webelieve"
+  msgid "no tracking"
+
+You can now imagine that without some more comments, it is very hard to get it
+right to translate those texts. Best is if the user additionally has an URL to
+see the tokens in action. Especially in the flow of all untranslated tokens,
+which is what most users do to help us translating.
+
+Most combined tokens are gathered under one specific B<msgctxt>, in the
+translation interface. You can click on the context given in the interface to
+reach a page with all tokens of this specific context. Still we try to add
+comments to every token that describes the complete text context where the token
+is used.
+
+=head3 Token translation functions
+
+  l(            msgid,                      ... )
+  ln(           msgid, msgid_plural, count, ... )
+  lp(  msgctxt, msgid,                      ... )
+  lnp( msgctxt, msgid, msgid_plural, count, ... )
+
+=head3 Token scraping
+
+I<This section is only relevant for people who put tokens in the code or the
+HTML, and can be skipped. Just go directly to L</Token translation storage>.>
+
+For L</Locale::Simple>, we made a scraper which is able to parse through any
+Javascript, Perl or Python scripts, to find those tokens. It is very primitive and
+can't really fully parse any code. This makes it relevant to be careful about
+the positions of the tokens:
+
+Always have the complete token, and everything that is in it, in one line. This
+is something we hope to change soon, but parsing any
+possible code combination for all the specific languages is very complex.
+
+Be aware that every parameter of the token must be really written out. That
+means you can't use code, to generate magically fixed B<msgctxt> for a group of
+tokens and add it via variables. This is neither allowed nor the purpose of
+translation tokens. You can only use placeholders, but you are not allowed to
+write code that gives out the token. You only work with the result.
+
+=head3 Token translation storage
+
+As described in the previous sections, the database of the community platform
+stores all the translations, which then gets generated into the I<po> files used
+by I<gettext> in our translation system. I show you here the German
+translations of the examples from above, from the I<po> that gets generated:
+
+  msgid "Monthly newsletter:"
+  msgstr "Monatlicher Newsletter:"
+
+  msgctxt "size"
+  msgid "Medium"
+  msgstr "Mittelgroß"
+
+  msgid "Hello %s!"
+  msgstr "Hallo %s!"
+
+  msgctxt "email"
+  msgid "You have %d message."
+  msgid_plural "You have %d messages."
+  msgstr[0] "Du hast %d Nachricht."
+  msgstr[1] "Du hast %d Nachrichten."
+
+  msgid "%2$s has %1$d message."
+  msgid_plural "%2$s has %1$d messages."
+  msgstr[0] "%2$s hat %1$d Nachricht."
+  msgstr[1] "%2$s hat %1$d Nachrichten."
+
+  msgid "From %s to %s"
+  msgstr "Von %s nach %s"
+
+The pirate translation of the B<"Hello %s!"> example would look like this:
+
+  msgid "Hello %s!"
+  msgstr "%s, ahoi! hrrr"
+
+Our example to change the order of the placeholders would look like this:
+
+  msgid "From %s to %s"
+  msgstr "To %2$s from %1$s"
+
+In the case of a language which has more than 2 plural forms (See
+L</Grammatical numbers>), the number in the brackets will just get stacked up:
+
+  msgid "You have %d message."
+  msgid_plural "You have %d messages."
+  msgstr[0] "Mas %d spravu."
+  msgstr[1] "Mas %d spravy."
+  msgstr[2] "Mas %d sprav."
+
+Interesting sidenote, the highest amount of plural forms is 6. You can find
+this in the L<Arabic language|https://duckduckgo.com/?q=arabic>.
+
+In the case of the placeholder with an amount and a dynamic text, a translation
+which uses the correct order, can of course then use the normal I<sprintf>
+placeholders definition:
+
+  msgid "%2$s has %1$d message."
+  msgid_plural "%2$s has %1$d messages."
+  msgstr[0] "%d Nachricht hat %s."
+  msgstr[1] "%d Nachrichten hat %s."
+
+=head3 Voting translations
+
+On the community platform, you are able to vote for an existing translation,
+instead of making your own translation. If you, by mistake, haven't seen the
+existing translation, your translation will automatically get converted to a
+note for this translation.
+
+=head3 Used translation
+
+The system which generates the translation I<po> files for all the languages,
+picks the translation by finding the translation with the most votes. If there
+are several translations with the same amount of votes, the translation will be
+used where the translator has the highest B<grade> in this language. We will
+explain this in the community platform section (L</The community platform>)
+more deeply. This process happens at the release of the translations.
+
+=head3 Releasing translations
+
+I<This section is very technical, and can be skipped. Just go directly to
+L</Token domains>.>
+
+The generated I<po> files will be packed together with all other necessary data
+files, like the I<mo> file and the I<json> file for the JavaScript, as a Perl
+distribution for our central B<DuckPAN> server, which is used to fetch the
+releases of the open source development to our live systems. The code for these
+procedures is in the package
+L<DDGC::LocaleDist|https://github.com/duckduckgo/community-platform/blob/master/lib/DDGC/LocaleDist.pm>
+in the L<source code of the community
+platform|https://github.com/duckduckgo/community-platform>.
+
+=head2 Token domains
+
+For organizational reasons, but also for technical matters, we are required to
+group the tokens in the so called B<token domains>. The terminology is taken from
+I<gettext>, which also defines that one I<po> file is one specific domain. We
+normally define a default domain at the initialization of our translation library.
+This way we never need to care about the domain on the function calls for the
+translation library.
+
+Also the release of the translations (See L<|/Releasing translations>) is
+executed for every token domain individually. On the live systems we install
+all the latest releases of all token domains at once.
+
+=head3 Token domains in the community platform
+
+In the community platform (L</The community platform>), the different token
+domains are independent lists of tokens. This allows translators to pick the
+block of tokens they want to work on. It is very important to understand that
+a half done translation is nearly as usable as no translation at all. The
+translators must be encouraged to finish up all tokens of a domain, only then
+it really makes sense to promote wider the specific project part to the users.
+We tell more about this in the section L</The community platform>.
+
+=head3 Token domain translation functions
+
+I<This section is very technical, and can be skipped. Just go directly to
+L</Overlapping tokens>.>
+
+Our translation library (See L<|/Locale::Simple>) also supports functions which
+use a specific token domain directly as parameter, but those functions are (so
+far) never used at DuckDuckGo. A switch between several domains inside one code
+file or template is avoided. They are called B<ld()>, B<ldn()>, B<ldp()> and
+B<ldnp()> and work exactly like already described with translation functions, but
+take the name of the token domain, that has to be used as first parameter. The
+function setting the default token domain is B<ltd()>.
+
+=head3 Overlapping tokens
+
+The definition of a token is bound to its token domain. This means that 2
+identical tokens in 2 domains are still 2 independent tokens and still both
+need to be translated. In most cases, this sadly leads to a pointless
+translation with the exactly same meaning and probably even in the exactly same
+context. It is very hard to avoid this.
+
+Still there are cases left where the context given with the token domain might
+slighty fix the interpretation more deeply. Only because a token seems very
+identical in the English language does not directly lead to the same
+interpretation with other languages.
+
+=head2 The community platform
+

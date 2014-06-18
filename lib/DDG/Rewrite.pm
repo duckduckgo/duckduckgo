@@ -10,14 +10,16 @@ sub BUILD {
 	my $to = $self->to;
 	my $callback = $self->has_callback ? $self->callback : "";
 	croak "Missing callback attribute for {{callback}} in to" if ($to =~ s/{{callback}}/$callback/g && !$self->has_callback);
+	# Make sure we replace "{{dollar}}"" with "{dollar}".
+	$to =~ s/{{dollar}}/\$\{dollar\}/g;
 	my @missing_envs;
 	for ($to =~ m/{{ENV{(\w+)}}}/g) {
-		if (defined $ENV{$1}) {
-			my $val = $ENV{$1};
-			$to =~ s/{{ENV{$1}}}/$val/g;
+		if (defined $ENV{$_}) {
+			my $val = $ENV{$_};
+			$to =~ s/{{ENV{$_}}}/$val/g;
 		} else {
-			push @missing_envs, $1;
-			$to =~ s/{{ENV{$1}}}//g;
+			push @missing_envs, $_;
+			$to =~ s/{{ENV{$_}}}//g;
 		}
 	}
 	$self->_missing_envs(\@missing_envs) if @missing_envs;
@@ -86,6 +88,11 @@ has wrap_string_callback => (
     default => sub { 0 },
 );
 
+has accept_header => (
+    is => 'ro',
+    default => sub { 0 },
+);
+
 has proxy_cache_valid => (
 	is => 'ro',
 	predicate => 'has_proxy_cache_valid',
@@ -94,6 +101,11 @@ has proxy_cache_valid => (
 has proxy_ssl_session_reuse => (
 	is => 'ro',
 	predicate => 'has_proxy_ssl_session_reuse',
+);
+
+has proxy_x_forwarded_for => (
+        is => 'ro',
+        default => sub { 'X-Forwarded-For $proxy_add_x_forwarded_for' }
 );
 
 has nginx_conf => (
@@ -112,21 +124,55 @@ sub _build_nginx_conf {
 	my $uri_path = $self->parsed_to;
 	$uri_path =~ s!$scheme://$host:$port!!;
 	$uri_path =~ s!$scheme://$host!!;
+	my $is_duckduckgo = $host =~ /(?:127\.0\.0\.1|duckduckgo\.com)/;
 
-    # wrap various other things into jsonp
-    croak "Cannot use wrap_jsonp_callback and wrap_string callback at the same time!" if $self->wrap_jsonp_callback && $self->wrap_string_callback;
+	# wrap various other things into jsonp
+	croak "Cannot use wrap_jsonp_callback and wrap_string callback at the same time!" if $self->wrap_jsonp_callback && $self->wrap_string_callback;
 	my $wrap_jsonp_callback = $self->has_callback && $self->wrap_jsonp_callback;
 	my $wrap_string_callback = $self->has_callback && $self->wrap_string_callback;
+	my $uses_echo_module = $wrap_jsonp_callback || $wrap_string_callback;
 
 	my $cfg = "location ^~ ".$self->path." {\n";
+	$cfg .= "\tproxy_set_header Accept '".$self->accept_header."';\n" if $self->accept_header;
+	
+        if($uses_echo_module) {
+            # we need to make sure we have plain text coming back until we have a way
+            # to unilaterally gunzip responses from the upstream since the echo module
+            # will intersperse plaintext with gzip which results in encoding errors.
+            # https://github.com/agentzh/echo-nginx-module/issues/30
+            $cfg .= "\tproxy_set_header Accept-Encoding '';\n";
+
+            # This is a workaround that deals with endpoints that don't support callback functions.
+            # So endpoints that don't support callback functions return a content-type of 'application/json'
+            # because what they're returning is not meant to be executed in the first place.
+            # Setting content-type to application/javascript for those endpoints solves blocking due to 
+            # mime type mismatches.
+            $cfg .= "\tmore_set_headers 'Content-Type: application/javascript; charset=utf-8';\n";
+        }
+
+	if($uses_echo_module || $self->accept_header || $is_duckduckgo) {
+	    $cfg .= "\tinclude /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;\n";
+	}
+
 	$cfg .= "\techo_before_body '".$self->callback."(';\n" if $wrap_jsonp_callback;
 	$cfg .= "\techo_before_body '".$self->callback.qq|("';\n| if $wrap_string_callback;
 	$cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")." ".$uri_path." break;\n";
 	$cfg .= "\tproxy_pass ".$scheme."://".$host.":".$port."/;\n";
+	$cfg .= "\tproxy_set_header ".$self->proxy_x_forwarded_for.";\n" if $is_duckduckgo;
 	$cfg .= "\tproxy_cache_valid ".$self->proxy_cache_valid.";\n" if $self->has_proxy_cache_valid;
 	$cfg .= "\tproxy_ssl_session_reuse ".$self->proxy_ssl_session_reuse.";\n" if $self->has_proxy_ssl_session_reuse;
 	$cfg .= "\techo_after_body ');';\n" if $wrap_jsonp_callback;
-	$cfg .= "\techo_after_body '\");'\n" if $wrap_string_callback;
+	$cfg .= "\techo_after_body '\");';\n" if $wrap_string_callback;
+
+        # proxy_intercept_errors is used to handle endpoints that don't return 200 OK
+        # When we get errors from the endpoint, instead of replying a blank page, it should reply the function instead with no parameters,
+        # e.g., ddg_spice_dictionary_definition();. The benefit of doing that is that we know for sure that the Spice failed, and we can do
+        # something about it (we know that the Spice failed because it should return Spice.failed('...') when the parameters are not valid).
+        if($self->callback) {
+            $cfg .= "\tproxy_intercept_errors on;\n";
+            $cfg .= "\terror_page 403 404 500 502 503 504 =200 /js/failed/".$self->callback.";\n";
+    	}
+
 	$cfg .= "}\n";
 	return $cfg;
 }

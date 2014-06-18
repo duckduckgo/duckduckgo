@@ -10,6 +10,19 @@ use DDG::Request;
 BEGIN {
 
 	my @t = (
+		''                            => {
+			query_raw                 => '',
+			query                     => '',
+			query_lc                  => '',
+			query_nowhitespace        => '',
+			query_nowhitespace_nodash => '',
+			query_clean               => '',
+			wordcount                 => 0,
+			query_raw_parts           => [],
+			query_parts               => [],
+			words                     => [],
+			triggers                  => {},
+		},
 		'   !bang test'                   => {
 			query_raw                 => '   !bang test',
 			query                     => '!bang test',
@@ -70,9 +83,9 @@ BEGIN {
 			query_parts                       => ['%"test',qq{%\)\(\)%!%§},'+##+tesfsd'],
 			words                             => [qw( test tesfsd )],
 			triggers                  => {
-				0 => ['%"test'],
-				2 => ['%)()%!%§'],
-				4 => ['+##+tesfsd'],
+				0 => ['', ' test', '%"test', 'test'],
+				2 => ['', '%)()%!%§'],
+				4 => ['', ' tesfsd', '+##+tesfsd', 'tesfsd' ],
 			},
 		},
 		'test...test test...Test?'         => {

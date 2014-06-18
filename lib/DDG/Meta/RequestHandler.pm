@@ -133,7 +133,8 @@ or language at all you can use B<$has_loc> and B<$has_lang>.
 				my ( $self, $request ) = @_;
 				$class->request_symbols($stash,$request);
 				my @result;
-				for ($request->$handler) {
+				my $default = $request->$handler;
+				for ($default) {
 					@result = $code->($_);
 				}
 				$class->reset_request_symbols($stash);
@@ -144,7 +145,8 @@ or language at all you can use B<$has_loc> and B<$has_lang>.
 				my ( $self, $request ) = @_;
 				$class->request_symbols($stash,$request);
 				my @result;
-				for ($request->$default_handler) {
+				my $default = $request->$default_handler;
+				for ($default) {
 					@result = $code->(@{$request->$handler});
 				}
 				$class->reset_request_symbols($stash);
@@ -182,7 +184,8 @@ or language at all you can use B<$has_loc> and B<$has_lang>.
 				my ( $self, $request, @matches ) = @_;
 				$class->request_symbols($stash,$request);
 				my @result;
-				for ($request->query_raw) {
+				my $default = $request->query_raw;
+				for ($default) {
 					@result = $code->(@matches);
 				}
 				$class->reset_request_symbols($stash);
