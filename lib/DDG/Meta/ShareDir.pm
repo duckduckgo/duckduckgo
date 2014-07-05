@@ -132,6 +132,19 @@ B<share/spice/test_test>.
 
 		$stash->add_symbol('&module_share_dir', sub { $share_path });
 
+=keyword with_style_css
+
+This function gets installed if the sharedir contains F</style.css>.
+It will concatenate its arguments with the contents of that file to
+provide a convenient and consistent mechanism to style HTML output.
+
+=cut
+
+        if (-e $share->file('style.css')) {
+            my $css = $share->file('style.css')->slurp;
+            $stash->add_symbol('&with_style_css', sub { join('', $css, @_); });
+        }
+
 		#
 		# apply role
 		#
