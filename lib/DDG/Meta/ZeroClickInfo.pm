@@ -7,23 +7,23 @@ use Carp;
 use DDG::ZeroClickInfo;
 use Package::Stash;
 
-sub zeroclickinfo_attributes {qw(
-	abstract
-	abstract_text
-	abstract_source
-	abstract_url
-	image
-	heading
-	answer
-	answer_type
-	definition
-	definition_source
-	definition_url
-	type
-	is_cached
-	is_unsafe
-	ttl
-)}
+my %supported_zci_attributes = (
+    abstract          => 1,
+    abstract_text     => 1,
+    abstract_source   => 1,
+    abstract_url      => 1,
+    image             => 1,
+    heading           => 1,
+    answer            => 1,
+    answer_type       => 1,
+    definition        => 1,
+    definition_source => 1,
+    definition_url    => 1,
+    type              => 1,
+    is_cached         => 1,
+    is_unsafe         => 1,
+    ttl               => 1,
+);
 
 =head1 DESCRIPTION
 
@@ -39,7 +39,7 @@ my %applied;
 
 sub apply_keywords {
 	my ( $class, $target ) = @_;
-	
+
 	return if exists $applied{$target};
 	$applied{$target} = undef;
 
@@ -49,7 +49,7 @@ sub apply_keywords {
 	my $answer_type = lc(join(' ',@parts));
 
 	my $stash = Package::Stash->new($target);
-	
+
 	my %zci_params = (
 		answer_type => $answer_type,
 	);
@@ -65,21 +65,16 @@ possible L<DDG::ZeroClickInfo> attributes.
 
 =cut
 
-	$stash->add_symbol('&zci', sub {
-		if (ref $_[0] eq 'HASH') {
-			for (keys %{$_[0]}) {
-				$zci_params{check_zeroclickinfo_key($_)} = $_[0]->{$_};
-			}
-		} else {
-			while (@_) {
-				my $key = shift;
-				my $value = shift;
-				$zci_params{check_zeroclickinfo_key($key)} = $value;
-			}
-		}
-	});
 
-=keyword zci_new 
+    $stash->add_symbol( '&zci', sub {
+            my %kv = (ref $_[0] eq 'HASH') ? %{$_[0]} : @_;
+            while (my ($key, $value) = each(%kv)) {
+                croak $key. " is not supported on DDG::ZeroClickInfo" unless ($supported_zci_attributes{$key});
+                $zci_params{$key} = $value;
+            }
+        });
+
+=keyword zci_new
 
 This function gives back a L<DDG::ZeroClickInfo> set with the parameter given
 on L</zci> and then overridden and extended through the parameter given to
@@ -92,23 +87,6 @@ this function.
 		DDG::ZeroClickInfo->new( %zci_params, ref $_[0] eq 'HASH' ? %{$_[0]} : @_ );
 	});
 
-}
-
-=method check_zeroclickinfo_key
-
-This function checks (and returns) the given parameter as possible parameter for
-L<DDG::ZeroClickInfo>. The list of possible parameter is given here in this
-package.
-	
-=cut
-
-sub check_zeroclickinfo_key {
-	my $key = shift;
-	if (grep { $key eq $_ } zeroclickinfo_attributes) {
-		return $key;
-	} else {
-		croak $key." is not supported on DDG::ZeroClickInfo";
-	}
 }
 
 1;
