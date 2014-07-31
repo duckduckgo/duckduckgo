@@ -7,23 +7,23 @@ use Carp;
 use DDG::ZeroClickInfo;
 use Package::Stash;
 
-my %supported_zci_attributes = (
-    abstract          => 1,
-    abstract_text     => 1,
-    abstract_source   => 1,
-    abstract_url      => 1,
-    image             => 1,
-    heading           => 1,
-    answer            => 1,
-    answer_type       => 1,
-    definition        => 1,
-    definition_source => 1,
-    definition_url    => 1,
-    type              => 1,
-    is_cached         => 1,
-    is_unsafe         => 1,
-    ttl               => 1,
-);
+my %supported_zci_attributes = map { $_ => 1 } (qw(
+      abstract
+      abstract_text
+      abstract_source
+      abstract_url
+      image
+      heading
+      answer
+      answer_type
+      definition
+      definition_source
+      definition_url
+      type
+      is_cached
+      is_unsafe
+      ttl
+));
 
 =head1 DESCRIPTION
 
@@ -69,7 +69,7 @@ possible L<DDG::ZeroClickInfo> attributes.
     $stash->add_symbol( '&zci', sub {
             my %kv = (ref $_[0] eq 'HASH') ? %{$_[0]} : @_;
             while (my ($key, $value) = each(%kv)) {
-                croak $key. " is not supported on DDG::ZeroClickInfo" unless ($supported_zci_attributes{$key});
+                croak $key. " is not supported on DDG::ZeroClickInfo" unless (exists $supported_zci_attributes{$key});
                 $zci_params{$key} = $value;
             }
         });
