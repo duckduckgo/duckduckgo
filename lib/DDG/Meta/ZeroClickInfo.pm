@@ -19,6 +19,7 @@ my %supported_zci_attributes = map { $_ => 1 } (qw(
       definition
       definition_source
       definition_url
+      structured
       type
       is_cached
       is_unsafe
