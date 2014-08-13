@@ -170,7 +170,7 @@ sub _build_nginx_conf {
         # something about it (we know that the Spice failed because it should return Spice.failed('...') when the parameters are not valid).
         if($self->callback) {
             $cfg .= "\tproxy_intercept_errors on;\n";
-            $cfg .= "\terror_page 403 404 500 502 503 504 =200 /js/failed/".$self->callback.";\n";
+            $cfg .= "\terror_page 301 302 303 403 404 500 502 503 504 =200 /js/failed/".$self->callback.";\n";
     	}
 
 	$cfg .= "}\n";
