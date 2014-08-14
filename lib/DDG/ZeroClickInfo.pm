@@ -3,7 +3,6 @@ package DDG::ZeroClickInfo;
 
 use Moo;
 extends qw( WWW::DuckDuckGo::ZeroClickInfo );
-with 'DDG::IsControllable';
 
 =head1 SYNOPSIS
 
@@ -23,9 +22,12 @@ So far all required attributes get injected via L<DDG::IsControllable>.
 
 =cut
 
+has structured_result => (
+    is        => 'ro',
+    predicate => 1,
+);
 
-
-
+with 'DDG::IsControllable', 'DDG::IsStructurable';
 
 =head1 SEE ALSO
 
