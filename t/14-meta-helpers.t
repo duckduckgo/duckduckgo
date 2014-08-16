@@ -16,7 +16,7 @@ subtest 'html_enc' => sub {
         is($res, '&lt;', 'single input');
 
         $res = DDGTest::Goodie::MetaOnly::html_enc('>', '<');
-        is($res, '&gt;', 'multiple input gets first element');
+        is($res, '&gt;&lt;', 'multiple input gets concatenated elements');
     };
 
     subtest 'array output' => sub {
@@ -39,7 +39,7 @@ subtest 'uri_esc' => sub {
         is($res, '%3C', 'single input');
 
         $res = DDGTest::Goodie::MetaOnly::uri_esc('>', '<');
-        is($res, '%3E', 'multiple input gets first element');
+        is($res, '%3E%3C', 'multiple input gets concatenated elements');
     };
 
     subtest 'array output' => sub {

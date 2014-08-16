@@ -37,7 +37,7 @@ encodes entities to safely post random data on HTML output.
 
 =cut
 
-	$stash->add_symbol('&html_enc', sub { return (wantarray) ? map { encode_entities($_) } @_ : encode_entities($_[0]) });
+	$stash->add_symbol('&html_enc', sub { return (wantarray) ? map { encode_entities($_) } @_ : encode_entities(join '', @_) });
 
 =keyword uri_esc
 
@@ -50,7 +50,7 @@ values there, this will just lead to double encoding!
 
 =cut
 
-	$stash->add_symbol('&uri_esc', sub { return (wantarray) ? map { uri_escape($_) } @_ : uri_escape($_[0]) });
+	$stash->add_symbol('&uri_esc', sub { return (wantarray) ? map { uri_escape($_) } @_ : uri_escape(join '', @_) });
 
 }
 
