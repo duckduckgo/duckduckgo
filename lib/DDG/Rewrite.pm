@@ -159,7 +159,15 @@ sub _build_nginx_conf {
 	$cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")." ".$uri_path." break;\n";
 	$cfg .= "\tproxy_pass ".$scheme."://".$host.":".$port."/;\n";
 	$cfg .= "\tproxy_set_header ".$self->proxy_x_forwarded_for.";\n" if $is_duckduckgo;
-	$cfg .= "\tproxy_cache_valid ".$self->proxy_cache_valid.";\n" if $self->has_proxy_cache_valid;
+
+        if($self->has_proxy_cache_valid) {
+            # This tells Nginx how long the response should be kept.
+            $cfg .= "\tproxy_cache_valid " . $self->proxy_cache_valid . ";\n";
+            # Some response headers from the endpoint can affect `proxy_cache_valid` so we ignore them.
+            # http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_ignore_headers
+            $cfg .= "\tproxy_ignore_headers X-Accel-Expires Expires Cache-Control Set-Cookie;\n";
+        }
+
 	$cfg .= "\tproxy_ssl_session_reuse ".$self->proxy_ssl_session_reuse.";\n" if $self->has_proxy_ssl_session_reuse;
 	$cfg .= "\techo_after_body ');';\n" if $wrap_jsonp_callback;
 	$cfg .= "\techo_after_body '\");';\n" if $wrap_string_callback;
