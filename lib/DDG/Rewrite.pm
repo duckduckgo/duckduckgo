@@ -160,7 +160,7 @@ sub _build_nginx_conf {
 	$cfg .= "\tproxy_pass ".$scheme."://".$host.":".$port."/;\n";
 	$cfg .= "\tproxy_set_header ".$self->proxy_x_forwarded_for.";\n" if $is_duckduckgo;
 
-        if($self->proxy_cache_valid) {
+        if($self->has_proxy_cache_valid) {
             $cfg .= "\tproxy_cache_valid " . $self->proxy_cache_valid . ";\n";
             $cfg .= "\tproxy_ignore_headers X-Accel-Expires Expires Cache-Control Set-Cookie;\n";
         }
