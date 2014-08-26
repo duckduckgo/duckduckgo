@@ -12,6 +12,7 @@ my %supported_zci_attributes = map { $_ => 1 } (qw(
       abstract_text
       abstract_source
       abstract_url
+      caller
       image
       heading
       answer
@@ -51,6 +52,7 @@ sub apply_keywords {
 	my $stash = Package::Stash->new($target);
 
 	my %zci_params = (
+        caller      => $target,
 		answer_type => $answer_type,
 	);
 

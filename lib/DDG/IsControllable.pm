@@ -43,4 +43,17 @@ has ttl => (
 	predicate => 'has_ttl',
 );
 
+=attr caller
+
+Must be set with the class generating the result for fetching additional
+configuration from there.
+
+=cut
+
+has caller => (
+	is => 'ro',
+    predicate => 'has_caller',
+);
+
+
 1;
