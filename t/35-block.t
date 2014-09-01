@@ -16,8 +16,9 @@ use DDG::ZeroClickInfo;
 use Scalar::Util qw( refaddr );
 
 sub zci {
-	my ( $answer, $answer_type, $is_cached, %extra_attributes ) = @_;
+	my ( $answer, $answer_type, $caller, $is_cached, %extra_attributes ) = @_;
 	DDG::ZeroClickInfo->new(
+        caller => $caller,
 		answer => $answer,
 		answer_type => $answer_type,
 		is_cached => $is_cached ? 1 : 0,
@@ -106,7 +107,7 @@ BEGIN {
 
 	my @queries = (
 		'aROUNd two' => {
-			wo => [zci('two','woblockone'),zci('aROUNd','woblocktwo')],
+			wo => [zci('two','woblockone', 'DDGTest::Goodie::WoBlockOne'),zci('aROUNd','woblocktwo', 'DDGTest::Goodie::WoBlockTwo')],
 			re => [],
 		},
 		'wikipedia blub' => {
@@ -114,11 +115,11 @@ BEGIN {
 			re => [],
 		},
 		'bla !wikipedia blub' => {
-			wo => [zci('bla blub','woblockbang')],
+			wo => [zci('bla blub','woblockbang', 'DDGTest::Goodie::WoBlockBang')],
 			re => [],
 		},
 		'!h-ow   to   do a   search   engine' => {
-			wo => [zci('a   search   engine','woblocktwo')],
+			wo => [zci('a   search   engine','woblocktwo', 'DDGTest::Goodie::WoBlockTwo')],
 			re => [],
 		},
 		' how  to   ' => {
@@ -126,59 +127,59 @@ BEGIN {
 			re => [],
 		},
 		'  !How to  Do a   search   engine?   ' => {
-			wo => [zci('a   search   engine?   ','woblocktwo')],
+			wo => [zci('a   search   engine?   ','woblocktwo', 'DDGTest::Goodie::WoBlockTwo')],
 			re => [],
 		},
 		'  how-to  do? a   search   engine?   ' => {
-			wo => [zci('a   search   engine?   ','woblocktwo')],
+			wo => [zci('a   search   engine?   ','woblocktwo', 'DDGTest::Goodie::WoBlockTwo')],
 			re => [],
 		},
 		'  !how--TO--do a   search   engine?   ' => {
-			wo => [zci('a   search   engine?   ','woblocktwo')],
+			wo => [zci('a   search   engine?   ','woblocktwo', 'DDGTest::Goodie::WoBlockTwo')],
 			re => [],
 		},
 		'  really bLACk  mAGIc my code!!  ' => {
-			wo => [zci('  really my code!!  ','woblocktwo')],
+			wo => [zci('  really my code!!  ','woblocktwo', 'DDGTest::Goodie::WoBlockTwo')],
 			re => [],
 		},
 		'  duckduckgo for the win   ' => {
-			wo => [zci('  duckduckgo','woblocktwo')],
+			wo => [zci('  duckduckgo','woblocktwo', 'DDGTest::Goodie::WoBlockTwo')],
 			re => [],
 		},
 		'  duckduckgo for-the-win' => {
-			wo => [zci('  duckduckgo','woblocktwo')],
+			wo => [zci('  duckduckgo','woblocktwo', 'DDGTest::Goodie::WoBlockTwo')],
 			re => [],
 		},
 		'whatever around two around whatever' => {
-			wo => [zci('whatever around around whatever','woblocktwo')],
+			wo => [zci('whatever around around whatever','woblocktwo', 'DDGTest::Goodie::WoBlockTwo')],
 			re => [],
 		},
 		'        whatever around three around whatever           ' => {
-			wo => [zci('whatever around three around whatever','woblockthree')],
+			wo => [zci('whatever around three around whatever','woblockthree', 'DDGTest::Goodie::WoBlockThree')],
 			re => [],
 		},
 		'whatever !ArouND' => {
-			wo => [zci('whatever','woblockone')],
+			wo => [zci('whatever','woblockone', 'DDGTest::Goodie::WoBlockOne')],
 			re => [],
 		},
 		'regexp xxxxx xxxxx' => {
 			wo => [],
-			re => [zci('xxxxx xxxxx','reblockone')],
+			re => [zci('xxxxx xxxxx','reblockone', 'DDGTest::Goodie::ReBlockOne')],
 		},
 		'  rEGExp		xXXXx aFTEr  ' => {
-			wo => [zci('  rEGExp		xXXXx','woblockone')],
-			re => [zci('	xXXXx aFTEr  ','reblockone')],
+			wo => [zci('  rEGExp		xXXXx','woblockone', 'DDGTest::Goodie::WoBlockOne')],
+			re => [zci('	xXXXx aFTEr  ','reblockone', 'DDGTest::Goodie::ReBlockOne')],
 		},
 		'  a    or     b   or        c  ' => {
-			wo => [zci('a|or|b|or|c','woblockarr')],
+			wo => [zci('a|or|b|or|c','woblockarr', 'DDGTest::Goodie::WoBlockArr')],
 			re => [],
 		},
 		'collide' => {
-			wo => [zci('collide','collideone'),zci('collide','collidetwo')],
+			wo => [zci('collide','collideone', 'DDGTest::Goodie::CollideOne'),zci('collide','collidetwo', 'DDGTest::Goodie::CollideTwo')],
 			re => [],
 		},
 	    'or two' => {
-			wo => [zci('or|two','woblockarr'), zci('or','woblocktwo')], 
+			wo => [zci('or|two','woblockarr', 'DDGTest::Goodie::WoBlockArr'), zci('or','woblocktwo', 'DDGTest::Goodie::WoBlockTwo')], 
 			re => [],
 	    },
 
@@ -202,19 +203,19 @@ BEGIN {
 
 	my @one_queries = (
 		'aROUNd two' => {
-			wo => [zci('two','woblockone')],
+			wo => [zci('two','woblockone', 'DDGTest::Goodie::WoBlockOne')],
 			re => [],
 		},
 		'  a    or     b   or        c  ' => {
-			wo => [zci('a|or|b|or|c','woblockarr')],
+			wo => [zci('a|or|b|or|c','woblockarr', 'DDGTest::Goodie::WoBlockArr')],
 			re => [],
 		},
 		'collide' => {
-			wo => [zci('collide','collideone')],
+			wo => [zci('collide','collideone', 'DDGTest::Goodie::CollideOne')],
 			re => [],
 		},
 	    'or two' => {
-			wo => [zci('or|two','woblockarr')], 
+			wo => [zci('or|two','woblockarr', 'DDGTest::Goodie::WoBlockArr')], 
 			re => [],
 	    },
 

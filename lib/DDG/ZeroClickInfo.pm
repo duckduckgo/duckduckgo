@@ -23,9 +23,10 @@ So far all required attributes get injected via L<DDG::IsControllable>.
 
 =cut
 
-
-
-
+has structured_answer => (
+    is        => 'ro',
+    predicate => 1,
+);
 
 =head1 SEE ALSO
 

@@ -41,18 +41,6 @@ has call_data => (
 	predicate => 'has_call_data',
 );
 
-=attr caller
-
-Must be set with the class generating the spice result for fetching additional
-configuration from there.
-
-=cut
-
-has caller => (
-	is => 'ro',
-	required => 1,
-);
-
 # LEGACY
 sub call_path { shift->call }
 

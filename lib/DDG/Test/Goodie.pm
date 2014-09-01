@@ -80,9 +80,7 @@ testing your L<DDG::Goodie> alone or in combination with others.
 =cut
 
 	$stash->add_symbol('&ddg_goodie_test', sub { block_test(sub {
-			my $query = shift;
-			my $answer = shift;
-			my $zci = shift;
+			my ($query, $answer, $zci) = @_;
 			if ($answer) {
 				# Check regex tests
 				for (qw/answer html heading/) {
@@ -91,6 +89,7 @@ testing your L<DDG::Goodie> alone or in combination with others.
 							$zci->{$_} = $answer->$_;
 					}
 				}
+                $zci->{caller} = $answer->caller; # TODO: Review all this cheating.
 				is_deeply($answer,$zci,'Testing query '.$query);
 			} else {
 				fail('Expected result but dont get one on '.$query) unless defined $answer;
