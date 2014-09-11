@@ -111,12 +111,7 @@ has query_parts => (
 sub _build_query_parts {
 	my $x;
 	[
-		# Jag (July 22, 14) 
-		# This number set here looks arbitrary, and
-		# it's breaking the behavior for some IAs such as 
-		# https://github.com/duckduckgo/zeroclickinfo-goodies/issues/283
-
-		# grep { ( $x += length ) < 100 }
+		grep { ( $x += length ) < 500 } # 500 matches the internal query max
 		grep { ! /$whitespaces/ } 
 		grep { length }
 		@{shift->query_raw_parts}
