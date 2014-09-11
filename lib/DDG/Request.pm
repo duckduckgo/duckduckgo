@@ -99,8 +99,7 @@ sub _build_query_raw_parts {
 =attr query_parts
 
 This functions filters out the whitespace parts and empty parts of
-L</query_raw_parts>. Also it cuts down all part which would exceed making the
-query more then 100 non whitespace characters.
+L</query_raw_parts>.
 
 =cut
 
@@ -112,7 +111,7 @@ has query_parts => (
 sub _build_query_parts {
 	my $x;
 	[
-		grep { ( $x += length ) < 100 }
+		grep { ( $x += length ) < 500 } # 500 matches the internal query max
 		grep { ! /$whitespaces/ } 
 		grep { length }
 		@{shift->query_raw_parts}
