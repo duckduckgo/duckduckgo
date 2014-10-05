@@ -38,7 +38,7 @@ You can predefine parameters via L</zci>.
 
 	$stash->add_symbol('&test_zci', sub {
 		my $answer = shift;
-		ref $_[0] eq 'HASH' ? 
+		ref $_[0] eq 'HASH' ?
 			DDG::ZeroClickInfo->new(%zci_params, %{$_[0]}, answer => $answer ) :
 			DDG::ZeroClickInfo->new(%zci_params, @_, answer => $answer )
 	});
@@ -81,7 +81,7 @@ testing your L<DDG::Goodie> alone or in combination with others.
 
 	$stash->add_symbol('&ddg_goodie_test', sub { block_test(sub {
 			my ($query, $answer, $zci) = @_;
-			subtest "Query: $query" => sub {
+		subtest "Query: $query" => sub {
 			if ($answer) {
 				# Check regex tests
 				for (grep { defined $zci->$_ } qw/answer html heading/) {
@@ -97,11 +97,11 @@ testing your L<DDG::Goodie> alone or in combination with others.
 					my $e_sa = $zci->structured_answer;
 					my $g_sa = $answer->structured_answer;
 					foreach my $key (grep { defined $e_sa->{$_} } sort keys %$e_sa) {
-						if ($e_sa->{$key} eq '-ANY-') {
-							pass('-ALL- pass: structured_answer{' . $key . '}');
-							$g_sa->{$key} = $e_sa->{$key};
-						} elsif (ref $e_sa->{$key} eq 'Regexp') {
+						if (ref $e_sa->{$key} eq 'Regexp') {
 							like($g_sa->{$key}, $e_sa->{$key}, 'Regexp: structured_answer{' . $key . '}');
+							$g_sa->{$key} = $e_sa->{$key};
+						} elsif ($e_sa->{$key} eq '-ANY-') {
+							pass('-ALL- pass: structured_answer{' . $key . '}');
 							$g_sa->{$key} = $e_sa->{$key};
 						}
 					}
