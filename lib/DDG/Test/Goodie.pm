@@ -9,6 +9,7 @@ use DDG::Test::Block;
 use DDG::ZeroClickInfo;
 use Package::Stash;
 
+binmode STDOUT, ':utf8';
 binmode Test::More->builder->output, ':utf8';
 binmode Test::More->builder->failure_output, ':utf8';
 
