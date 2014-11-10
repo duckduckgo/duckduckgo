@@ -141,6 +141,7 @@ has debug_trace => (
 sub trace {
 	my $self = shift;
 	return unless $self->debug_trace;
+    $|=1;
 	print STDERR ("[".$self->trace_name."] ",join(" ",map { defined $_ ? $_ : 'undef' } @_),"\n");
 }
 
