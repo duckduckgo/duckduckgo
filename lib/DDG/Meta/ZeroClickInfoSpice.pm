@@ -27,13 +27,8 @@ sub zeroclickinfospice_attributes {qw(
 	ttl
 )}
 
-my %applied;
-
 sub apply_keywords {
 	my ( $class, $target ) = @_;
-	
-	return if exists $applied{$target};
-	$applied{$target} = undef;
 
 	my @parts = split('::',$target);
 	my $callback = join('_',map { s/([a-z])([A-Z])/$1_$2/g; lc; } @parts);

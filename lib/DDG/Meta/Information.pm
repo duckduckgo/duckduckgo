@@ -79,20 +79,15 @@ Uses a given classname to install the described keywords.
 
 =cut
 
-my %applied;
-
 sub apply_keywords {
 	my ( $class, $target ) = @_;
-
-	return if exists $applied{$target};
-	$applied{$target} = undef;
 
 	my @attributions;
 	my @topics;
 	my @primary_example_queries;
 	my @secondary_example_queries;
-    	my $description;
-    	my $source;
+	my $description;
+	my $source;
 	my $icon;
 	my $category;
 	my $name;

@@ -19,13 +19,8 @@ It also adds the role L<DDG::Block::Blockable> to the target classname.
 
 =cut
 
-my %applied;
-
 sub apply_keywords {
 	my ( $class, $target ) = @_;
-
-	return if exists $applied{$target};
-	$applied{$target} = undef;
 
 	#
 	# triggers

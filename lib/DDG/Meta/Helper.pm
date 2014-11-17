@@ -21,13 +21,8 @@ This meta class installs the some helper functions.
 
 =cut
 
-my %applied;
-
 sub apply_keywords {
 	my ( $class, $target ) = @_;
-
-	return if exists $applied{$target};
-	$applied{$target} = undef;
 
 	my $stash = Package::Stash->new($target);
 
