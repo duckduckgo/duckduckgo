@@ -72,36 +72,42 @@ ddg_spice_test(
 		DDGTest::Spice::Cached
 		DDGTest::Spice::ChangeCached
 	)],
-	'data test' => test_spice( 
+	'data test' => test_spice(
 		'/js/spice/data/test',
 		call_data => { otherkey => 'value', key => 'finalvalue' },
 		call_type => 'include',
 		caller => 'DDGTest::Spice::Data'
 	),
-	'bregexp test a' => test_spice( 
+	'data test regex' => test_spice(
+		qr!/js/spice/data/\w+%20\w+!,
+		call_data => { otherkey => 'value', key => 'finalvalue' },
+		call_type => 'include',
+		caller => 'DDGTest::Spice::Data'
+	),
+	'bregexp test a' => test_spice(
 		'/js/spice/regexp/test.a/DDG%3A%3ARequest',
 		call_type => 'include',
 		caller => 'DDGTest::Spice::Regexp'
 	),
-	'testing cached' => test_spice( 
+	'testing cached' => test_spice(
 		'/js/spice/cached/testing',
 		call_type => 'include',
 		caller => 'DDGTest::Spice::Cached',
 		is_cached => 1
 	),
-	'test changed caching' => test_spice( 
+	'test changed caching' => test_spice(
 		'/js/spice/change_cached/test',
 		call_type => 'include',
 		caller => 'DDGTest::Spice::ChangeCached',
 		is_cached => 1
 	),
-	'not caching changed caching' => test_spice( 
+	'not caching changed caching' => test_spice(
 		'/js/spice/change_cached/not%20caching',
 		call_type => 'include',
 		caller => 'DDGTest::Spice::ChangeCached',
 		is_cached => 0
 	),
-	# 'flash version' => test_spice( 
+	# 'flash version' => test_spice(
 	# 	'/js/spice/flashtest',
 	# 	call_type => 'self',
 	# 	caller => 'DDGTest::Spice::Flashtest'
