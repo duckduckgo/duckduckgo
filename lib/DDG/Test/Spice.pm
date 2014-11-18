@@ -9,6 +9,8 @@ use DDG::Test::Block;
 use DDG::ZeroClickInfo::Spice;
 use Package::Stash;
 
+use Data::Printer;
+
 =head1 DESCRIPTION
 
 Installs functions for testing Spice.
@@ -83,10 +85,14 @@ testing your L<DDG::Spice> alone or in combination with others.
 =cut
 
 	$stash->add_symbol('&ddg_spice_test', sub { block_test(sub {
-		my $query = shift;
-		my $answer = shift;
-		my $spice = shift;
+		my ($query, $answer, $spice) = @_;
+
 		if ($answer) {
+			if (ref $spice->{call} eq 'Regexp') {
+				like($answer->{call}, $spice->{call}, 'Regexp: ' . $spice->{call} );
+				$spice->{call} = $answer->{call};
+			}
+
 			is_deeply($answer,$spice,'Testing query '.$query);
 		} else {
 			fail('Expected result but dont get one on '.$query);
