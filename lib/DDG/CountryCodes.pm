@@ -7,6 +7,7 @@ use strict;
 use warnings;
 
 use Moo;
+use namespace::autoclean;
 use Moose::Exporter;
 use Locale::Country ();
 
@@ -22,6 +23,9 @@ Moose::Exporter->setup_import_methods(
 
 sub BUILD {
   my ( $self ) = @_;
+
+  # ghetto singleton ahoy!
+  return if $::ddg_countrycodes_defined;
 
   # These are the only 2 countries which officially have 'The' in their name
   # Source: http://www.bbc.co.uk/news/magazine-18233844
@@ -63,9 +67,16 @@ sub BUILD {
   Locale::Country::rename_country('va' => 'the Holy See (Vatican City State)');
   Locale::Country::rename_country('vg' => 'the British Virgin Islands');
   Locale::Country::rename_country('vi' => 'the US Virgin Islands');
+
+  $::ddg_countrycodes_defined ++;
 }
 
+__PACKAGE__->meta->make_immutable;
 
+1;
+
+package main;
+my $ddg_countrycodes_defined = 0;
 1;
 
 __END__
