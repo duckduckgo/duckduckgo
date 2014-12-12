@@ -33,7 +33,7 @@ is($c->country2code('murica',  LOCALE_CODE_ALPHA_3), 'usa');
 is($c->country2code('America', LOCALE_CODE_ALPHA_3), 'usa');
 
 # check some ddg renames
-is($c->code2country('gb'), 'The United Kingdom');
-is($c->code2country('kr'), 'The Republic of Korea');
+is($c->code2country('gb'), 'the United Kingdom');
+is($c->code2country('kr'), 'the Republic of Korea');
 
 done_testing;
