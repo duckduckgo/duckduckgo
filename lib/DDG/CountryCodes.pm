@@ -27,6 +27,14 @@ sub BUILD {
   # ghetto singleton ahoy!
   return if $::ddg_countrycodes_defined;
 
+  # Because future releases of stock Locale::Warnings might add some
+  # of these local aliases, when that happens we'll get duplicate
+  # alias warnings again. So in defense, we can simply disable those
+  # warnings for this piece.
+
+  my $savewarn = $SIG{__WARN__};
+  $SIG{__WARN__} = sub {};
+
   # These are the only 2 countries which officially have 'The' in their name
   # Source: http://www.bbc.co.uk/news/magazine-18233844
   Locale::Country::rename_country('gm' => 'The Gambia');
@@ -68,7 +76,8 @@ sub BUILD {
   Locale::Country::rename_country('vg' => 'the British Virgin Islands');
   Locale::Country::rename_country('vi' => 'the US Virgin Islands');
 
-  $::ddg_countrycodes_defined ++;
+  $SIG{__WARN__} = $savewarn;		# restore warnings
+  $::ddg_countrycodes_defined ++;	# mark singleton as complete
 }
 
 __PACKAGE__->meta->make_immutable;
