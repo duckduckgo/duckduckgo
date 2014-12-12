@@ -13,12 +13,13 @@ BEGIN {
     use_ok('DDG::ZeroClickInfo');
     use_ok('DDG::Test::Goodie');
     use_ok('DDG::Test::Spice');
+    use_ok('DDG::CountryCodes');
 
-	# use_ok('DDG::Dir::Static');
-	# use_ok('DDG::File::Static');
-	# use_ok('DDG::Site');
-	# use_ok('DDG::Site::DuckDuckGo');
+    # use_ok('DDG::Dir::Static');
+    # use_ok('DDG::File::Static');
+    # use_ok('DDG::Site');
+    # use_ok('DDG::Site::DuckDuckGo');
 
-}
+  }
 
 done_testing;
