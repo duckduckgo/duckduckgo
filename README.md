@@ -1,5 +1,7 @@
 # DuckDuckGo (Core) [![Build Status](https://travis-ci.org/duckduckgo/duckduckgo.png?branch=master)](https://travis-ci.org/duckduckgo/duckduckgo)
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/duckduckgo/duckduckgo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This repository contains the core code responsible for triggering and handling the DuckDuckHack instant answers. It is the base of the 
 DuckDuckHack Instant Answer infrastructure.  
 
