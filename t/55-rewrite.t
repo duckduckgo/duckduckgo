@@ -56,6 +56,7 @@ is($rewrite->nginx_conf,'location ^~ /js/test/ {
 	echo_after_body \');\';
 	proxy_intercept_errors on;
 	error_page 301 302 303 403 404 500 502 503 504 =200 /js/failed/test;
+	expires 1s;
 }
 ','Checking generated nginx.conf');
 
@@ -67,6 +68,7 @@ my $dollarrewrite = DDG::Rewrite->new(
 is($dollarrewrite->nginx_conf,'location ^~ /js/test/ {
 	rewrite ^/js/test/(.*) /${dollar} break;
 	proxy_pass http://some.api:80/;
+	expires 1s;
 }
 ','Checking {{dollar}} replacement');
 
@@ -81,6 +83,7 @@ is($minrewrite->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
 is($minrewrite->nginx_conf,'location ^~ /js/test/ {
 	rewrite ^/js/test/(.*) /$1 break;
 	proxy_pass http://some.api:80/;
+	expires 1s;
 }
 ','Checking generated nginx.conf');
 
@@ -95,6 +98,7 @@ is($minrewrite_https->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
 is($minrewrite_https->nginx_conf,'location ^~ /js/test/ {
 	rewrite ^/js/test/(.*) /$1 break;
 	proxy_pass https://some.api:443/;
+	expires 1s;
 }
 ','Checking generated nginx.conf');
 
@@ -109,6 +113,7 @@ is($minrewrite_with_port->missing_envs ? 1 : 0,0,'Checking now not missing ENV')
 is($minrewrite_with_port->nginx_conf,'location ^~ /js/test2/ {
 	rewrite ^/js/test2/(.*) /$1 break;
 	proxy_pass http://some.api:3000/;
+	expires 1s;
 }
 ','Checking generated nginx.conf');
 
