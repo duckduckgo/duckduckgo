@@ -181,6 +181,7 @@ sub _build_nginx_conf {
             $cfg .= "\terror_page 301 302 303 403 404 500 502 503 504 =200 /js/failed/".$self->callback.";\n";
     	}
 
+        $cfg .= "\texpires 1s;\n";
 	$cfg .= "}\n";
 	return $cfg;
 }
