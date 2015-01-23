@@ -13,7 +13,6 @@ use DDG::Meta::ShareDir;
 use DDG::Meta::Block;
 use DDG::Meta::Information;
 use DDG::Meta::Helper;
-use DDG::Meta::AnyBlock;
 
 use MooX ();
 
@@ -56,8 +55,7 @@ This function applies a huge amount of keywords of other meta classes into
 the package of the given target classname. Please see:
 
 L<DDG::Meta::ZeroClickInfo>, L<DDG::Meta::ShareDir>, L<DDG::Meta::Block>,
-L<DDG::Meta::Attribution>, L<DDG::Meta::Helper>, L<DDG::Meta::Helper>,
-L<DDG::Meta::RequestHandler>
+L<DDG::Meta::Information>, L<DDG::Meta::Helper>, L<DDG::Meta::RequestHandler>
 
 The goodie request handler is supposed to give back an array of 
 L<DDG::ZeroClickInfo> objects or an empty array for nothing.
@@ -76,7 +74,8 @@ sub apply_goodie_keywords {
 			scalar @_ == 1 && ref $_[0] eq 'HASH' ? $_[0] :
 				@_ % 2 ? ( answer => @_ ) : @_
 		);
-	},'DDG::IsGoodie');
+	});
+	Moo::Role->apply_role_to_package($target, "DDG::IsGoodie");
 }
 
 =method apply_spice_keywords
@@ -85,8 +84,7 @@ This function applies a huge amount of keywords of other meta classes into
 the package of the given target classname. Please see:
 
 L<DDG::Meta::ZeroClickInfoSpice>, L<DDG::Meta::ShareDir>, L<DDG::Meta::Block>,
-L<DDG::Meta::Attribution>, L<DDG::Meta::Helper>, L<DDG::Meta::Helper>,
-L<DDG::Meta::RequestHandler>
+L<DDG::Meta::Information>, L<DDG::Meta::Helper>, L<DDG::Meta::RequestHandler>
 
 The spice request handler is supposed to give back an array of 
 L<DDG::ZeroClickInfo::Spice> objects or an empty array for nothing.
@@ -102,7 +100,8 @@ sub apply_spice_keywords {
 	DDG::Meta::Helper->apply_keywords($target);
 	DDG::Meta::RequestHandler->apply_keywords($target,sub {
 		shift->spice_new(@_);
-	},'DDG::IsSpice');
+	});
+	Moo::Role->apply_role_to_package($target, "DDG::IsSpice");
 }
 
 =method apply_fathead_keywords
@@ -110,13 +109,13 @@ sub apply_spice_keywords {
 =cut
 
 sub apply_fathead_keywords {
-    my ( $class, $target ) = @_;
-    DDG::Meta::ZeroClickInfo->apply_keywords($target);
+	my ( $class, $target ) = @_;
+	DDG::Meta::ZeroClickInfo->apply_keywords($target);
 	DDG::Meta::ShareDir->apply_keywords($target);
-    DDG::Meta::Fathead->apply_keywords($target);
-    DDG::Meta::Information->apply_keywords($target);    
-    DDG::Meta::AnyBlock->apply_keywords($target);
-    Moo::Role->apply_role_to_package($target, "DDG::IsFathead");
+	DDG::Meta::Block->apply_keywords($target);
+	DDG::Meta::Fathead->apply_keywords($target);
+	DDG::Meta::Information->apply_keywords($target);
+	Moo::Role->apply_role_to_package($target, "DDG::IsFathead");
 }
 
 =method apply_longtail_keywords
@@ -124,12 +123,12 @@ sub apply_fathead_keywords {
 =cut
 
 sub apply_longtail_keywords {
-    my ( $class, $target ) = @_;
-    DDG::Meta::ZeroClickInfo->apply_keywords($target);
+	my ( $class, $target ) = @_;
+	DDG::Meta::ZeroClickInfo->apply_keywords($target);
 	DDG::Meta::ShareDir->apply_keywords($target);
-    DDG::Meta::Information->apply_keywords($target);
-    DDG::Meta::AnyBlock->apply_keywords($target);
-    Moo::Role->apply_role_to_package($target, "DDG::IsLongtail");
+	DDG::Meta::Block->apply_keywords($target);
+	DDG::Meta::Information->apply_keywords($target);
+	Moo::Role->apply_role_to_package($target, "DDG::IsLongtail");
 }
 
 1;

@@ -12,7 +12,7 @@ require Moo::Role;
 =head1 DESCRIPTION
 
 This meta class can install the required B<handle_request_matches> function
-required by the L<DDG::IsGoodie> and the L<DDG::IsSpice> role.
+required by the L<DDG::IsGoodie> and L<DDG::HasRequestHandler> role.
 
 It installs the keyword L</handle>, which installs this function on its call.
 
@@ -43,9 +43,8 @@ my $default_handler = 'query_raw';
 =method apply_keywords
 
 This function installs the L</handle> keyword. It requires for this the target
-package name, a result handler for handling the results of the plugins and
-optional a role which is applied after installing the keyword. This function
-is used in L<DDG::Meta> as part of all the meta for L<DDG::Goodie> and
+package name and a result handler for handling the results of the plugins.
+This function is used in L<DDG::Meta> as part of all the meta for L<DDG::Goodie> and
 L<DDG::Spice>.
 
 =cut
@@ -53,7 +52,7 @@ L<DDG::Spice>.
 my %applied;
 
 sub apply_keywords {
-	my ( $class, $target, $result_handler, $role ) = @_;
+	my ( $class, $target, $result_handler ) = @_;
 
 	return if exists $applied{$target};
 	$applied{$target} = undef;
@@ -207,7 +206,7 @@ or language at all you can use B<$has_loc> and B<$has_lang>.
 		# apply role
 		#
 
-		Moo::Role->apply_role_to_package($target,$role) if $role;
+		Moo::Role->apply_role_to_package($target, 'DDG::HasRequestHandler');
 	});
 }
 

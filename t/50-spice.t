@@ -17,6 +17,7 @@ use DDGTest::Spice::Regexp;
 use DDGTest::Spice::Data;
 use DDGTest::Spice::Cached;
 use DDGTest::Spice::ChangeCached;
+use DDGTest::Spice::EndpointOnly;
 
 use DDG::ZeroClickInfo::Spice;
 
@@ -54,6 +55,20 @@ is(DDGTest::Spice::Regexp->get_nginx_conf,'location ^~ /js/spice/regexp/ {
 	proxy_intercept_errors on;
 	error_page 301 302 303 403 404 500 502 503 504 =200 /js/failed/ddgtest_spice_regexp;
 	expires 1s;
+}
+',"Checking standard nginx_conf");
+
+my $endpoint_only = DDGTest::Spice::EndpointOnly->new( block => undef );
+
+isa_ok($endpoint_only,'DDGTest::Spice::EndpointOnly');
+
+is(DDGTest::Spice::EndpointOnly->get_nginx_conf,'location ^~ /js/spice/endpoint_only/ {
+	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
+	rewrite ^/js/spice/endpoint_only/(.*) /?q=$1&format=json&pretty=1 break;
+	proxy_pass https://api.duckduckgo.com:443/;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	proxy_intercept_errors on;
+	error_page 403 404 500 502 503 504 =200 /js/failed/ddgtest_spice_endpoint_only;
 }
 ',"Checking standard nginx_conf");
 
