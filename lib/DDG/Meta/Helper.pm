@@ -10,14 +10,18 @@ use URI::Escape;
 
 =head1 SYNOPSIS
 
-On your goodie for example:
+In your goodie, for example:
 
   return "text from random source: ".$text."!",
     html => "<div>text from random source: ".html_enc($text)."!</div>";
 
+Or use JSON-like booleans:
+
+  { option1 => true, option2 => false }
+
 =head1 DESCRIPTION
 
-This meta class installs the some helper functions.
+This meta class installs some helper functions.
 
 =cut
 
@@ -52,6 +56,14 @@ values there, this will just lead to double encoding!
 
 	$stash->add_symbol('&uri_esc', sub { return (wantarray) ? map { uri_escape($_) } @_ : uri_escape(join '', @_) });
 
+=keyword Booleans (true/false)
+
+Use booleans true and false to set options.
+
+=cut
+
+    $stash->add_symbol('&true', sub { 1 });
+    $stash->add_symbol('&false', sub { 0 });
 }
 
 1;
