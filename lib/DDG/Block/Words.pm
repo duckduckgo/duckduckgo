@@ -170,32 +170,64 @@ sub request {
 		#
 		my $start = $cnt == 0 ? 1 : 0;
 		my $end = $cnt == $max-1 ? 1 : 0;
+
+		# Iterate over each word in the query, checking if any of
+		# the IA's have this specific word as (part of) a `start`,
+		# `end` or `any` trigger.
 		for my $word (@{$request->triggers->{$poses[$cnt]}}) {
 			$self->trace( "Testing word:", "'".$word."'" );
-			#
-			# Checking if any of the IA's have this specific word
-			# as (part of) a start, end or any trigger. Start and end
-			# of course only if its first or last word in the query.
-			#
-			# It gives back a touple of 2 elements, a bool which defines
-			# if there COULD BE more words after it (so this fits for
-			# any and start triggers), the second is the part of the
-			# prepared trigger set of the blocks which is responsible
-			# for this word.
-			#
-			# The keys inside the hitstruct define the words count it
-			# additional carries. This allows to kick out the ones which
-			# are not fitting anymore into the length of the query (by
-			# wordcount)
-			#
-			if (my ( $begin, $hitstruct ) =
-					$start && defined $self->_words_plugins->{start}->{$word}
-						? ( 1 => $self->_words_plugins->{start}->{$word} )
-						: $end && defined $self->_words_plugins->{end}->{$word}
-							? ( 0 => $self->_words_plugins->{end}->{$word} )
-							: defined $self->_words_plugins->{any}->{$word}
-								? ( 1 => $self->_words_plugins->{any}->{$word} )
-								: undef) {
+
+			my @hits = ();
+			{
+
+				# Flag that tells us if there could be more words
+				# after the matched word.
+				#
+				# Used for `any` and `start` triggers. Not for `end`
+				# triggers because they look in-front of the word.
+				my $begin = 0;
+
+				# A hash containing all triggers related to the current word
+				# 
+				# The keys inside the hitstruct define the word count for the
+				# trigger word/phrase. This is used to determine if the query
+				# is long enough to have a match.
+				# ie. a 2 word query can't match a 3 word trigger phrase
+				my $hitstruct = undef;
+
+				my $is_start = $start && defined $self->_words_plugins->{start}->{$word};
+				my $is_end = $end && defined $self->_words_plugins->{end}->{$word};
+				my $is_any = defined $self->_words_plugins->{any}->{$word};
+
+				if ($is_start) {
+					$begin = 1;
+					$hitstruct = $self->_words_plugins->{start}->{$word};
+					push(@hits,[$begin,$hitstruct]);
+				}
+
+				if ($is_end) {
+					$begin = 0;
+					$hitstruct = $self->_words_plugins->{end}->{$word};
+					push(@hits,[$begin,$hitstruct]);
+				}
+
+				if ($is_any) {
+					$begin = 1;
+					$hitstruct = $self->_words_plugins->{any}->{$word};
+					push(@hits,[$begin,$hitstruct]);
+				}
+			}
+
+			unless ( @hits ) {
+				$self->trace("No hit with","'".$word."'");
+			}
+
+			# iterate over each type of trigger match for the current word
+			# this allows us to consider combinations of `start`, `end` and `any`
+			# triggers for the current word
+			while (my $hitref = shift @hits) {
+
+				my ($begin,$hitstruct) = @{$hitref};
 				######################################################
 				$self->trace("Got a hit with","'".$word."'","!", $begin ? "And it's just the beginning..." : "");
 
@@ -227,8 +259,8 @@ sub request {
 					}
 					# Here we take the index of the partially matched trigger phrase and
 					# calculate where the trigger should start or end (based on whether 
-					# it's a start or end trigger) to verify if the partial match is a
-					# full match against
+					# it's a `start` or `end` trigger) to verify if the partial match is a
+					# full match against the whole trigger
 					#
 					# Then we check if the next/previous word in the string matches
 					# the next/previous word in the trigger phrase (again, based on whether it's a start or end trigger)
@@ -269,8 +301,6 @@ sub request {
 						}
 					}
 				}
-			} else {
-				$self->trace("No hit with","'".$word."'");
 			}
 		}
 	}
