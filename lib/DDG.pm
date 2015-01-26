@@ -11,8 +11,6 @@ Longtime it will get probably a kind of metaclass or stays a general configurati
 use strict;
 use warnings;
 
-our $VERSION ||= '9.999';
-
 use File::ShareDir::ProjectDistDir;
 
 use Exporter 'import';
