@@ -9,8 +9,6 @@ use DDG::Test::Block;
 use DDG::ZeroClickInfo::Spice;
 use Package::Stash;
 
-use Data::Printer;
-
 =head1 DESCRIPTION
 
 Installs functions for testing Spice.
