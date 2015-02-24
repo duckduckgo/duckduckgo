@@ -20,7 +20,7 @@ If you're submitting a **pull request** (bugfix/addition):
 
 ## Making Changes
 
-- Before making any changes, refer to the [DuckDuckHack Styleguide](https://dukgo.com/duckduckhack/styleguide_overview) to ensure your changes are made in the correct fashion
+- Before making any changes, refer to the [DuckDuckHack Styleguide](https://duck.co/duckduckhack/styleguide_overview) to ensure your changes are made in the correct fashion
 - Make sure your commits are of a reasonable size. They shouldn't be too big (or too small)
 - Make sure your commit messages effectively explain what changes have been made, and please identify which instant answer or file has been modified:
 
@@ -46,7 +46,7 @@ If you're submitting a **pull request** (bugfix/addition):
   git commit -a -m "My first instant answer that does X is ready to go!"
   ```
 
-2. Get your commit history [how you like it](http://book.git-scm.com/4_interactive_rebasing.html).
+2. Get your commit history [how you like it](http://schacon.github.io/gitbook/4_interactive_rebasing.html).
 
   ```shell
   git rebase -i origin/master

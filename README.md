@@ -9,4 +9,4 @@ If you're reporting an issue with an instant answer, please add the issue to an 
 General DuckDuckGo issues (not related to our open source projects) should be reported here: https://duckduckgo.com/feedback 
 
 
-If you are interested in creating a DuckDuckGo Instant Answer please refer to our documentation: https://dukgo.com/duckduckhack/ddh-intro
+If you are interested in creating a DuckDuckGo Instant Answer please refer to our documentation: https://duck.co/duckduckhack/ddg-intro
