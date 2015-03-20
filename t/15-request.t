@@ -191,7 +191,12 @@ BEGIN {
 			is_deeply($req->combined_lc_words($param),$result{$result_key},'Testing '.$result_key.' of "'.$query.'"') if defined $result{$result_key};
 		}
 		if (defined $result{triggers}) {
-			is_deeply($req->triggers,$result{triggers},'Test trigger of "'.$query.'"');
+			my $triggers = $req->triggers;
+			my @sorted_expected = sort keys %{$result{triggers}};
+			is_deeply([sort keys %$triggers], \@sorted_expected, "Testing trigger keys of $query");
+			for my $k (@sorted_expected){
+				is_deeply([sort @{$triggers->{$k}}], [@{$result{triggers}{$k}}], "Testng triggers of key $k for $query");
+			}
 		}
 	}
 	
