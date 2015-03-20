@@ -189,7 +189,7 @@ sub generate_triggers {
 		my @boundary_words = split /\W+/o, $part ;
 		++$parts{$_} for @boundary_words;
 		++$parts{join('', @boundary_words)};
-		++$parts{join( ' ', @boundary_words)};
+		++$parts{join(' ', @boundary_words)};
 	}
 	return [keys %parts];
 }
