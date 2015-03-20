@@ -3,7 +3,6 @@ package DDG::Request;
 
 use Moo;
 use utf8;
-use List::MoreUtils qw{ uniq };
 
 =head1 SYNOPSIS
 
@@ -162,7 +161,7 @@ sub _build_triggers {
 	my %triggers;
 	for ($x..(scalar @parts-1)) {
 		unless ($_ % 2) {
-			$triggers{$_} = [$self->generate_triggers($parts[$_])];
+			$triggers{$_} = $self->generate_triggers($parts[$_]);
 		}
 	}
 	return \%triggers;
@@ -178,25 +177,21 @@ triggers are generated out of a part please read the function.
 =cut
 
 sub generate_triggers {
-	my ( $self, $original_part ) = @_;
-	my $part = $original_part;
-	my @parts = (lc($part));
-	$part =~ s/^!//g;
-	push @parts, lc($part);
-	$part =~ s/\?$//g;
-	push @parts, lc($part);
-	if ($part =~ m/(\W+)/ and $1 !~ m/'/) {
-		my @boundary_words = split(/\W+/, $part);
-		for my $boundary_word (@boundary_words) {
-			push @parts, lc($boundary_word);
-		}
-		push @parts, lc($_) for @boundary_words;
-		my $joined = join('', @boundary_words);
-		push @parts, lc($joined);
-		my $space_joined = join(' ', @boundary_words);
-		push @parts, lc($space_joined);
+	my $part = lc $_[1];
+	my %parts;
+	++$parts{$part};
+	$part =~ s/^!//go && ++$parts{$part};
+	$part =~ s/\?$//go && ++$parts{$part};
+	# Look for non-word characters, except single quotes, e.g. can't, John's
+	if ($part =~ /[^\w']/o) {
+		# The split could be part of the if but it would leave single quotes
+		# in the resulting terms.
+		my @boundary_words = split /\W+/o, $part ;
+		++$parts{$_} for @boundary_words;
+		++$parts{join('', @boundary_words)};
+		++$parts{join( ' ', @boundary_words)};
 	}
-	return uniq sort @parts;
+	return [keys %parts];
 }
 
 =method generate_remainder
