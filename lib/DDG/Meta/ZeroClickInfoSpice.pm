@@ -41,6 +41,7 @@ sub apply_keywords {
 	my $path = '/js/'.join('/',map { s/([a-z])([A-Z])/$1_$2/g; lc; } @parts).'/';
 	shift @parts;
 	my $answer_type = lc(join(' ',@parts));
+	my $file_name = lc(join('_',@parts));
 
 	my %zcispice_params = (
 		caller => $target,
@@ -125,6 +126,7 @@ sub apply_keywords {
 	$stash->add_symbol('&path',sub { $path });
 
 	my $spice_js;
+	my $spice_js_file;
 
 	$stash->add_symbol('&data',sub {
 		unshift @_, %{$_[0]} if ref $_[0] eq 'HASH';
@@ -136,12 +138,21 @@ sub apply_keywords {
 		return $spice_js if defined $spice_js;
 		my ( $self ) = @_;
 		$spice_js = "";
-		if ($target->can('module_share_dir') && (my $spice_js_file = $target->can('share')->('spice.js'))) {
+
+		if ($target->can('module_share_dir')
+			&& ($spice_js_file = $target->can('share')->("$file_name.js")) 
+			&& -f $spice_js_file) {
+
 			$spice_js .= io($spice_js_file)->slurp;
 			$spice_js .= "\n";
 		}
+		
 		if ($target->spice_call_type eq 'self') {
-			$spice_js .= $target->callback."();";
+			
+			# 12-13-2013
+			# View.pm does not utilize this but DuckPAN can
+			# For now will keep manually adding this line to Spice JS
+			# $spice_js .= $target->callback."();";
 		}
 		return $spice_js;
 	});
