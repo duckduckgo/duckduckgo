@@ -14,6 +14,7 @@ use DDG::Meta::Block;
 use DDG::Meta::Information;
 use DDG::Meta::Helper;
 use DDG::Meta::AnyBlock;
+use DDG::Meta::Data;
 
 use MooX ();
 
@@ -70,6 +71,7 @@ sub apply_goodie_keywords {
 	DDG::Meta::ShareDir->apply_keywords($target);
 	DDG::Meta::Block->apply_keywords($target);
 	DDG::Meta::Information->apply_keywords($target);
+	DDG::Meta::Data->apply_keywords($target);
 	DDG::Meta::Helper->apply_keywords($target);
 	DDG::Meta::RequestHandler->apply_keywords($target,sub {
 		shift->zci_new(
@@ -99,6 +101,7 @@ sub apply_spice_keywords {
 	DDG::Meta::ShareDir->apply_keywords($target);
 	DDG::Meta::Block->apply_keywords($target);
 	DDG::Meta::Information->apply_keywords($target);
+	DDG::Meta::Data->apply_keywords($target);
 	DDG::Meta::Helper->apply_keywords($target);
 	DDG::Meta::RequestHandler->apply_keywords($target,sub {
 		shift->spice_new(@_);
