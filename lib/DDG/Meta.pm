@@ -14,6 +14,7 @@ use DDG::Meta::Block;
 use DDG::Meta::Information;
 use DDG::Meta::Helper;
 use DDG::Meta::AnyBlock;
+use DDG::Meta::CountryCodes;
 
 use MooX ();
 
