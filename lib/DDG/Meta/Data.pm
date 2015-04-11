@@ -58,7 +58,6 @@ sub build_metadata {
             my $sharedir = $self->_make_sharedir($perl_module);
 
             # create a new ia
-			warn "Adding $perl_module\n";
             $ia_metadata{$perl_module} = {
                 id => $module_data->{id},
                 signal_from => $module_data->{signal_from} || $module_data->{id},
@@ -86,7 +85,7 @@ sub apply_keywords {
 
 	return if exists $applied{$target};	
 
-	$ia_metadata = $self->build_metadata unless %ia_metadata;
+	$self->build_metadata unless %ia_metadata;
 
 	warn "No metadata found for $target", return unless my $ia = $ia_metadata{$target};
 
