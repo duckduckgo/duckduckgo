@@ -3,11 +3,9 @@ package DDG::Meta::CountryCodes;
 
 use Locale::Country 'country2code';;
 
-unless(country2code('Tobago')){
+unless(country2code('DuckDuckGo')){
     # These are the only 2 countries which officially have 'The' in their name
     # Source: http://www.bbc.co.uk/news/magazine-18233844
-    Locale::Country::rename_country('gm' => 'The Gambia');
-    Locale::Country::rename_country('bs' => 'The Bahamas');
     Locale::Country::add_country_alias('Antigua and Barbuda' => 'Antigua');
     Locale::Country::add_country_alias('Antigua and Barbuda' => 'Barbuda');
     Locale::Country::add_country_alias("Lao People's Democratic Republic" => "Laos");
@@ -35,6 +33,12 @@ unless(country2code('Tobago')){
     Locale::Country::rename_country('va' => 'the Holy See (Vatican City State)');
     Locale::Country::rename_country('vg' => 'the British Virgin Islands');
     Locale::Country::rename_country('vi' => 'the US Virgin Islands');
+    # Easter eggs
+    Locale::Country::add_country_alias('Russian Federation' => 'Kremlin');
+    Locale::Country::add_country_alias('United States' => 'murica');
+    Locale::Country::add_country_alias('Canada' => 'Canadia');
+    Locale::Country::add_country_alias('Australia' => 'down under');
+    Locale::Country::add_country_alias('Canada' => 'DuckDuckGo');
 }
 
 1;
