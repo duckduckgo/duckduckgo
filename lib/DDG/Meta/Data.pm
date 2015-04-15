@@ -76,7 +76,7 @@ unless(%ia_metadata){
                 tab => $module_data->{tab},
                 perl_module => $perl_module,
                 topic => $module_data->{topic},
-                js_callback_name => $self->js_callback_name($perl_module)
+                js_callback_name => _js_callback_name($perl_module)
             };
 
             #add new ia to ia_metadata{id}
@@ -126,8 +126,9 @@ sub by_id {
     return \%h;
 }
 
-sub js_callback_name {                                                                                                                                                                                                                                                                                             
-    my ($self, $name) = @_;
+# Internal function.
+sub _js_callback_name {
+    my $name = shift;
     my $fn;
     if(($fn) = $name =~ /^DDG::\w+::(\w.+)$/o){
         $fn =~ s/::/_/og;
