@@ -118,6 +118,7 @@ sub apply_fathead_keywords {
 	DDG::Meta::ShareDir->apply_keywords($target);
     DDG::Meta::Fathead->apply_keywords($target);
     DDG::Meta::Information->apply_keywords($target);    
+	DDG::Meta::Data->apply_keywords($target);
     DDG::Meta::AnyBlock->apply_keywords($target);
     Moo::Role->apply_role_to_package($target, "DDG::IsFathead");
 }
@@ -131,6 +132,7 @@ sub apply_longtail_keywords {
     DDG::Meta::ZeroClickInfo->apply_keywords($target);
 	DDG::Meta::ShareDir->apply_keywords($target);
     DDG::Meta::Information->apply_keywords($target);
+	DDG::Meta::Data->apply_keywords($target);
     DDG::Meta::AnyBlock->apply_keywords($target);
     Moo::Role->apply_role_to_package($target, "DDG::IsLongtail");
 }

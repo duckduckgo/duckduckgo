@@ -1,16 +1,18 @@
 package DDG::Meta::Data;
-use Package::Stash;
-use DDG::Util::Database qw( decode_json_file );
+use Moo;
+use DDG::SpiceBundle::OpenSourceDuckDuckGo; 
+use DDG::GoodieBundle::OpenSourceDuckDuckGo; 
+use DDG::LongtailBundle::OpenSourceDuckDuckGo; 
+use DDG::FatheadBundle::OpenSourceDuckDuckGo; 
+use JSON::XS 'decode_json';
 use Path::Class;
+use File::ShareDir 'dist_file';
+use IO::All;
 
 sub debug { 0 }
 use if debug, 'Data::Printer';
 
 no warnings 'uninitialized';
-
-# perl library for IA metadata
-my $perl5_dir = '/usr/local/ddg.cpan/perl5/lib/perl5/auto/share/module';
-my $ddg_cache = $ENV{DDG_CACHE_DIR};
 
 # $ia_metadata => {
 #    id => { ... }
@@ -19,14 +21,15 @@ my $ddg_cache = $ENV{DDG_CACHE_DIR};
 # }
 my %ia_metadata;
 
-my %metadata_files = map { $_ => "$perl5_dir/DDG-$_-Meta/metadata.json" } qw(Goodie Spice Fathead Longtail);
+my @ia_types = qw(Spice Goodie Longtail Fathead);
 
-sub build_metadata {
-    my $self = shift;
+my %metadata_files = map { $_ => dist_file("DDG-${_}Bundle-OpenSourceDuckDuckGo", lc $_ . '/meta/metadata.json') } @ia_types;
+
+# Only build metadata once. Not in BUILD so we can call apply_keywords directly
+unless(%ia_metadata){
 
     FILE: while (my ($type, $filename) = each %metadata_files) {
-	warn "loading $filename";
-        warn "IA type: $type Version: $versions{$type}" if debug;
+        warn "Processing IA type: $type with file $filename" if debug;
 
         # One metadata file for each repo with the following format
         # { "<IA name>": {
@@ -34,7 +37,7 @@ sub build_metadata {
         #     "signal" : " "
         #     ....
         # }
-        my $file_data = decode_json_file($filename);
+        my $file_data = decode_json(io($filename)->all);
 
         # check for decode_json_file error, returns undef
         warn "reading metadata file failed ... $filename" unless $file_data;
@@ -54,11 +57,15 @@ sub build_metadata {
                 $module_data->{perl_module} = 'DDG::Goodie::IsAwesome'
             }
 
+            # warn if we run into a duplicate id.  These should be unique
+            if( $ia_metadata{id}{$id} ){
+                warn "Duplicate ID for IA with ID: $id";
+            }
+
             my $perl_module = $module_data->{perl_module};
-            my $sharedir = $self->_make_sharedir($perl_module);
 
             # create a new ia
-            $ia_metadata{$perl_module} = {
+            my $ia = {
                 id => $module_data->{id},
                 signal_from => $module_data->{signal_from} || $module_data->{id},
                 status => $module_data->{status},
@@ -68,12 +75,14 @@ sub build_metadata {
                 repo => $module_data->{repo},
                 tab => $module_data->{tab},
                 perl_module => $perl_module,
-                sharedir => $sharedir,
-                sharedir_abs => $self->_make_sharedir_abs($sharedir),
                 topic => $module_data->{topic},
                 js_callback_name => $self->js_callback_name($perl_module)
             };
 
+            #add new ia to ia_metadata{id}
+            $ia_metadata{id}{$id} = $ia;
+            #add new ia to ia_metadata{module}
+            $ia_metadata{module}{$perl_module} = $ia;
         }
     }
 }
@@ -81,43 +90,40 @@ sub build_metadata {
 my %applied;
 
 sub apply_keywords {
-	my ($self, $target) = @_;
+    my ($self, $target) = @_;
 
-	return if exists $applied{$target};	
+    return if $applied{$target};    
 
-	$self->build_metadata unless %ia_metadata;
+    my $ia;
+    unless($ia = $self->get_ia(module => $target)){
+        warn "No metadata found for $target"; 
+        return;
+    }
 
-	warn "No metadata found for $target", return unless my $ia = $ia_metadata{$target};
+    my $s = Package::Stash->new($target);
 
-	my $s = Package::Stash->new($target);
-
-	while(my ($k, $v) = each %$ia){
-		$s->add_symbol("&$k", sub { $v });
-	}
-	$s->add_symbol('&metadata', sub { $ia });
+    while(my ($k, $v) = each %$ia){
+        $s->add_symbol("&$k", sub { $v });
+    }
+    $s->add_symbol('&metadata', sub { return {%$ia} });
 }
 
-# get share directory path from perl module
-sub _make_sharedir {
-    my ($self, $class) = @_;
-    my @classparts = grep{$_ ne 'DDG'} split('::', $class);
-    my $v = $versions{ ucfirst $classparts[0]} || 0;
-    my $sharedir = join('/', (map { s/([a-z])([A-Z])/$1_$2/g; lc } @classparts), $v);
-    return $sharedir;
+sub get_ia {
+    my ($self, $by, $lookup) = @_;
+    warn 'Get IA obj lookup params: ', p($lookup) if debug;
+    
+    $lookup =~ s/^DDG::Goodie::IsAwesome\K::.+$//;
+
+    # make a copy of the hash; doesn't need deep cloning atm
+    my %ia = %{$ia_metadata{$by}{$lookup}};
+    warn 'Returning IA ', p(%ia) if debug;
+    return \%ia;
 }
 
-sub _make_sharedir_abs {
-    my ($self, $sharedir) = @_;
-    my $dir = dir($ddg_cache, 'share', $sharedir);
-    return $dir;
-}
-
-# convert decimal and string version to int ex:  0.002 => 2
-sub _convert_version {
-    my ($v) = @_;
-    $v =~ s/[^\d]+//g;
-    $v += 0;
-    return $v
+# return a hash of IA objects by id
+sub by_id {
+    my %h = %{$ia_metadata{id}};
+    return \%h;
 }
 
 sub js_callback_name {                                                                                                                                                                                                                                                                                             
