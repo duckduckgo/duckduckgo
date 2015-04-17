@@ -8,6 +8,7 @@ use JSON::XS 'decode_json';
 use Path::Class;
 use File::ShareDir 'dist_file';
 use IO::All;
+use Clone 'clone';
 
 sub debug { 0 }
 use if debug, 'Data::Printer';
@@ -96,7 +97,7 @@ sub apply_keywords {
 
     my $ia;
     unless($ia = $self->get_ia(module => $target)){
-        warn "No metadata found for $target"; 
+        warn "No metadata found for $target";
         return;
     }
 
@@ -115,15 +116,14 @@ sub get_ia {
     $lookup =~ s/^DDG::Goodie::IsAwesome\K::.+$//;
 
     # make a copy of the hash; doesn't need deep cloning atm
-    my %ia = %{$ia_metadata{$by}{$lookup}};
-    warn 'Returning IA ', p(%ia) if debug;
-    return \%ia;
+    my $m = $ia_metadata{$by}{$lookup};
+    warn 'Returning IA ', p($m) if debug;
+    return $m ? clone($m) : $m;
 }
 
 # return a hash of IA objects by id
 sub by_id {
-    my %h = %{$ia_metadata{id}};
-    return \%h;
+    return clone($ia_metadata{id});
 }
 
 # Internal function.
