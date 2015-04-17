@@ -118,7 +118,7 @@ sub get_ia {
     # make a copy of the hash; doesn't need deep cloning atm
     my $m = $ia_metadata{$by}{$lookup};
     warn 'Returning IA ', p($m) if debug;
-    return $m ? clone($m) : $m;
+    return clone($m);
 }
 
 # return a hash of IA objects by id
