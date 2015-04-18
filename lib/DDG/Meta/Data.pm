@@ -1,4 +1,6 @@
 package DDG::Meta::Data;
+# ABSTRACT: Metadata functions for instant answers
+
 use Moo;
 use DDG::SpiceBundle::OpenSourceDuckDuckGo; 
 use DDG::GoodieBundle::OpenSourceDuckDuckGo; 
@@ -9,6 +11,8 @@ use Path::Class;
 use File::ShareDir 'dist_file';
 use IO::All;
 use Clone 'clone';
+
+use strict;
 
 sub debug { 0 }
 use if debug, 'Data::Printer';
