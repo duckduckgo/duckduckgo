@@ -41,7 +41,7 @@ unless(%ia_metadata){
         my $file_data = decode_json(io($filename)->all);
 
         # check for decode_json_file error, returns undef
-        warn "reading metadata file failed ... $filename" unless $file_data;
+        die "reading metadata file failed ... $filename" unless $file_data;
 
         IA: while (my ($id, $module_data) = each %{ $file_data }) {
 
@@ -97,7 +97,7 @@ sub apply_keywords {
 
     my $ia;
     unless($ia = $self->get_ia(module => $target)){
-        warn "No metadata found for $target";
+        warn "No metadata found for $target" if debug;
         return;
     }
 
