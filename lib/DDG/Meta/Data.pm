@@ -110,38 +110,39 @@ sub apply_keywords {
 
     my $s = Package::Stash->new($target);
 
+    # Will return metadata by id from the current subset of the IA's metadata
     my $dynamic_meta = sub {
-	    my $id = $_[0];
-		unless($id){
-			croak "No id provided to dynamic instant answer";
-		}
-		my @m = grep {$_->{id} eq $id} @$ias;
-		unless(@m == 1){
-			croak "Failed to select metadata with id $id";
-		} 
-		return $m[0];
+        my $id = $_[0];
+        unless($id){
+            croak "No id provided to dynamic instant answer";
+        }
+        my @m = grep {$_->{id} eq $id} @$ias;
+        unless(@m == 1){
+            croak "Failed to select metadata with id $id";
+        }
+        return $m[0];
     };
 
-	# Check for id_required *outside* of the subs so we don't incur the
-	# slight performance penalty across the board
+    # Check for id_required *outside* of the subs so we don't incur the
+    # slight performance penalty across the board
     while(my ($k, $v) = each %{$ias->[0]}){ # must have at least one set of metadata
         $s->add_symbol("&$k", $id_required ? 
             sub {
-				my $m = $dynamic_meta->($_[0]);
-				return $m->{$k};
-			}
-			:
-			sub { $v }
+                my $m = $dynamic_meta->($_[0]);
+                return $m->{$k};
+            }
+            :
+            sub { $v }
         );
     }
     $s->add_symbol('&metadata', $id_required ? 
-		sub {
-			my $m = $dynamic_meta->($_[0]);
-			return clone($m);
-		}
-		:	
-		sub { clone($ias->[0]) }
-	);	
+        sub {
+            my $m = $dynamic_meta->($_[0]);
+            return clone($m);
+        }
+        :
+        sub { clone($ias->[0]) }
+    );
 }
 
 sub get_ia {
