@@ -106,7 +106,7 @@ sub apply_keywords {
         warn "No metadata found for $target" if debug;
         return;
     }
-    my $id_required = @{$ias} > 1;
+    my $id_required = @{$ias} - 1;
 
     my $s = Package::Stash->new($target);
 
