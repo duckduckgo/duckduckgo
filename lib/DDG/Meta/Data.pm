@@ -11,6 +11,7 @@ use Path::Class;
 use File::ShareDir 'dist_file';
 use IO::All;
 use Clone 'clone';
+use Carp;
 
 use strict;
 
@@ -62,7 +63,8 @@ unless(%ia_metadata){
                 $module_data->{perl_module} = 'DDG::Goodie::IsAwesome'
             }
 
-            # warn if we run into a duplicate id.  These should be unique
+            # warn if we run into a duplicate id.  These should be unique within *and*
+            # across all IA types
             if( $ia_metadata{id}{$id} ){
                 warn "Duplicate ID for IA with ID: $id";
             }
@@ -86,8 +88,8 @@ unless(%ia_metadata){
 
             #add new ia to ia_metadata{id}
             $ia_metadata{id}{$id} = $ia;
-            #add new ia to ia_metadata{module}
-            $ia_metadata{module}{$perl_module} = $ia;
+            #add new ia to ia_metadata{module}. Multiple ias per module possible
+            push @{$ia_metadata{module}{$perl_module}}, $ia;
         }
     }
 }
@@ -99,18 +101,47 @@ sub apply_keywords {
 
     return if $applied{$target};    
 
-    my $ia;
-    unless($ia = $self->get_ia(module => $target)){
+    my $ias;
+    unless($ias = $self->get_ia(module => $target)){
         warn "No metadata found for $target" if debug;
         return;
     }
+    my $id_required = @{$ias} > 1;
 
     my $s = Package::Stash->new($target);
 
-    while(my ($k, $v) = each %$ia){
-        $s->add_symbol("&$k", sub { $v });
+    my $dynamic_meta = sub {
+	    my $id = $_[0];
+		unless($id){
+			croak "No id provided to dynamic instant answer";
+		}
+		my @m = grep {$_->{id} eq $id} @$ias;
+		unless(@m == 1){
+			croak "Failed to select metadata with id $id";
+		} 
+		return $m[0];
+    };
+
+	# Check for id_required *outside* of the subs so we don't incur the
+	# slight performance penalty across the board
+    while(my ($k, $v) = each %{$ias->[0]}){ # must have at least one set of metadata
+        $s->add_symbol("&$k", $id_required ? 
+            sub {
+				my $m = $dynamic_meta->($_[0]);
+				return $m->{$k};
+			}
+			:
+			sub { $v }
+        );
     }
-    $s->add_symbol('&metadata', sub { return {%$ia} });
+    $s->add_symbol('&metadata', $id_required ? 
+		sub {
+			my $m = $dynamic_meta->($_[0]);
+			return clone($m);
+		}
+		:	
+		sub { clone($ias->[0]) }
+	);	
 }
 
 sub get_ia {
