@@ -4,6 +4,7 @@ package DDG::Meta;
 use strict;
 use warnings;
 use Carp;
+require Data::Printer;
 
 use DDG::Meta::RequestHandler;
 use DDG::Meta::ZeroClickInfo;
