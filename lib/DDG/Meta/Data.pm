@@ -90,7 +90,7 @@ unless(%ia_metadata){
             #add new ia to ia_metadata{id}
             $ia_metadata{id}{$id} = $ia;
             #add new ia to ia_metadata{module}. Multiple ias per module possible
-            push @{$ia_metadata{module}{$perl_module}}, $ia;
+            $ia_metadata{module}{$perl_module} = $ia;
         }
     }
 }
@@ -102,51 +102,19 @@ sub apply_keywords {
 
     return if $applied{$target};    
 
-    my $ias;
-    unless($ias = $self->get_ia(module => $target)){
+    my $ia;
+    unless($ia = $self->get_ia(module => $target)){
         warn "No metadata found for $target" if debug;
         return;
     }
-    # If only one id this will be false. Only a few IAs have
-    # multiple ids per module, e.g. CheatSheets
-    my $id_required = @{$ias} - 1;
 
     my $s = Package::Stash->new($target);
 
-    # Will return metadata by id from the current subset of the IA's metadata
-    my $dynamic_meta = sub {
-        my $id = $_[0];
-        unless($id){
-            die "No id provided to dynamic instant answer";
-        }
-        my @m = grep {$_->{id} eq $id} @$ias;
-        unless(@m == 1){
-            die "Failed to select metadata with id $id";
-        }
-        return $m[0];
-    };
-
-    # Check for id_required *outside* of the subs so we don't incur the
-    # slight performance penalty across the board. Remember that these
-    # are method calls and that $_[0] is self
-    while(my ($k, $v) = each %{$ias->[0]}){ # must have at least one set of metadata
-        $s->add_symbol("&$k", $id_required ? 
-            sub {
-                my $m = $dynamic_meta->($_[1]);
-                return $m->{$k};
-            }
-            :
-            sub { $v }
-        );
+    while(my ($k, $v) = each %$ia){
+        $s->add_symbol("&$k", sub { $v });
     }
-    $s->add_symbol('&metadata', $id_required ? 
-        sub {
-            my $m = $dynamic_meta->($_[1]);
-            return clone($m);
-        }
-        :
-        sub { clone($ias->[0]) }
-    );
+
+    $s->add_symbol('&metadata', sub { return clone($ia) });
 }
 
 sub get_ia {
