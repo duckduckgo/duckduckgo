@@ -4,6 +4,7 @@ package DDG::Meta;
 use strict;
 use warnings;
 use Carp;
+require Data::Printer;
 
 use DDG::Meta::RequestHandler;
 use DDG::Meta::ZeroClickInfo;
@@ -14,6 +15,7 @@ use DDG::Meta::Block;
 use DDG::Meta::Information;
 use DDG::Meta::Helper;
 use DDG::Meta::AnyBlock;
+use DDG::Meta::CountryCodes;
 
 use MooX ();
 
