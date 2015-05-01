@@ -1,7 +1,6 @@
 package DDG::Meta::Data;
 # ABSTRACT: Metadata functions for instant answers
 
-use Moo;
 use DDG::SpiceBundle::OpenSourceDuckDuckGo; 
 use DDG::GoodieBundle::OpenSourceDuckDuckGo; 
 use DDG::LongtailBundle::OpenSourceDuckDuckGo; 
