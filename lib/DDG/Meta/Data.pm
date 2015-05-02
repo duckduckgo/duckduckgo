@@ -48,7 +48,8 @@ unless(%ia_metadata){
 
         IA: while (my ($id, $module_data) = each %{ $file_data }) {
 
-            next unless $module_data->{status} eq 'live';
+            # 20150502 (zt) Can't filter like this yet as some tests depend on non-live IA metadata
+            #next unless $module_data->{status} eq 'live';
 
             # check for bad metadata.  We need a perl_module for the by_module key
             if($module_data->{perl_module} !~ /DDG::.+::.+/){
