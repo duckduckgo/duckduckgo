@@ -70,9 +70,11 @@ unless(%ia_metadata){
                 warn "Duplicate ID for IA with ID: $id";
             }
 
+            my $perl_module = $module_data->{perl_module};
+
             # Clean up/set some values
             $module_data->{signal_from} ||= $module_data->{id};
-            $module_data->{js_callback_name} = _js_callback_name($module_data->{perl_module});
+            $module_data->{js_callback_name} = _js_callback_name($perl_module);
 
             #add new ia to ia_metadata{id}
             $ia_metadata{id}{$id} = $module_data;
