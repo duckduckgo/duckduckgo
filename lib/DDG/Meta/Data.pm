@@ -70,27 +70,14 @@ unless(%ia_metadata){
                 warn "Duplicate ID for IA with ID: $id";
             }
 
-            my $perl_module = $module_data->{perl_module};
-
-            # create a new ia
-            my $ia = {
-                id => $module_data->{id},
-                signal_from => $module_data->{signal_from} || $module_data->{id},
-                status => $module_data->{status},
-                example_query => $module_data->{example_query},
-                name => $module_data->{name},
-                description => $module_data->{description},
-                repo => $module_data->{repo},
-                tab => $module_data->{tab},
-                perl_module => $perl_module,
-                topic => $module_data->{topic},
-                js_callback_name => _js_callback_name($perl_module)
-            };
+            # Clean up/set some values
+            $module_data->{signal_from} ||= $module_data->{id};
+            $module_data->{js_callback_name} = _js_callback_name($module_data->{perl_module});
 
             #add new ia to ia_metadata{id}
-            $ia_metadata{id}{$id} = $ia;
+            $ia_metadata{id}{$id} = $module_data;
             #add new ia to ia_metadata{module}. Multiple ias per module possible
-            push @{$ia_metadata{module}{$perl_module}}, $ia;
+            push @{$ia_metadata{module}{$perl_module}}, $module_data;
         }
     }
 }
