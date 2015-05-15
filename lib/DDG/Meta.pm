@@ -16,6 +16,7 @@ use DDG::Meta::Information;
 use DDG::Meta::Helper;
 use DDG::Meta::AnyBlock;
 use DDG::Meta::CountryCodes;
+use DDG::Meta::Data;
 
 use MooX ();
 
@@ -72,6 +73,7 @@ sub apply_goodie_keywords {
 	DDG::Meta::ShareDir->apply_keywords($target);
 	DDG::Meta::Block->apply_keywords($target);
 	DDG::Meta::Information->apply_keywords($target);
+	DDG::Meta::Data->apply_keywords($target);
 	DDG::Meta::Helper->apply_keywords($target);
 	DDG::Meta::RequestHandler->apply_keywords($target,sub {
 		shift->zci_new(
@@ -101,6 +103,7 @@ sub apply_spice_keywords {
 	DDG::Meta::ShareDir->apply_keywords($target);
 	DDG::Meta::Block->apply_keywords($target);
 	DDG::Meta::Information->apply_keywords($target);
+	DDG::Meta::Data->apply_keywords($target);
 	DDG::Meta::Helper->apply_keywords($target);
 	DDG::Meta::RequestHandler->apply_keywords($target,sub {
 		shift->spice_new(@_);
@@ -114,9 +117,10 @@ sub apply_spice_keywords {
 sub apply_fathead_keywords {
     my ( $class, $target ) = @_;
     DDG::Meta::ZeroClickInfo->apply_keywords($target);
-	DDG::Meta::ShareDir->apply_keywords($target);
+    DDG::Meta::ShareDir->apply_keywords($target);
     DDG::Meta::Fathead->apply_keywords($target);
     DDG::Meta::Information->apply_keywords($target);    
+    DDG::Meta::Data->apply_keywords($target);
     DDG::Meta::AnyBlock->apply_keywords($target);
     Moo::Role->apply_role_to_package($target, "DDG::IsFathead");
 }
@@ -128,8 +132,9 @@ sub apply_fathead_keywords {
 sub apply_longtail_keywords {
     my ( $class, $target ) = @_;
     DDG::Meta::ZeroClickInfo->apply_keywords($target);
-	DDG::Meta::ShareDir->apply_keywords($target);
+    DDG::Meta::ShareDir->apply_keywords($target);
     DDG::Meta::Information->apply_keywords($target);
+    DDG::Meta::Data->apply_keywords($target);
     DDG::Meta::AnyBlock->apply_keywords($target);
     Moo::Role->apply_role_to_package($target, "DDG::IsLongtail");
 }
