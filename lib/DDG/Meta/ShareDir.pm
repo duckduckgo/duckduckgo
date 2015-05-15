@@ -48,47 +48,6 @@ sub apply_keywords {
 
 	my $share;
 
-	# kent\n:
-	# If the module we are currently running setup for is presently in t/lib/
-	# such as "t/lib/Test/Frob.pm", then asking "Where it came from, where is
-	# the root", would resolve as "t/lib/".
-	#
-	# This poses a problem, as normally, the module is in lib/ during dev, and
-	# its sharedir is in share/.
-	#
-	# This would mean if a library was in t/lib/ , it would try to detect the
-	# presence of t/share to determine if it was a "dev environment" or not,
-	# and not find that dir, and falsely conclude the library in t/lib/ was
-	# installed, which will never be the case.
-	#
-	# Hence, we detect the special case of "t/lib" and ascend another level to
-	# find the "project root", and the presensce of "share" at the project root
-	# indicates its a dev environment, and everything works as expected.
-	#
-	# Simplifed in pseudocode:
-	#
-	# X->setup
-	# 	a = path of X;
-	# 	b = "base dir" of a,
-	# 		ie: $root/t/lib/X.pm -> $root/t
-	# 		    $root/lib/Y.pm   -> $root
-	#
-	# 	is there a path $b/../t ?
-	# 		$b = "$root/t"   -> $root/t/../t  -> $root/t/ --> yes
-	# 		$b = "$root"     -> $root/../t                --> no
-	#
-	#	yes:
-	#		$b = $b/../
-	#			 -> $b = "$root/t/../"
-	#			 -> $b = "$root"
-	#
-	# Noting of course, we don't know what "$root" is, and this codes purpose
-	# is to find the value of $root.
-	#
-	if ( -e $basedir->parent->subdir('t') ) {
-		$basedir = $basedir->parent;
-	}
-
 	if ( -e $basedir->subdir('lib') and -e $basedir->subdir('share') ) {
 		my $dir = dir($basedir,$share_path);
 		$share = $dir if -d $dir;
