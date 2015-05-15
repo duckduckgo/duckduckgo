@@ -52,8 +52,8 @@ unless(%ia_metadata){
             #next unless $module_data->{status} eq 'live';
 
             # check for bad metadata.  We need a perl_module for the by_module key
-            if($module_data->{perl_module} !~ /DDG::.+::.+/ and $module_data->{status} eq 'live'){
-                warn "Invalid perl_module for IA $id: $module_data->{perl_module} in $filename...skipping";
+            if($module_data->{perl_module} !~ /DDG::.+::.+/){
+                warn "Invalid perl_module for IA $id: $module_data->{perl_module} in $filename...skipping" if $module_data->{status} eq 'live';
                 next IA;
             }
 
