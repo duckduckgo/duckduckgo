@@ -9,7 +9,7 @@ use Clone 'clone';
 
 use strict;
 
-sub debug { 0 }
+sub debug { 1 }
 use if debug, 'Data::Printer';
 
 no warnings 'uninitialized';
@@ -26,17 +26,20 @@ unless(%ia_metadata){
 
     my @ia_types = qw(Spice Goodie Longtail Fathead);
 
-    # Load IA metadata files.
+    # Load IA metadata files. Not all types are required during development.
     my %metadata_files;
     for my $iat (@ia_types){
         my $bundle = "DDG::${iat}Bundle::OpenSourceDuckDuckGo";
-        eval "require $bundle" or next;
-        $metadata_files{$iat} = dist_file("DDG-${iat}Bundle-OpenSourceDuckDuckGo", lc $iat . '/meta/metadata.json');
+        eval "require $bundle";
+        my $f = eval{ dist_file("DDG-${iat}Bundle-OpenSourceDuckDuckGo", lc $iat . '/meta/metadata.json') }
+		    or (debug && warn $@);
+        $metadata_files{$iat} = $f if $f;
     }
 
     unless(%metadata_files){
-        warn("No instant answer bundles installed. If you are developing an instant answer,\n",
-            "please install one of the following (via `cpanm --mirror http://duckpan.org`):\n\n\t",
+        warn("No instant answer bundles installed. If you are developing an instant answer, please\n",
+            "install one or more of the following (via `duckpan` or `cpanm --mirror http://duckpan.org`),\n",
+			"including the type with which you are working:\n\n\t",
             join("\n\t", map{ "DDG::${_}Bundle::OpenSourceDuckDuckGo" } @ia_types), "\n") and exit 1;
     }
 
