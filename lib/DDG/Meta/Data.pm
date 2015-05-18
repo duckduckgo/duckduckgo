@@ -1,10 +1,6 @@
 package DDG::Meta::Data;
 # ABSTRACT: Metadata functions for instant answers
 
-use DDG::SpiceBundle::OpenSourceDuckDuckGo; 
-use DDG::GoodieBundle::OpenSourceDuckDuckGo; 
-use DDG::LongtailBundle::OpenSourceDuckDuckGo; 
-use DDG::FatheadBundle::OpenSourceDuckDuckGo; 
 use JSON::XS 'decode_json';
 use Path::Class;
 use File::ShareDir 'dist_file';
@@ -25,12 +21,21 @@ no warnings 'uninitialized';
 # }
 my %ia_metadata;
 
-my @ia_types = qw(Spice Goodie Longtail Fathead);
-
-my %metadata_files = map { $_ => dist_file("DDG-${_}Bundle-OpenSourceDuckDuckGo", lc $_ . '/meta/metadata.json') } @ia_types;
-
 # Only build metadata once. Not in BUILD so we can call apply_keywords directly
 unless(%ia_metadata){
+
+    my @ia_types = qw(Spice Goodie Longtail Fathead);
+
+    my %metadata_files;
+    for my $iat (@ia_types){
+        my $bundle = "DDG::${iat}Bundle::OpenSourceDuckDuckGo";
+        eval{ require $bundle } or next;
+        $metadata_files{$iat} = dist_file("DDG-${iat}Bundle-OpenSourceDuckDuckGo", lc $iat . '/meta/metadata.json';
+    }
+
+    die "No instant answer bundles installed. If you are developing an instant answer,\n",
+        "please install one of the following (via `cpanm --mirror http://duckpan.org`):\n\n\t",
+        join("\n\t", map{ "DDG::${_}Bundle::OpenSourceDuckDuckGo" } @ia_types), "\n";
 
     FILE: while (my ($type, $filename) = each %metadata_files) {
         warn "Processing IA type: $type with file $filename" if debug;
