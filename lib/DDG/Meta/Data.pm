@@ -80,6 +80,8 @@ unless(%ia_metadata){
             $ia_metadata{id}{$id} = $module_data;
             #add new ia to ia_metadata{module}. Multiple ias per module possible
             push @{$ia_metadata{module}{$perl_module}}, $module_data;
+            # by source number for fatheads
+            $ia_metadata{source}{$module_data->{src_id}} = $module_data if $module_data->{repo} eq 'fathead';
         }
     }
 }
@@ -165,6 +167,20 @@ sub _js_callback_name {
         $fn = lc $fn;
     }
     return $fn;
+}
+
+# return fathead data
+sub source_data {
+    my ($self, $source) = @_;
+    my $data = $ia_metadata{source}{$source} if exists $ia_metadata{source}{$source};
+    my @return = (
+        $data->{src_name},
+        $data->{src_domain},
+        $data->{src_options}->{source_info},
+        $data->{src_options}->{is_mediawiki},
+        $data->{perl_module}
+    );
+    return @return;
 }
 
 1;
