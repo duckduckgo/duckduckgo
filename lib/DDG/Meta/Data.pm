@@ -9,7 +9,7 @@ use Clone 'clone';
 
 use strict;
 
-sub debug { 1 }
+sub debug { 0 }
 use if debug, 'Data::Printer';
 
 no warnings 'uninitialized';
