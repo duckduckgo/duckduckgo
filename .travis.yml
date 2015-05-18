@@ -10,7 +10,7 @@ before_install:
 install:
   - cpanm --quiet --notest Dist::Zilla
   - >
-      cpanm --mirror http://duckpan.org
+      cpanm --quiet --notest --mirror http://www.cpan.org/ --mirror http://duckpan.org
       DDG::GoodieBundle::OpenSourceDuckDuckGo
       DDG::SpiceBundle::OpenSourceDuckDuckGo
       DDG::FatheadBundle::OpenSourceDuckDuckGo
