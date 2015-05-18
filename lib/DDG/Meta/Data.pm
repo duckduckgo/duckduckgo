@@ -26,16 +26,19 @@ unless(%ia_metadata){
 
     my @ia_types = qw(Spice Goodie Longtail Fathead);
 
+    # Load IA metadata files.
     my %metadata_files;
     for my $iat (@ia_types){
         my $bundle = "DDG::${iat}Bundle::OpenSourceDuckDuckGo";
-        eval{ require $bundle } or next;
-        $metadata_files{$iat} = dist_file("DDG-${iat}Bundle-OpenSourceDuckDuckGo", lc $iat . '/meta/metadata.json';
+        eval "require $bundle" or next;
+        $metadata_files{$iat} = dist_file("DDG-${iat}Bundle-OpenSourceDuckDuckGo", lc $iat . '/meta/metadata.json');
     }
 
-    die "No instant answer bundles installed. If you are developing an instant answer,\n",
-        "please install one of the following (via `cpanm --mirror http://duckpan.org`):\n\n\t",
-        join("\n\t", map{ "DDG::${_}Bundle::OpenSourceDuckDuckGo" } @ia_types), "\n";
+    unless(%metadata_files){
+        warn("No instant answer bundles installed. If you are developing an instant answer,\n",
+            "please install one of the following (via `cpanm --mirror http://duckpan.org`):\n\n\t",
+            join("\n\t", map{ "DDG::${_}Bundle::OpenSourceDuckDuckGo" } @ia_types), "\n") and exit 1;
+    }
 
     FILE: while (my ($type, $filename) = each %metadata_files) {
         warn "Processing IA type: $type with file $filename" if debug;
