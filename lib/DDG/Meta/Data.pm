@@ -40,7 +40,7 @@ unless(%ia_metadata){
         warn("No instant answer bundles installed. If you are developing an instant answer, please\n",
             "install one or more of the following (via `duckpan` or `cpanm --mirror http://duckpan.org`),\n",
 			"including the type with which you are working:\n\n\t",
-            join("\n\t", map{ "DDG::${_}Bundle::OpenSourceDuckDuckGo" } @ia_types), "\n");# and exit 1;
+            join("\n\t", map{ "DDG::${_}Bundle::OpenSourceDuckDuckGo" } @ia_types), "\n");
     }
 
     FILE: while (my ($type, $filename) = each %metadata_files) {
