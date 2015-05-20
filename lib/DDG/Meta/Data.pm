@@ -164,7 +164,7 @@ sub get_ia {
 sub get_js {
     my ($self, $id) = @_;
 
-    my $metaj = encode_json($self->get_ia(id => $id));                                                                                                                                                                                              
+    my $metaj = eval { encode_json($self->get_ia(id => $id)) } or warn "Failed to encode metdata to json: $@";
 	return qq(DDH.$id = DDH.$id || {};\nDDH.$id.meta = $metaj;); 
 }
 
