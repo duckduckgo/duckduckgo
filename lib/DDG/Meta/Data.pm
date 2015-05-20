@@ -32,14 +32,14 @@ unless(%ia_metadata){
         my $bundle = "DDG::${iat}Bundle::OpenSourceDuckDuckGo";
         eval "require $bundle";
         my $f = eval{ dist_file("DDG-${iat}Bundle-OpenSourceDuckDuckGo", lc $iat . '/meta/metadata.json') }
-		    or (debug && warn $@);
+            or (debug && warn $@);
         $metadata_files{$iat} = $f if $f;
     }
 
     unless(%metadata_files){
         warn("[Error] No Instant Answer bundles installed. If you are developing an Instant Answer, please\n",
              "install one or more of the following (via `duckpan` or `cpanm --mirror http://duckpan.org`),\n",
-	     "including the type with which you are working:\n\n\t",
+         "including the type with which you are working:\n\n\t",
         join("\n\t", map{ "DDG::${_}Bundle::OpenSourceDuckDuckGo" } @ia_types), "\n"); # and exit 1;
     }
 
@@ -164,8 +164,8 @@ sub get_ia {
 sub get_js {
     my ($self, $id) = @_;
 
-    my $metaj = encode_json($self->get_ia(id => $id));                                                                                                                                                                                              
-	return qq(DDH.$id = DDH.$id || {};\nDDH.$id.meta = $metaj;); 
+    my $metaj = eval { encode_json($self->get_ia(id => $id)) } || qq|{"encode_json error":"$@"}|;
+    return qq(DDH.$id = DDH.$id || {};\nDDH.$id.meta = $metaj;); 
 }
 
 # return a hash of IA objects by id
