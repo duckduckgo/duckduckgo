@@ -1,7 +1,7 @@
 package DDG::Meta::Data;
 # ABSTRACT: Metadata functions for instant answers
 
-use JSON::XS 'decode_json';
+use JSON::XS qw'decode_json encode_json';
 use Path::Class;
 use File::ShareDir 'dist_file';
 use IO::All;
@@ -159,6 +159,13 @@ sub get_ia {
     my $m = $ia_metadata{$by}{$lookup};
     warn 'Returning IA ', p($m) if debug;
     return clone($m);
+}
+
+sub get_js {
+    my ($self, $id) = @_;
+
+    my $metaj = encode_json($self->get_ia(id => $id));                                                                                                                                                                                              
+	return qq(DDH.$id = DDH.$id || {};\nDDH.$id.meta = $metaj;); 
 }
 
 # return a hash of IA objects by id
