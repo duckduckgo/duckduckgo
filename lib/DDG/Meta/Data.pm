@@ -164,10 +164,12 @@ sub get_ia {
 }
 
 sub get_js {
-    my ($self, $id) = @_;
+    my ($self, $by, $lookup) = @_;
+    my $ia = $self->get_ia($by => $lookup);
+    return unless $ia;
 
-    my $metaj = eval { encode_json($self->get_ia(id => $id)) } || qq|{"encode_json error":"$@"}|;
-    return qq(DDH.$id = DDH.$id || {};\nDDH.$id.meta = $metaj;); 
+    my $metaj = eval { encode_json($ia) };
+    return qq(DDH.$ia->{id} = DDH.$ia->{id} || {};\nDDH.$ia->{id}.meta = $metaj;); 
 }
 
 # return a hash of IA objects by id
