@@ -6,6 +6,7 @@ use Path::Class;
 use File::ShareDir 'dist_file';
 use IO::All;
 use Clone 'clone';
+use LWP::UserAgent;
 
 use strict;
 
@@ -26,25 +27,34 @@ unless(%ia_metadata){
 
     my @ia_types = qw(Spice Goodie Longtail Fathead);
 
-    # Load IA metadata files. Not all types are required during development.
-    my %metadata_files;
+    # Load IA metadata. Not all types are required during development.
     for my $iat (@ia_types){
-        my $bundle = "DDG::${iat}Bundle::OpenSourceDuckDuckGo";
-        eval "require $bundle";
-        my $f = eval{ dist_file("DDG-${iat}Bundle-OpenSourceDuckDuckGo", lc $iat . '/meta/metadata.json') }
-            or (debug && warn $@);
-        $metadata_files{$iat} = $f if $f;
-    }
+        debug && warn "Processing IA type: $iat";
 
-    unless(%metadata_files){
-        warn("[Error] No Instant Answer bundles installed. If you are developing an Instant Answer, please\n",
-             "install one or more of the following (via `duckpan` or `cpanm --mirror http://duckpan.org`),\n",
-         "including the type with which you are working:\n\n\t",
-        join("\n\t", map{ "DDG::${_}Bundle::OpenSourceDuckDuckGo" } @ia_types), "\n"); # and exit 1;
-    }
+        my $json_endpt = lc $iat;
+        $json_endpt =~ s/goodie/goodies/;
 
-    FILE: while (my ($type, $filename) = each %metadata_files) {
-        warn "Processing IA type: $type with file $filename" if debug;
+        # Prefer freshly downloaded metadata and fall back to metadata
+        # bundled with installed IA repos
+        my $ua = LWP::UserAgent->new;
+        my $res = $ua->get("https://duck.co/ia/repo/$json_endpt/json");
+        my $json;
+        if($res->is_success){
+            $json = $res->decoded_content;
+        }
+        else {
+            debug && warn "Failed to download metdata for $iat: ", $res->status_line;
+            my $bundle = "DDG::${iat}Bundle::OpenSourceDuckDuckGo";
+            eval "require $bundle";
+            eval{
+                my $f = dist_file("DDG-${iat}Bundle-OpenSourceDuckDuckGo", lc $iat . '/meta/metadata.json');
+                $json = io($f)->all;
+            } or warn "Failed to read bundled json for $iat: $@";
+        }
+
+        next unless $json;
+        my $metadata = eval{ decode_json($json); } or warn "Failed to decode_json: $@";
+        next unless $metadata;
 
         # One metadata file for each repo with the following format
         # { "<IA name>": {
@@ -52,27 +62,23 @@ unless(%ia_metadata){
         #     "signal" : " "
         #     ....
         # }
-        my $file_data = decode_json(io($filename)->all);
 
-        # check for decode_json_file error, returns undef
-        die "reading metadata file failed ... $filename" unless $file_data;
-
-        IA: while (my ($id, $module_data) = each %{ $file_data }) {
+        IA: while (my ($id, $ia) = each %{ $metadata }) {
 
             # 20150502 (zt) Can't filter like this yet as some tests depend on non-live IA metadata
-            #next unless $module_data->{status} eq 'live';
+            #next unless $ia->{status} eq 'live';
 
             # check for bad metadata.  We need a perl_module for the by_module key
-            if($module_data->{perl_module} !~ /DDG::.+::.+/){
-                warn "Invalid perl_module for IA $id: $module_data->{perl_module} in $filename...skipping" if $module_data->{status} eq 'live';
+            if($ia->{perl_module} !~ /DDG::.+::.+/){
+                warn "Invalid perl_module for IA $id: $ia->{perl_module} in $iat metadata...skipping" if $ia->{status} eq 'live';
                 next IA;
             }
 
             # generic IsAwesome goodie metadata since these are always the same
-            if($module_data->{perl_module} =~ /IsAwesome/){
+            if($ia->{perl_module} =~ /IsAwesome/){
                 next IA if $ia_metadata{module}{'DDG::Goodie::IsAwesome'};
-                $module_data->{id} = 'is_awesome';
-                $module_data->{perl_module} = 'DDG::Goodie::IsAwesome'
+                $ia->{id} = 'is_awesome';
+                $ia->{perl_module} = 'DDG::Goodie::IsAwesome'
             }
 
             # warn if we run into a duplicate id.  These should be unique within *and*
@@ -81,17 +87,26 @@ unless(%ia_metadata){
                 warn "Duplicate ID for IA with ID: $id";
             }
 
-            my $perl_module = $module_data->{perl_module};
+            my $perl_module = $ia->{perl_module};
 
             # Clean up/set some values
-            $module_data->{signal_from} ||= $module_data->{id};
-            $module_data->{js_callback_name} = _js_callback_name($perl_module);
+            $ia->{signal_from} ||= $ia->{id};
+            $ia->{js_callback_name} = _js_callback_name($perl_module);
 
             #add new ia to ia_metadata{id}
-            $ia_metadata{id}{$id} = $module_data;
+            $ia_metadata{id}{$id} = $ia;
             #add new ia to ia_metadata{module}. Multiple ias per module possible
-            push @{$ia_metadata{module}{$perl_module}}, $module_data;
+            push @{$ia_metadata{module}{$perl_module}}, $ia;
         }
+    }
+
+    unless(%ia_metadata){
+        warn("[Error] No Instant Answer metadata loaded. Metadata will be downloaded\n",
+             "automatically if a network connection can be made to https://duck.co.\n",
+             "Alternatively, if you are developing an Instant Answer, you can install\n",
+             "one or more of the following (via `duckpan` or `cpanm --mirror http://duckpan.org`),\n",
+             "including the type with which you are working:\n\n\t",
+        join("\n\t", map{ "DDG::${_}Bundle::OpenSourceDuckDuckGo" } @ia_types), "\n"); # and exit 1;
     }
 }
 
