@@ -165,7 +165,7 @@ sub get_js {
     my ($self, $id) = @_;
 
     my $metaj = eval { encode_json($self->get_ia(id => $id)) } || qq|{"encode_json error":"$@"}|;
-    return qq(DDH.$id = DDH.$id || {};\nDDH.$id.meta = $metaj;); 
+    return qq(DDH.$id=DDH.$id||{};DDH.$id.meta=$metaj;); 
 }
 
 # return a hash of IA objects by id
