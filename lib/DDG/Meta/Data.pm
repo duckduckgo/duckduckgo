@@ -57,6 +57,8 @@ unless(%ia_metadata){
         # check for decode_json_file error, returns undef
         die "reading metadata file failed ... $filename" unless $file_data;
 
+        my $is_fathead = 1 if $type eq 'Fathead';
+
         IA: while (my ($id, $module_data) = each %{ $file_data }) {
 
             # 20150502 (zt) Can't filter like this yet as some tests depend on non-live IA metadata
@@ -91,8 +93,16 @@ unless(%ia_metadata){
             $ia_metadata{id}{$id} = $module_data;
             #add new ia to ia_metadata{module}. Multiple ias per module possible
             push @{$ia_metadata{module}{$perl_module}}, $module_data;
-            # by source number for fatheads
-            $ia_metadata{source}{$module_data->{src_id}} = $module_data if $module_data->{repo} eq 'fathead';
+            # by language for multilang wiki
+            if($is_fathead){
+                # by source number for fatheads
+                $ia_metadata{source}{$module_data->{src_id}} = $module_data if $is_fathead;
+                # by language for multi language wiki sources
+                # check that language is set since most fatheads don't have a language
+                if( my $lang = $module_data->{src_options}->{language}){
+                    $ia_metadata{lang}{$lang} = $module_data->{src_id};
+                }
+            }
         }
     }
 }
