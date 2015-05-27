@@ -201,36 +201,4 @@ sub _js_callback_name {
     return $fn;
 }
 
-# return fathead data
-sub source_data {
-    my ($self, $source) = @_;
-    if(my $data = $ia_metadata{source}{$source}){
-        return (
-            $data->{src_name} || '',
-            $data->{src_domain} || '',
-            $data->{src_options}->{src_info} || '',
-            $data->{src_options}->{is_mediawiki} || '',
-            $data->{perl_module} || ''
-        );
-    }else{
-        return ('','','','','');
-    }
-}
-
-sub source_skip {
-    my ($self, $source) = @_;
-    if(my $data = $ia_metadata{source}{$source}){
-        return (
-            $data->{src_options}->{source_name} || '',
-            $data->{src_options}->{skip_end} || '',
-            $data->{src_options}->{skip_abstract_paren} || '',
-            $data->{src_options}->{skip_image_name} || '',
-            $data->{src_options}->{skip_abstract} || '',
-            $data->{src_options}->{is_mediawiki} || '',
-        );
-    }else{
-        return ('','','','','','');
-    }
-}
-
 1;
