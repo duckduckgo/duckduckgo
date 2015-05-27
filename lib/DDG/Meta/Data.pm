@@ -175,12 +175,12 @@ sub get_ia {
 
 sub get_js {
     my ($self, $by, $lookup) = @_;
+    return unless $by =~ /id|source/;
     my $ia = $self->get_ia($by => $lookup);
     return unless $ia;
 
-    my $metaj;
     my $id = $ia->{id};
-    eval { $metaj = JSON::XS->new->ascii->encode($ia) } || return;
+    my $metaj = eval { JSON::XS->new->ascii->encode($ia) } || return;
     return qq(DDH.$id=DDH.$id||{};DDH.$id.meta=$metaj;); 
 }
 
