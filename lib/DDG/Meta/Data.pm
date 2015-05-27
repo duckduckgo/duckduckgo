@@ -6,7 +6,7 @@ use Path::Class;
 use File::ShareDir 'dist_file';
 use IO::All;
 use Clone 'clone';
-use LWP::UserAgent;
+use LWP::Simple;
 
 use strict;
 
@@ -27,6 +27,8 @@ unless(%ia_metadata){
 
     my @ia_types = qw(Spice Goodie Longtail Fathead);
 
+    my $tmpdir = io->tmpdir;
+
     # Load IA metadata. Not all types are required during development.
     for my $iat (@ia_types){
         debug && warn "Processing IA type: $iat";
@@ -36,14 +38,14 @@ unless(%ia_metadata){
 
         # Prefer freshly downloaded metadata and fall back to metadata
         # bundled with installed IA repos
-        my $ua = LWP::UserAgent->new;
-        my $res = $ua->get("https://duck.co/ia/repo/$json_endpt/json");
+        my $f = "$tmpdir/$iat.json";
+        my $c = mirror("https://duck.co/ia/repo/$json_endpt/json", $f);
         my $json;
-        if($res->is_success){
-            $json = $res->decoded_content;
+        if($c == RC_OK || $c == RC_NOT_MODIFIED){
+            $json = io($f)->slurp; 
         }
         else {
-            debug && warn "Failed to download metdata for $iat: ", $res->status_line;
+            debug && warn "Failed to download metdata for $iat: $c";
             my $bundle = "DDG::${iat}Bundle::OpenSourceDuckDuckGo";
             eval "require $bundle";
             eval{
