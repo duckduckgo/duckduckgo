@@ -96,7 +96,7 @@ unless(%ia_metadata){
             # by language for multilang wiki
             if($is_fathead){
                 # by source number for fatheads
-                $ia_metadata{source}{$module_data->{src_id}} = $module_data if $is_fathead;
+                $ia_metadata{source}{$module_data->{src_id}} = $module_data;
                 # by language for multi language wiki sources
                 # check that language is set since most fatheads don't have a language
                 if( my $lang = $module_data->{src_options}->{language}){
