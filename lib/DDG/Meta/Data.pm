@@ -39,7 +39,7 @@ unless(%ia_metadata){
         # Prefer freshly downloaded metadata and fall back to metadata
         # bundled with installed IA repos
         my $f = "$tmpdir/$iat.json";
-        my $c = mirror("https://duck.co/ia/repo/$json_endpt/json", $f);
+        my $c = $ENV{NO_METADATA_DOWNLOAD} ? 0 : mirror("https://duck.co/ia/repo/$json_endpt/json", $f);
         my $json;
         if($c == RC_OK || $c == RC_NOT_MODIFIED){
             $json = io($f)->slurp; 
