@@ -152,7 +152,7 @@ sub apply_keywords {
     }
     $s->add_symbol('&metadata', $id_required ? 
         sub { return $dynamic_meta->($_[1]); } :
-		sub { $ias->[0] }
+        sub { $ias->[0] }
     );
 }
 
