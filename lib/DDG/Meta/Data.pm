@@ -5,7 +5,6 @@ use JSON::XS qw'decode_json encode_json';
 use Path::Class;
 use File::ShareDir 'dist_file';
 use IO::All;
-use Clone 'clone';
 
 use strict;
 
@@ -152,12 +151,8 @@ sub apply_keywords {
         );
     }
     $s->add_symbol('&metadata', $id_required ? 
-        sub {
-            my $m = $dynamic_meta->($_[1]);
-            return clone($m);
-        }
-        :
-        sub { clone($ias->[0]) }
+        sub { return $dynamic_meta->($_[1]); } :
+		sub { $ias->[0] }
     );
 }
 
@@ -167,10 +162,9 @@ sub get_ia {
     
     $lookup =~ s/^DDG::Goodie::IsAwesome\K::.+$//;
 
-    # make a copy of the hash; doesn't need deep cloning atm
     my $m = $ia_metadata{$by}{$lookup};
     warn 'Returning IA ', p($m) if debug;
-    return clone($m);
+    return $m;
 }
 
 sub get_js {
@@ -185,9 +179,7 @@ sub get_js {
 }
 
 # return a hash of IA objects by id
-sub by_id {
-    return clone($ia_metadata{id});
-}
+sub by_id { return $ia_metadata{id}; }
 
 # Internal function.
 sub _js_callback_name {
