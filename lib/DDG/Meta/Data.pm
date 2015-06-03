@@ -27,7 +27,15 @@ unless(%ia_metadata){
 
     my @ia_types = qw(Spice Goodie Longtail Fathead);
 
-    my $tmpdir = io->tmpdir;
+	my $home = (getpwuid $>)[7];
+	unless($home){
+	   die "No home directory found uid $>: $home";
+	}
+
+	my $mdir = "$home/.ddg";
+	unless(-d $mdir){
+		mkdir $mdir or die "Failed to mkdir $mdir: $!";
+	}
 
     # Load IA metadata. Not all types are required during development.
     for my $iat (@ia_types){
@@ -38,7 +46,7 @@ unless(%ia_metadata){
 
         # Prefer freshly downloaded metadata and fall back to metadata
         # bundled with installed IA repos
-        my $f = "$tmpdir/$iat.json";
+        my $f = "$mdir/$iat.json";
         my $c = $ENV{NO_METADATA_DOWNLOAD} ? 0 : mirror("https://duck.co/ia/repo/$json_endpt/json", $f);
         my $json;
         if($c == RC_OK || $c == RC_NOT_MODIFIED){
