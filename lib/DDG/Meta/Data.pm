@@ -46,12 +46,12 @@ unless(%ia_metadata){
         }
         else {
             debug && warn "Failed to download metdata for $iat: $c";
-            my $bundle = "DDG::${iat}Bundle::OpenSourceDuckDuckGo";
-            eval "require $bundle";
-            eval{
-                my $f = dist_file("DDG-${iat}Bundle-OpenSourceDuckDuckGo", lc $iat . '/meta/metadata.json');
+            if(-f $f){
                 $json = io($f)->all;
-            } or warn "Failed to read bundled json for $iat: $@";
+            }
+            else{
+               warn "Failed to download metadata for $iat and no local file $f";
+            }
         }
 
         next unless $json;
