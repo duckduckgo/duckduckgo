@@ -151,7 +151,7 @@ sub apply_keywords {
         );
     }
     $s->add_symbol('&metadata', $id_required ? 
-        sub { return $dynamic_meta->($_[1]); } :
+        sub { $dynamic_meta->($_[1]) } :
         sub { $ias->[0] }
     );
 }
@@ -179,7 +179,7 @@ sub get_js {
 }
 
 # return a hash of IA objects by id
-sub by_id { return $ia_metadata{id}; }
+sub by_id { $ia_metadata{id} }
 
 # Internal function.
 sub _js_callback_name {
