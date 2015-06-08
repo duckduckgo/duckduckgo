@@ -5,7 +5,6 @@ use JSON::XS qw'decode_json encode_json';
 use Path::Class;
 use File::ShareDir 'dist_file';
 use IO::All;
-use Clone 'clone';
 use LWP::Simple;
 
 use strict;
@@ -73,6 +72,8 @@ unless(%ia_metadata){
         #     ....
         # }
 
+        my $is_fathead = 1 if $iat eq 'Fathead';
+
         IA: while (my ($id, $ia) = each %{ $metadata }) {
 
             # 20150502 (zt) Can't filter like this yet as some tests depend on non-live IA metadata
@@ -107,6 +108,16 @@ unless(%ia_metadata){
             $ia_metadata{id}{$id} = $ia;
             #add new ia to ia_metadata{module}. Multiple ias per module possible
             push @{$ia_metadata{module}{$perl_module}}, $ia;
+            # by language for multilang wiki
+            if($is_fathead){
+                # by source number for fatheads
+                $ia_metadata{source}{$ia->{src_id}} = $ia;
+                # by language for multi language wiki sources
+                # check that language is set since most fatheads don't have a language
+                if( my $lang = $ia->{src_options}->{language}){
+                    $ia_metadata{lang}{$lang} = $ia->{src_id};
+                }
+            }
         }
     }
 
@@ -165,12 +176,8 @@ sub apply_keywords {
         );
     }
     $s->add_symbol('&metadata', $id_required ? 
-        sub {
-            my $m = $dynamic_meta->($_[1]);
-            return clone($m);
-        }
-        :
-        sub { clone($ias->[0]) }
+        sub { $dynamic_meta->($_[1]) } :
+        sub { $ias->[0] }
     );
 }
 
@@ -180,23 +187,24 @@ sub get_ia {
     
     $lookup =~ s/^DDG::Goodie::IsAwesome\K::.+$//;
 
-    # make a copy of the hash; doesn't need deep cloning atm
     my $m = $ia_metadata{$by}{$lookup};
     warn 'Returning IA ', p($m) if debug;
-    return clone($m);
+    return $m;
 }
 
 sub get_js {
-    my ($self, $id) = @_;
+    my ($self, $by, $lookup) = @_;
+    return unless $by =~ /id|source/;
+    my $ia = $self->get_ia($by => $lookup);
+    return unless $ia;
 
-    my $metaj = eval { encode_json($self->get_ia(id => $id)) } || qq|{"encode_json error":"$@"}|;
-    return qq(DDH.$id = DDH.$id || {};\nDDH.$id.meta = $metaj;); 
+    my $id = $ia->{id};
+    my $metaj = eval { JSON::XS->new->ascii->encode($ia) } || return;
+    return qq(DDH.$id=DDH.$id||{};DDH.$id.meta=$metaj;); 
 }
 
 # return a hash of IA objects by id
-sub by_id {
-    return clone($ia_metadata{id});
-}
+sub by_id { $ia_metadata{id} }
 
 # Internal function.
 sub _js_callback_name {
