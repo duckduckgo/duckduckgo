@@ -27,15 +27,15 @@ unless(%ia_metadata){
 
     my @ia_types = qw(Spice Goodie Longtail Fathead);
 
-	my $home = (getpwuid $>)[7];
-	unless($home){
-	   die "No home directory found uid $>: $home";
-	}
+    my $tmpdir = io->tmpdir;
+    unless($tmpdir){
+       die 'No system temp directory found';
+    }
 
-	my $mdir = "$home/.ddg";
-	unless(-d $mdir){
-		mkdir $mdir or die "Failed to mkdir $mdir: $!";
-	}
+    my $mdir = "$tmpdir/ddg-$>";
+    unless(-d $mdir){
+        mkdir $mdir or die "Failed to mkdir $mdir: $!";
+    }
 
     # Load IA metadata. Not all types are required during development.
     for my $iat (@ia_types){
