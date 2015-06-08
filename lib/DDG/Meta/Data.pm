@@ -5,7 +5,6 @@ use JSON::XS qw'decode_json encode_json';
 use Path::Class;
 use File::ShareDir 'dist_file';
 use IO::All;
-use Clone 'clone';
 
 use strict;
 
@@ -156,12 +155,8 @@ sub apply_keywords {
         );
     }
     $s->add_symbol('&metadata', $id_required ? 
-        sub {
-            my $m = $dynamic_meta->($_[1]);
-            return clone($m);
-        }
-        :
-        sub { clone($ias->[0]) }
+        sub { $dynamic_meta->($_[1]) } :
+        sub { $ias->[0] }
     );
 }
 
@@ -171,10 +166,9 @@ sub get_ia {
     
     $lookup =~ s/^DDG::Goodie::IsAwesome\K::.+$//;
 
-    # make a copy of the hash; doesn't need deep cloning atm
     my $m = $ia_metadata{$by}{$lookup};
     warn 'Returning IA ', p($m) if debug;
-    return clone($m);
+    return $m;
 }
 
 sub get_js {
@@ -188,25 +182,17 @@ sub get_js {
     return qq(DDH.$id=DDH.$id||{};DDH.$id.meta=$metaj;); 
 }
 
-# return a hash of IA metadata for all IAs by id
-sub by_id {
-    return clone($ia_metadata{id});
-}
+# return a hash of IA objects by id
+sub by_id { $ia_metadata{id} }
 
 # return a hash of IA metadata for fatheads
-sub by_source {
-    return clone($ia_metadata{source});
-}
+sub by_source { $ia_metadata{source} }
 
 # return hash if IA metadata by language
-sub by_lang {
-    return clone($ia_metadata{lang});
-}
+sub by_lang { $ia_metadata{lang} }
 
 # fathead min lengths
-sub by_length {
-    return clone($ia_metadata{min_length});
-}
+sub by_length { $ia_metadata{min_length} }
 
 # Internal function.
 sub _js_callback_name {
