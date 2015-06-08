@@ -93,15 +93,19 @@ unless(%ia_metadata){
             $ia_metadata{id}{$id} = $module_data;
             #add new ia to ia_metadata{module}. Multiple ias per module possible
             push @{$ia_metadata{module}{$perl_module}}, $module_data;
-            # by language for multilang wiki
+
             if($is_fathead){
+                my $source = $module_data->{src_id};
                 # by source number for fatheads
-                $ia_metadata{source}{$module_data->{src_id}} = $module_data;
+                $ia_metadata{source}{$source} = $module_data;
                 # by language for multi language wiki sources
                 # check that language is set since most fatheads don't have a language
                 if( my $lang = $module_data->{src_options}->{language}){
-                    $ia_metadata{lang}{$lang} = $module_data->{src_id};
+                    $ia_metadata{lang}{$lang} = $source;
                 }
+
+                my $min_length = $module_data->{src_options}->{min_abstract_length};
+                $ia_metadata{min_length}{$source} = $min_length if $min_length;
             }
         }
     }
@@ -184,9 +188,24 @@ sub get_js {
     return qq(DDH.$id=DDH.$id||{};DDH.$id.meta=$metaj;); 
 }
 
-# return a hash of IA objects by id
+# return a hash of IA metadata for all IAs by id
 sub by_id {
     return clone($ia_metadata{id});
+}
+
+# return a hash of IA metadata for fatheads
+sub by_source {
+    return clone($ia_metadata{source});
+}
+
+# return hash if IA metadata by language
+sub by_lang {
+    return clone($ia_metadata{lang});
+}
+
+# fathead min lengths
+sub by_length {
+    return clone($ia_metadata{min_length});
 }
 
 # Internal function.
