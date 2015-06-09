@@ -186,13 +186,13 @@ sub get_js {
 sub by_id { $ia_metadata{id} }
 
 # return a hash of IA metadata for fatheads
-sub by_source { $ia_metadata{source} }
+sub fathead_by_source { $ia_metadata{source} }
 
 # return hash if IA metadata by language
-sub by_lang { $ia_metadata{lang} }
+sub fathead_by_lang { $ia_metadata{lang} }
 
 # fathead min lengths
-sub by_length { $ia_metadata{min_length} }
+sub fathead_by_length { $ia_metadata{min_length} }
 
 # Internal function.
 sub _js_callback_name {
