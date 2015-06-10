@@ -204,7 +204,14 @@ example.
 It doesnt check which one is bigger, the first one must always be lower then
 the second one given. You can also just give one index position.
 
+When called will set the remainder attribute for later use, e.g. L</matched_trigger>.
+
 =cut
+
+has remainder => (
+    is => 'rwp',
+	lazy => 1
+);
 
 sub generate_remainder {
 	my ( $self, $from_pos, $to_pos ) = @_;
@@ -225,7 +232,30 @@ sub generate_remainder {
 		$right_remainder =~ s/^\s//;
 		$remainder = $left_remainder.' '.$right_remainder;
 	}
+	$self->_set_remainder($remainder);
 	return $remainder;
+}
+
+=attr matched_trigger
+
+Uses L</remainder> and L</query_raw> to derive the trigger.  Will only
+work when using the remainder handle.
+
+=cut
+
+has matched_trigger => (
+	is => 'ro',
+	lazy => 1,
+	builder => 1
+);
+
+sub _build_matched_trigger {
+	my $self = shift;
+
+	my $r = $self->remainder || '';
+	my $qr = $self->query_raw;
+	$qr =~ s/\s*\Q$r\E\s*//i;
+	return $qr;
 }
 
 =attr query
