@@ -110,56 +110,6 @@ unless(%ia_metadata){
     }
 }
 
-my %applied;
-
-sub apply_keywords {
-    my ($self, $target) = @_;
-
-    return if $applied{$target};    
-
-    my $ias;
-    unless($ias = $self->get_ia(module => $target)){
-        warn "No metadata found for $target" if debug;
-        return;
-    }
-    # If only one id this will be false. Only a few IAs have
-    # multiple ids per module, e.g. CheatSheets
-    my $id_required = @{$ias} - 1;
-
-    my $s = Package::Stash->new($target);
-
-    # Will return metadata by id from the current subset of the IA's metadata
-    my $dynamic_meta = sub {
-        my $id = $_[0];
-        unless($id){
-            die "No id provided to dynamic instant answer";
-        }
-        my @m = grep {$_->{id} eq $id} @$ias;
-        unless(@m == 1){
-            die "Failed to select metadata with id $id";
-        }
-        return $m[0];
-    };
-
-    # Check for id_required *outside* of the subs so we don't incur the
-    # slight performance penalty across the board. Remember that these
-    # are method calls and that $_[0] is self
-    while(my ($k, $v) = each %{$ias->[0]}){ # must have at least one set of metadata
-        $s->add_symbol("&$k", $id_required ? 
-            sub {
-                my $m = $dynamic_meta->($_[1]);
-                return $m->{$k};
-            }
-            :
-            sub { $v }
-        );
-    }
-    $s->add_symbol('&metadata', $id_required ? 
-        sub { $dynamic_meta->($_[1]) } :
-        sub { $ias->[0] }
-    );
-}
-
 sub get_ia {
     my ($self, $by, $lookup) = @_;
     warn 'Get IA obj lookup params: ', p($lookup) if debug;
