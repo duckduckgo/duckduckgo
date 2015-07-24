@@ -15,9 +15,9 @@ use if debug, 'Data::Printer';
 no warnings 'uninitialized';
 
 # $ia_metadata => {
-#    id => { ... }
-#    module => { ... }
-#    sharedir => { ... }
+#    id => ...
+#    module => ...
+#    sharedir => ...
 # }
 my %ia_metadata;
 
@@ -127,7 +127,7 @@ unless(%ia_metadata){
     unless(%ia_metadata){
         warn "[Error] No Instant Answer metadata loaded. Metadata will be downloaded\n",
              "automatically and stored in $mdir if a network connection can be made\n",
-			 "to https://duck.co.\n";
+             "to https://duck.co.\n";
     }
 }
 
