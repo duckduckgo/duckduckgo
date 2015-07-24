@@ -110,75 +110,25 @@ unless(%ia_metadata){
             push @{$ia_metadata{module}{$perl_module}}, $ia;
             # by language for multilang wiki
             if($is_fathead){
+                my $source = $ia->{src_id};
                 # by source number for fatheads
-                $ia_metadata{source}{$ia->{src_id}} = $ia;
+                $ia_metadata{fathead_source}{$source} = $ia;
                 # by language for multi language wiki sources
                 # check that language is set since most fatheads don't have a language
-                if( my $lang = $ia->{src_options}->{language}){
-                    $ia_metadata{lang}{$lang} = $ia->{src_id};
+                if( my $lang = $ia->{src_options}{language}){
+                    $ia_metadata{fathead_lang}{$lang} = $source;
                 }
+                my $min_length = $ia->{src_options}{min_abstract_length};
+                $ia_metadata{fathead_min_length}{$source} = $min_length if $min_length;
             }
         }
     }
 
     unless(%ia_metadata){
-        warn("[Error] No Instant Answer metadata loaded. Metadata will be downloaded\n",
-             "automatically if a network connection can be made to https://duck.co.\n",
-             "Alternatively, if you are developing an Instant Answer, you can install\n",
-             "one or more of the following (via `duckpan` or `cpanm --mirror http://duckpan.org`),\n",
-             "including the type with which you are working:\n\n\t",
-        join("\n\t", map{ "DDG::${_}Bundle::OpenSourceDuckDuckGo" } @ia_types), "\n"); # and exit 1;
+        warn "[Error] No Instant Answer metadata loaded. Metadata will be downloaded\n",
+             "automatically and stored in $mdir if a network connection can be made\n",
+			 "to https://duck.co.\n";
     }
-}
-
-my %applied;
-
-sub apply_keywords {
-    my ($self, $target) = @_;
-
-    return if $applied{$target};    
-
-    my $ias;
-    unless($ias = $self->get_ia(module => $target)){
-        warn "No metadata found for $target" if debug;
-        return;
-    }
-    # If only one id this will be false. Only a few IAs have
-    # multiple ids per module, e.g. CheatSheets
-    my $id_required = @{$ias} - 1;
-
-    my $s = Package::Stash->new($target);
-
-    # Will return metadata by id from the current subset of the IA's metadata
-    my $dynamic_meta = sub {
-        my $id = $_[0];
-        unless($id){
-            die "No id provided to dynamic instant answer";
-        }
-        my @m = grep {$_->{id} eq $id} @$ias;
-        unless(@m == 1){
-            die "Failed to select metadata with id $id";
-        }
-        return $m[0];
-    };
-
-    # Check for id_required *outside* of the subs so we don't incur the
-    # slight performance penalty across the board. Remember that these
-    # are method calls and that $_[0] is self
-    while(my ($k, $v) = each %{$ias->[0]}){ # must have at least one set of metadata
-        $s->add_symbol("&$k", $id_required ? 
-            sub {
-                my $m = $dynamic_meta->($_[1]);
-                return $m->{$k};
-            }
-            :
-            sub { $v }
-        );
-    }
-    $s->add_symbol('&metadata', $id_required ? 
-        sub { $dynamic_meta->($_[1]) } :
-        sub { $ias->[0] }
-    );
 }
 
 sub get_ia {
@@ -205,6 +155,15 @@ sub get_js {
 
 # return a hash of IA objects by id
 sub by_id { $ia_metadata{id} }
+
+# return a hash of IA metadata for fatheads
+sub fathead_by_source { $ia_metadata{fathead_source} }
+
+# return hash if IA metadata by language
+sub fathead_by_lang { $ia_metadata{fathead_lang} }
+
+# fathead min lengths
+sub fathead_by_length { $ia_metadata{fathead_min_length} }
 
 # Internal function.
 sub _js_callback_name {
