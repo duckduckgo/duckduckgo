@@ -5,6 +5,7 @@ use JSON::XS qw'decode_json encode_json';
 use Path::Class;
 use File::ShareDir 'dist_file';
 use IO::All;
+use LWP::Simple;
 
 use strict;
 
@@ -14,9 +15,9 @@ use if debug, 'Data::Printer';
 no warnings 'uninitialized';
 
 # $ia_metadata => {
-#    id => { ... }
-#    module => { ... }
-#    sharedir => { ... }
+#    id => ...
+#    module => ...
+#    sharedir => ...
 # }
 my %ia_metadata;
 
@@ -25,25 +26,44 @@ unless(%ia_metadata){
 
     my @ia_types = qw(Spice Goodie Longtail Fathead);
 
-    # Load IA metadata files. Not all types are required during development.
-    my %metadata_files;
+    my $tmpdir = io->tmpdir;
+    unless($tmpdir){
+       die 'No system temp directory found';
+    }
+
+    my $mdir = "$tmpdir/ddg-$>";
+    unless(-d $mdir){
+        mkdir $mdir or die "Failed to mkdir $mdir: $!";
+    }
+
+    # Load IA metadata. Not all types are required during development.
     for my $iat (@ia_types){
-        my $bundle = "DDG::${iat}Bundle::OpenSourceDuckDuckGo";
-        eval "require $bundle";
-        my $f = eval{ dist_file("DDG-${iat}Bundle-OpenSourceDuckDuckGo", lc $iat . '/meta/metadata.json') }
-            or (debug && warn $@);
-        $metadata_files{$iat} = $f if $f;
-    }
+        debug && warn "Processing IA type: $iat";
 
-    unless(%metadata_files){
-        warn("[Error] No Instant Answer bundles installed. If you are developing an Instant Answer, please\n",
-             "install one or more of the following (via `duckpan` or `cpanm --mirror http://duckpan.org`),\n",
-         "including the type with which you are working:\n\n\t",
-        join("\n\t", map{ "DDG::${_}Bundle::OpenSourceDuckDuckGo" } @ia_types), "\n"); # and exit 1;
-    }
+        my $json_endpt = lc $iat;
+        $json_endpt =~ s/goodie/goodies/;
 
-    FILE: while (my ($type, $filename) = each %metadata_files) {
-        warn "Processing IA type: $type with file $filename" if debug;
+        # Prefer freshly downloaded metadata and fall back to metadata
+        # bundled with installed IA repos
+        my $f = "$mdir/$iat.json";
+        my $c = $ENV{NO_METADATA_DOWNLOAD} ? 0 : mirror("https://duck.co/ia/repo/$json_endpt/json", $f);
+        my $json;
+        if($c == RC_OK || $c == RC_NOT_MODIFIED){
+            $json = io($f)->slurp; 
+        }
+        else {
+            debug && warn "Failed to download metdata for $iat: $c";
+            if(-f $f){
+                $json = io($f)->all;
+            }
+            else{
+               warn "Failed to download metadata for $iat and no local file $f";
+            }
+        }
+
+        next unless $json;
+        my $metadata = eval{ decode_json($json); } or warn "Failed to decode_json: $@";
+        next unless $metadata;
 
         # One metadata file for each repo with the following format
         # { "<IA name>": {
@@ -51,29 +71,25 @@ unless(%ia_metadata){
         #     "signal" : " "
         #     ....
         # }
-        my $file_data = decode_json(io($filename)->all);
 
-        # check for decode_json_file error, returns undef
-        die "reading metadata file failed ... $filename" unless $file_data;
+        my $is_fathead = 1 if $iat eq 'Fathead';
 
-        my $is_fathead = 1 if $type eq 'Fathead';
-
-        IA: while (my ($id, $module_data) = each %{ $file_data }) {
+        IA: while (my ($id, $ia) = each %{ $metadata }) {
 
             # 20150502 (zt) Can't filter like this yet as some tests depend on non-live IA metadata
-            #next unless $module_data->{status} eq 'live';
+            #next unless $ia->{status} eq 'live';
 
             # check for bad metadata.  We need a perl_module for the by_module key
-            if($module_data->{perl_module} !~ /DDG::.+::.+/){
-                warn "Invalid perl_module for IA $id: $module_data->{perl_module} in $filename...skipping" if $module_data->{status} eq 'live';
+            if($ia->{perl_module} !~ /DDG::.+::.+/){
+                warn "Invalid perl_module for IA $id: $ia->{perl_module} in $iat metadata...skipping" if $ia->{status} eq 'live';
                 next IA;
             }
 
             # generic IsAwesome goodie metadata since these are always the same
-            if($module_data->{perl_module} =~ /IsAwesome/){
+            if($ia->{perl_module} =~ /IsAwesome/){
                 next IA if $ia_metadata{module}{'DDG::Goodie::IsAwesome'};
-                $module_data->{id} = 'is_awesome';
-                $module_data->{perl_module} = 'DDG::Goodie::IsAwesome'
+                $ia->{id} = 'is_awesome';
+                $ia->{perl_module} = 'DDG::Goodie::IsAwesome'
             }
 
             # warn if we run into a duplicate id.  These should be unique within *and*
@@ -82,31 +98,36 @@ unless(%ia_metadata){
                 warn "Duplicate ID for IA with ID: $id";
             }
 
-            my $perl_module = $module_data->{perl_module};
+            my $perl_module = $ia->{perl_module};
 
             # Clean up/set some values
-            $module_data->{signal_from} ||= $module_data->{id};
-            $module_data->{js_callback_name} = _js_callback_name($perl_module);
+            $ia->{signal_from} ||= $ia->{id};
+            $ia->{js_callback_name} = _js_callback_name($perl_module);
 
             #add new ia to ia_metadata{id}
-            $ia_metadata{id}{$id} = $module_data;
+            $ia_metadata{id}{$id} = $ia;
             #add new ia to ia_metadata{module}. Multiple ias per module possible
-            push @{$ia_metadata{module}{$perl_module}}, $module_data;
-
+            push @{$ia_metadata{module}{$perl_module}}, $ia;
+            # by language for multilang wiki
             if($is_fathead){
-                my $source = $module_data->{src_id};
+                my $source = $ia->{src_id};
                 # by source number for fatheads
-                $ia_metadata{fathead_source}{$source} = $module_data;
+                $ia_metadata{fathead_source}{$source} = $ia;
                 # by language for multi language wiki sources
                 # check that language is set since most fatheads don't have a language
-                if( my $lang = $module_data->{src_options}->{language}){
+                if( my $lang = $ia->{src_options}{language}){
                     $ia_metadata{fathead_lang}{$lang} = $source;
                 }
-
-                my $min_length = $module_data->{src_options}->{min_abstract_length};
+                my $min_length = $ia->{src_options}{min_abstract_length};
                 $ia_metadata{fathead_min_length}{$source} = $min_length if $min_length;
             }
         }
+    }
+
+    unless(%ia_metadata){
+        warn "[Error] No Instant Answer metadata loaded. Metadata will be downloaded\n",
+             "automatically and stored in $mdir if a network connection can be made\n",
+             "to https://duck.co.\n";
     }
 }
 
