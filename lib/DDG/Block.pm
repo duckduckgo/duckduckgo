@@ -5,6 +5,7 @@ use Moo::Role;
 use Carp;
 use Class::Load ':all';
 use POSIX qw(strftime);
+use Data::Printer;
 
 requires qw(
 	request
@@ -201,8 +202,8 @@ sub _build__plugin_objs {
 		my $class;
 		my %args;
 		if (ref $_ eq 'HASH') {
-			croak "require a class key in hash" unless defined $_->{class};
-			$class = delete $_->{class};
+			croak "require a class key in hash" unless $class = delete $_->{class};
+			warn "HASH CLASS: ", p($lcass);w
 			%args = %{$_};
 		} else {
 			$class = $_;
