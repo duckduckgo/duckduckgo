@@ -156,8 +156,11 @@ sub _build_nginx_conf {
 
 	$cfg .= "\techo_before_body '".$self->callback."(';\n" if $wrap_jsonp_callback;
 	$cfg .= "\techo_before_body '".$self->callback.qq|("';\n| if $wrap_string_callback;
+	my ($spice_name) = $self->path =~ /js\/spice\/(.+?)\//;
+	my $upstream = '$'.$spice_name.'_upstream';
+	$cfg .= "\tset ". $upstream . ' ' . $scheme."://".$host.":".$port.";\n";
 	$cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")." ".$uri_path." break;\n";
-	$cfg .= "\tproxy_pass ".$scheme."://".$host.":".$port."/;\n";
+	$cfg .= "\tproxy_pass $upstream;\n";
 	$cfg .= "\tproxy_set_header ".$self->proxy_x_forwarded_for.";\n" if $is_duckduckgo;
 
         if($self->has_proxy_cache_valid) {
