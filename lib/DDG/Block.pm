@@ -5,6 +5,9 @@ use Moo::Role;
 use Carp;
 use Class::Load ':all';
 use POSIX qw(strftime);
+use DDG::Meta::Data;
+use Text::Template;
+use Data::Printer;
 
 requires qw(
 	request
@@ -194,6 +197,29 @@ has _plugin_objs => (
 );
 sub plugin_objs { shift->_plugin_objs }
 
+# dynamically generate a package for inclusion in a block for IAs 
+# that don't have a physical module
+has package_template => (
+	is => 'ro',
+	default => sub {
+		my $tt = Text::Template->new(TYPE => 'STRING',
+			SOURCE => q| 
+			package DDG::{$type}::{$id};
+			use DDG::{$type};
+			triggers {$triggers[0]} => '{join("','", @{$triggers[1]})}';
+			handle {$handle} => sub \{
+			    return undef, structure_answer => {
+					id => '{$id}',
+					name => '{$name}',
+					data => {},
+					templates => {}
+				};
+			\};
+			1;|
+		);
+	}
+);
+
 sub _build__plugin_objs {
 	my ( $self ) = @_;
 	my @plugin_objs;
@@ -204,19 +230,30 @@ sub _build__plugin_objs {
 			croak "require a class key in hash" unless defined $_->{class};
 			$class = delete $_->{class};
 			%args = %{$_};
-		} else {
+		}
+		else{
 			$class = $_;
 		}
 		my $plugin;
 		if (ref $class) {
 			$plugin = $class;
-		} else {
-			unless (try_load_class($class)) {
-				if ($self->allow_missing_plugins) {
+		}
+		else {
+			warn "loading $class";
+			unless(try_load_class($class)) {
+				warn "Failed to load $class";
+				my $m = DDG::Meta::Data->get_ia(module => $class)->[0];
+				if(exists $m->{triggers}){
+					warn "Creating package for ", $m->{id};
+					my $p = $self->package_template->fill_in(HASH => $m);
+					eval { $p } or die "Failed to create package for $m->{id}: $@";
+				}
+				elsif($self->allow_missing_plugins) {
 					if (ref $self->allow_missing_plugins eq 'CODE') {
 						$self->allow_missing_plugins->($self,$class);
 					}
-				} else {
+				}
+				else {
 					die "Can't load plugin ".$class;
 				}
 				next;
