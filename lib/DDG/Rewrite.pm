@@ -157,14 +157,9 @@ sub _build_nginx_conf {
 	$cfg .= "\techo_before_body '".$self->callback."(';\n" if $wrap_jsonp_callback;
 	$cfg .= "\techo_before_body '".$self->callback.qq|("';\n| if $wrap_string_callback;
 
-	my $spice_name;
-	if(($spice_name) = $self->path =~ m/js\/spice\/(.+)\/?/){
-		$spice_name =~ s/\/$//;
+	my ($spice_name, $upstream) = ('','');
+	if(($spice_name) = $self->path =~ m{^/js/spice/(.+)/$}){
 		$spice_name =~ s|/|_|og;
-	}
-
-	my $upstream = '';
-	if (defined $spice_name) {
 		$upstream = '$'.$spice_name.'_upstream';
 		$cfg .= "\tset $upstream $scheme://$host:$port;\n";
 	}
