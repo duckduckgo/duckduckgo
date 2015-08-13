@@ -131,4 +131,14 @@ my $ddgrewrite = DDG::Rewrite->new(
 isa_ok($ddgrewrite,'DDG::Rewrite');
 like($ddgrewrite->nginx_conf,qr/X-Forwarded-For/,'Checking DuckDuckGo rewrite');
 
+my $upstream_rewrite = DDG::Rewrite->new(
+        path => '/js/spice/spice_name',
+        from => '([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|)',
+        to => 'http://some.api/$1/?a=$2&b=$3&cb={{callback}}&ak={{ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY}}}',
+	callback => 'test',
+);
+
+my $upstream_line = '\tset $spice_name_upstream http://some.api:80;';
+like($upstream_rewrite->nginx_conf, qr/set \$spice_name_upstream http:\/\/some\.api:80;/,'Checking upstream rewrite');
+
 done_testing;
