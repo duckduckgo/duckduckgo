@@ -164,7 +164,7 @@ sub _build_nginx_conf {
 		$cfg .= "\tset $upstream $scheme://$host:$port;\n";
 	} else {
 		warn "Error: Problem finding spice name in ".$self->path; return
-    }
+	}
 
 	$cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")." ".$uri_path." break;\n";
 	$cfg .= "\tproxy_pass $upstream;\n";

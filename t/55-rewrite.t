@@ -20,7 +20,7 @@ like($@,qr/Missing callback attribute for {{callback}}/,'Seeking proper error on
 delete $ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY} if defined $ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY};
 
 my $missing_rewrite = DDG::Rewrite->new(
-	path => '/js/test/',
+	path => '/js/spice/spice_name',
 	from => '([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|)',
 	to => 'http://some.api/$1/?a=$2&b=$3&cb={{callback}}&ak={{ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY}}}',
 	callback => 'buh',
@@ -33,7 +33,7 @@ is_deeply($missing_rewrite->missing_envs,['DDGTEST_DDG_REWRITE_TEST_API_KEY'],'C
 $ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY} = 1;
 
 my $rewrite = DDG::Rewrite->new(
-	path => '/js/test/',
+	path => '/js/spice/spice_name/',
 	from => '([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|)',
 	to => 'http://some.api/$1/?a=$2&b=$3&cb={{callback}}&ak={{ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY}}}',
 	callback => 'test',
@@ -62,7 +62,7 @@ is($rewrite->nginx_conf,'location ^~ /js/spice/spice_name/ {
 ','Checking generated nginx.conf');
 
 my $dollarrewrite = DDG::Rewrite->new(
-	path => '/js/test/',
+	path => '/js/spice/spice_name/',
 	to => 'http://some.api/{{dollar}}',
 );
 
@@ -75,7 +75,7 @@ is($dollarrewrite->nginx_conf,'location ^~ /js/spice/spice_name/ {
 ','Checking {{dollar}} replacement');
 
 my $minrewrite = DDG::Rewrite->new(
-	path => '/js/test/',
+	path => '/js/spice/spice_name/',
 	to => 'http://some.api/$1',
 );
 
@@ -91,7 +91,7 @@ is($minrewrite->nginx_conf,'location ^~ /js/spice/spice_name/ {
 ','Checking generated nginx.conf');
 
 my $minrewrite_https = DDG::Rewrite->new(
-	path => '/js/test/',
+	path => '/js/spice/spice_name/',
 	to => 'https://some.api/$1',
 );
 
@@ -107,7 +107,7 @@ is($minrewrite_https->nginx_conf,'location ^~ /js/spice/spice_name/ {
 ','Checking generated nginx.conf');
 
 my $minrewrite_with_port = DDG::Rewrite->new(
-	path => '/js/test2/',
+	path => '/js/spice/spice_test2/',
 	to => 'http://some.api:3000/$1',
 );
 
@@ -123,14 +123,14 @@ is($minrewrite_with_port->nginx_conf,'location ^~ /js/spice/spice_test2/ {
 ','Checking generated nginx.conf');
 
 my $localhostrewrite = DDG::Rewrite->new(
-       path => '/js/test/',
+       path => '/js/spice/spice_test/',
        to => 'https://127.0.0.1',
 );
 isa_ok($localhostrewrite,'DDG::Rewrite');
 like($localhostrewrite->nginx_conf,qr/X-Forwarded-For/,'Checking localhost rewrite');
 
 my $ddgrewrite = DDG::Rewrite->new(
-       path => '/js/test/',
+       path => '/js/spice/spice_test/',
        to => 'https://duckduckgo.com',
 );
 isa_ok($ddgrewrite,'DDG::Rewrite');
