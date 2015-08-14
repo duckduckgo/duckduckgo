@@ -165,11 +165,7 @@ sub _build_nginx_conf {
 	}
 
 	$cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")." ".$uri_path." break;\n";
-
-	if ($upstream) {
-		$cfg .= "\tproxy_pass $upstream;\n"
-	}
-
+	$cfg .= "\tproxy_pass $upstream;\n" if $upstream;
 	$cfg .= "\tproxy_set_header ".$self->proxy_x_forwarded_for.";\n" if $is_duckduckgo;
 
 	if($self->has_proxy_cache_valid) {
