@@ -20,7 +20,7 @@ like($@,qr/Missing callback attribute for {{callback}}/,'Seeking proper error on
 delete $ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY} if defined $ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY};
 
 my $missing_rewrite = DDG::Rewrite->new(
-	path => '/js/spice/spice_name',
+	path => '/js/spice/spice_name/',
 	from => '([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|)',
 	to => 'http://some.api/$1/?a=$2&b=$3&cb={{callback}}&ak={{ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY}}}',
 	callback => 'buh',
@@ -137,7 +137,7 @@ isa_ok($ddgrewrite,'DDG::Rewrite');
 like($ddgrewrite->nginx_conf,qr/X-Forwarded-For/,'Checking DuckDuckGo rewrite');
 
 my $upstream_rewrite = DDG::Rewrite->new(
-        path => '/js/spice/spice_name',
+        path => '/js/spice/spice_name/',
         from => '([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|)',
         to => 'http://some.api/$1/?a=$2&b=$3&cb={{callback}}&ak={{ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY}}}',
 	callback => 'test',
