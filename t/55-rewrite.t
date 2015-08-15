@@ -45,19 +45,19 @@ isa_ok($rewrite,'DDG::Rewrite');
 
 is($rewrite->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
 is($rewrite->nginx_conf,'location ^~ /js/spice/spice_name/ {
-    proxy_set_header Accept-Encoding \'\';
-    more_set_headers \'Content-Type: application/javascript; charset=utf-8\';
-    include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
-    echo_before_body \'test(\';
-    set $spice_name_upstream http://some.api:80;
-    rewrite ^/js/spice/spice_name/([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|) /$1/?a=$2&b=$3&cb=test&ak=1 break;
-    proxy_pass $spice_name_upstream;
-    proxy_cache_valid 418 1d;
-    proxy_ignore_headers X-Accel-Expires Expires Cache-Control Set-Cookie;
-    echo_after_body \');\';
-    proxy_intercept_errors on;
-    error_page 301 302 303 403 404 500 502 503 504 =200 /js/failed/test;
-    expires 1s;
+	proxy_set_header Accept-Encoding \'\';
+	more_set_headers \'Content-Type: application/javascript; charset=utf-8\';
+	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
+	echo_before_body \'test(\';
+	set $spice_name_upstream http://some.api:80;
+	rewrite ^/js/spice/spice_name/([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|) /$1/?a=$2&b=$3&cb=test&ak=1 break;
+	proxy_pass $spice_name_upstream;
+	proxy_cache_valid 418 1d;
+	proxy_ignore_headers X-Accel-Expires Expires Cache-Control Set-Cookie;
+	echo_after_body \');\';
+	proxy_intercept_errors on;
+	error_page 301 302 303 403 404 500 502 503 504 =200 /js/failed/test;
+	expires 1s;
 }
 ','Checking generated nginx.conf');
 
@@ -67,10 +67,10 @@ my $dollarrewrite = DDG::Rewrite->new(
 );
 
 is($dollarrewrite->nginx_conf,'location ^~ /js/spice/spice_name/ {
-    set $spice_name_upstream http://some.api:80;
-    rewrite ^/js/spice/spice_name/(.*) /${dollar} break;
-    proxy_pass $spice_name_upstream;
-    expires 1s;
+	set $spice_name_upstream http://some.api:80;
+	rewrite ^/js/spice/spice_name/(.*) /${dollar} break;
+	proxy_pass $spice_name_upstream;
+	expires 1s;
 }
 ','Checking {{dollar}} replacement');
 
@@ -83,10 +83,10 @@ isa_ok($minrewrite,'DDG::Rewrite');
 
 is($minrewrite->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
 is($minrewrite->nginx_conf,'location ^~ /js/spice/spice_name/ {
-    set $spice_name_upstream http://some.api:80;
-    rewrite ^/js/spice/spice_name/(.*) /$1 break;
-    proxy_pass $spice_name_upstream;
-    expires 1s;
+	set $spice_name_upstream http://some.api:80;
+	rewrite ^/js/spice/spice_name/(.*) /$1 break;
+	proxy_pass $spice_name_upstream;
+	expires 1s;
 }
 ','Checking generated nginx.conf');
 
@@ -99,10 +99,10 @@ isa_ok($minrewrite_https,'DDG::Rewrite');
 
 is($minrewrite_https->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
 is($minrewrite_https->nginx_conf,'location ^~ /js/spice/spice_name/ {
-    set $spice_name_upstream https://some.api:443;
-    rewrite ^/js/spice/spice_name/(.*) /$1 break;
-    proxy_pass $spice_name_upstream;
-    expires 1s;
+	set $spice_name_upstream https://some.api:443;
+	rewrite ^/js/spice/spice_name/(.*) /$1 break;
+	proxy_pass $spice_name_upstream;
+	expires 1s;
 }
 ','Checking generated nginx.conf');
 
@@ -115,10 +115,10 @@ isa_ok($minrewrite_with_port,'DDG::Rewrite');
 
 is($minrewrite_with_port->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
 is($minrewrite_with_port->nginx_conf,'location ^~ /js/spice/spice_test2/ {
-    set $spice_test2_upstream http://some.api:3000;
-    rewrite ^/js/spice/spice_test2/(.*) /$1 break;
-    proxy_pass $spice_test2_upstream;
-    expires 1s;
+	set $spice_test2_upstream http://some.api:3000;
+	rewrite ^/js/spice/spice_test2/(.*) /$1 break;
+	proxy_pass $spice_test2_upstream;
+	expires 1s;
 }
 ','Checking generated nginx.conf');
 
