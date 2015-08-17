@@ -135,53 +135,63 @@ sub _build_nginx_conf {
 	my $cfg = "location ^~ ".$self->path." {\n";
 	$cfg .= "\tproxy_set_header Accept '".$self->accept_header."';\n" if $self->accept_header;
 	
-        if($uses_echo_module) {
-            # we need to make sure we have plain text coming back until we have a way
-            # to unilaterally gunzip responses from the upstream since the echo module
-            # will intersperse plaintext with gzip which results in encoding errors.
-            # https://github.com/agentzh/echo-nginx-module/issues/30
-            $cfg .= "\tproxy_set_header Accept-Encoding '';\n";
+	if($uses_echo_module) {
+		# we need to make sure we have plain text coming back until we have a way
+		# to unilaterally gunzip responses from the upstream since the echo module
+		# will intersperse plaintext with gzip which results in encoding errors.
+		# https://github.com/agentzh/echo-nginx-module/issues/30
+		$cfg .= "\tproxy_set_header Accept-Encoding '';\n";
 
-            # This is a workaround that deals with endpoints that don't support callback functions.
-            # So endpoints that don't support callback functions return a content-type of 'application/json'
-            # because what they're returning is not meant to be executed in the first place.
-            # Setting content-type to application/javascript for those endpoints solves blocking due to 
-            # mime type mismatches.
-            $cfg .= "\tmore_set_headers 'Content-Type: application/javascript; charset=utf-8';\n";
-        }
+		# This is a workaround that deals with endpoints that don't support callback functions.
+		# So endpoints that don't support callback functions return a content-type of 'application/json'
+		# because what they're returning is not meant to be executed in the first place.
+		# Setting content-type to application/javascript for those endpoints solves blocking due to 
+		# mime type mismatches.
+		$cfg .= "\tmore_set_headers 'Content-Type: application/javascript; charset=utf-8';\n";
+	}
 
 	if($uses_echo_module || $self->accept_header || $is_duckduckgo) {
-	    $cfg .= "\tinclude /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;\n";
+		$cfg .= "\tinclude /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;\n";
 	}
 
 	$cfg .= "\techo_before_body '".$self->callback."(';\n" if $wrap_jsonp_callback;
 	$cfg .= "\techo_before_body '".$self->callback.qq|("';\n| if $wrap_string_callback;
+
+	my $upstream;
+	if(my ($spice_name) = $self->path =~ m{^/js/spice/(.+)/$}){
+		$spice_name =~ s|/|_|og;
+		$upstream = '$'.$spice_name.'_upstream';
+		$cfg .= "\tset $upstream $scheme://$host:$port;\n";
+	} else {
+		warn "Error: Problem finding spice name in ".$self->path; return
+	}
+
 	$cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")." ".$uri_path." break;\n";
-	$cfg .= "\tproxy_pass ".$scheme."://".$host.":".$port."/;\n";
+	$cfg .= "\tproxy_pass $upstream;\n";
 	$cfg .= "\tproxy_set_header ".$self->proxy_x_forwarded_for.";\n" if $is_duckduckgo;
 
-        if($self->has_proxy_cache_valid) {
-            # This tells Nginx how long the response should be kept.
-            $cfg .= "\tproxy_cache_valid " . $self->proxy_cache_valid . ";\n";
-            # Some response headers from the endpoint can affect `proxy_cache_valid` so we ignore them.
-            # http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_ignore_headers
-            $cfg .= "\tproxy_ignore_headers X-Accel-Expires Expires Cache-Control Set-Cookie;\n";
-        }
+	if($self->has_proxy_cache_valid) {
+		# This tells Nginx how long the response should be kept.
+		$cfg .= "\tproxy_cache_valid " . $self->proxy_cache_valid . ";\n";
+		# Some response headers from the endpoint can affect `proxy_cache_valid` so we ignore them.
+		# http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_ignore_headers
+		$cfg .= "\tproxy_ignore_headers X-Accel-Expires Expires Cache-Control Set-Cookie;\n";
+	}
 
 	$cfg .= "\tproxy_ssl_session_reuse ".$self->proxy_ssl_session_reuse.";\n" if $self->has_proxy_ssl_session_reuse;
 	$cfg .= "\techo_after_body ');';\n" if $wrap_jsonp_callback;
 	$cfg .= "\techo_after_body '\");';\n" if $wrap_string_callback;
 
-        # proxy_intercept_errors is used to handle endpoints that don't return 200 OK
-        # When we get errors from the endpoint, instead of replying a blank page, it should reply the function instead with no parameters,
-        # e.g., ddg_spice_dictionary_definition();. The benefit of doing that is that we know for sure that the Spice failed, and we can do
-        # something about it (we know that the Spice failed because it should return Spice.failed('...') when the parameters are not valid).
-        if($self->callback) {
-            $cfg .= "\tproxy_intercept_errors on;\n";
-            $cfg .= "\terror_page 301 302 303 403 404 500 502 503 504 =200 /js/failed/".$self->callback.";\n";
-    	}
+	# proxy_intercept_errors is used to handle endpoints that don't return 200 OK
+	# When we get errors from the endpoint, instead of replying a blank page, it should reply the function instead with no parameters,
+	# e.g., ddg_spice_dictionary_definition();. The benefit of doing that is that we know for sure that the Spice failed, and we can do
+	# something about it (we know that the Spice failed because it should return Spice.failed('...') when the parameters are not valid).
+	if($self->callback) {
+		$cfg .= "\tproxy_intercept_errors on;\n";
+		$cfg .= "\terror_page 301 302 303 403 404 500 502 503 504 =200 /js/failed/".$self->callback.";\n";
+	}
 
-        $cfg .= "\texpires 1s;\n";
+	$cfg .= "\texpires 1s;\n";
 	$cfg .= "}\n";
 	return $cfg;
 }
