@@ -55,5 +55,9 @@ has caller => (
     predicate => 'has_caller',
 );
 
+has uses_browser_location => (
+    is => 'rw',
+    default => sub { 0 },
+);
 
 1;

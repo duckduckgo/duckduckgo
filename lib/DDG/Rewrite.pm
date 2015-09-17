@@ -114,6 +114,11 @@ has nginx_conf => (
 	builder => '_build_nginx_conf',
 );
 
+has uses_browser_location => (
+    is => 'rw',
+    default => sub { 0 },
+);
+
 sub _build_nginx_conf {
 	my ( $self ) = @_;
 
@@ -165,6 +170,13 @@ sub _build_nginx_conf {
 	} else {
 		warn "Error: Problem finding spice name in ".$self->path; return
 	}
+
+        if ($self->uses_browser_location) {
+            $cfg .= "\t".'if ($arg_latlon) {'."\n";
+            $cfg .= "\t\t".'set $query_latlon $arg_latlon;'."\n";
+            $cfg .= "\t\t".'rewrite ^/js/spice/maps/places/(.*) /local.js?q=$1&latlon=$query_latlon&cb=ddg_spice_maps_places break;'."\n";
+            $cfg .= "\t}\n";
+        }
 
 	$cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")." ".$uri_path." break;\n";
 	$cfg .= "\tproxy_pass $upstream;\n";
