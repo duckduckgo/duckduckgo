@@ -133,6 +133,11 @@ has uses_browser_location => (
     default => sub { 0 },
 );
 
+has latlon_to => (
+    is => 'rw',
+    default => sub { 0 },
+);
+
 sub _build_nginx_conf {
 	my ( $self ) = @_;
 
@@ -143,11 +148,13 @@ sub _build_nginx_conf {
 	my $uri_path = $self->parsed_to;
 	$uri_path =~ s!$scheme://$host:$port!!;
 	$uri_path =~ s!$scheme://$host!!;
-
-        my $latlon_uri_path = $self->parsed_latlon_to;
-        $latlon_uri_path =~ s!$scheme://$host:$port!!;
-        $latlon_uri_path =~ s!$scheme://$host!!;
-
+        
+        my $latlon_uri_path;
+        if ($self->parsed_latlon_to) {
+            $latlon_uri_path = $self->parsed_latlon_to;
+            $latlon_uri_path =~ s!$scheme://$host:$port!!;
+            $latlon_uri_path =~ s!$scheme://$host!!;
+        }
 	my $is_duckduckgo = $host =~ /(?:127\.0\.0\.1|duckduckgo\.com)/;
 
 	# wrap various other things into jsonp
@@ -190,11 +197,11 @@ sub _build_nginx_conf {
 		warn "Error: Problem finding spice name in ".$self->path; return
 	}
 
-        if ($uses_browser_location) {
-            $cfg .= "\t".'if ($arg_latlon =~ /(\-?\d+\.\d+),(\-?\d+\.\d+)/) {'."\n";
-            $cfg .= "\t".'set $lat $1;'."\n";
-            $cfg .= "\t".'set $lon $2;'."\n";
-            $cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")."&latlon"." ".$latlon_uri_path." break;\n";
+        if ($self->uses_browser_location) {
+            $cfg .= "\t".'if ($arg_latlon ~ /(\-?\d+\.\d+),(\-?\d+\.\d+)/) {'."\n";
+            $cfg .= "\t\t".'set $lat $1;'."\n";
+            $cfg .= "\t\t".'set $lon $2;'."\n";
+            $cfg .= "\t\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")."&latlon"." ".$latlon_uri_path." break;\n";
             $cfg .= "\t}\n";
         }
 
@@ -238,5 +245,11 @@ has _parsed_to => (
 	is => 'rw',
 );
 sub parsed_to { shift->_parsed_to }
+
+has _parsed_latlon_to => (
+    is => 'rw',
+);
+sub parsed_latlon_to {shift->_parsed_latlon_to}
+
 
 1;
