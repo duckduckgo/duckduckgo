@@ -24,6 +24,20 @@ sub BUILD {
 	}
 	$self->_missing_envs(\@missing_envs) if @missing_envs;
 	$self->_parsed_to($to);
+        if ($self->uses_browser_location) {
+            my $latlon_to = $self->latlon_to;
+            croak "Missing callback attribute for {{callback}} in to" if ($latlon_to =~ s/{{callback}}/$callback/g && !$self->has_callback);
+            $latlon_to =~ s/{{dollar}}/\$\{dollar\}/g;
+            for ($latlon_to =~ m/{{ENV{(\w+)}}}/g) {
+                if (defined $ENV{$_}) {
+                    my $val = $ENV{$_};
+                    $latlon_to =~ s/{{ENV{$_}}}/$val/g;
+                } else {
+                    $latlon_to =~ s/{{ENV{$_}}}//g;
+                }
+            }
+            $self->_parsed_latlon_to($latlon_to);
+        }
 }
 
 =head1 SYNOPSIS
@@ -129,6 +143,11 @@ sub _build_nginx_conf {
 	my $uri_path = $self->parsed_to;
 	$uri_path =~ s!$scheme://$host:$port!!;
 	$uri_path =~ s!$scheme://$host!!;
+
+        my $latlon_uri_path = $self->parsed_latlon_to;
+        $latlon_uri_path =~ s!$scheme://$host:$port!!;
+        $latlon_uri_path =~ s!$scheme://$host!!;
+
 	my $is_duckduckgo = $host =~ /(?:127\.0\.0\.1|duckduckgo\.com)/;
 
 	# wrap various other things into jsonp
@@ -171,10 +190,11 @@ sub _build_nginx_conf {
 		warn "Error: Problem finding spice name in ".$self->path; return
 	}
 
-        if ($self->uses_browser_location) {
-            $cfg .= "\t".'if ($arg_latlon) {'."\n";
-            $cfg .= "\t\t".'set $query_latlon $arg_latlon;'."\n";
-            $cfg .= "\t\t".'rewrite ^/js/spice/maps/places/(.*) /local.js?q=$1&latlon=$query_latlon&cb=ddg_spice_maps_places break;'."\n";
+        if ($uses_browser_location) {
+            $cfg .= "\t".'if ($arg_latlon =~ /(\-?\d+\.\d+),(\-?\d+\.\d+)/) {'."\n";
+            $cfg .= "\t".'set $lat $1;'."\n";
+            $cfg .= "\t".'set $lon $2;'."\n";
+            $cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")."&latlon"." ".$latlon_uri_path." break;\n";
             $cfg .= "\t}\n";
         }
 
