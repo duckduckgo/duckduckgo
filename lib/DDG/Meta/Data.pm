@@ -48,7 +48,6 @@ unless(%ia_metadata){
     }
 
     my $metadata = decode_json(io($f)->all);
-    next unless $metadata;
 
     # One metadata file for each repo with the following format
     # { "<IA name>": {
