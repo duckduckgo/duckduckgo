@@ -39,6 +39,7 @@ unless(%ia_metadata){
     my $f = "$mdir/metadata.json";
     unless($ENV{NO_METADATA_DOWNLOAD}){
         my $ua = LWP::UserAgent->new;
+        $ua->timeout(5);
         $ua->default_header('Accept-Encoding' => scalar HTTP::Message::decodable());
         my $res = $ua->mirror("https://duck.co/ia/repo/all/json", $f);
         unless($res->is_success){
