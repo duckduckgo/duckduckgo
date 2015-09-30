@@ -40,9 +40,9 @@ unless(%ia_metadata){
     unless($ENV{NO_METADATA_DOWNLOAD}){
         my $ua = LWP::UserAgent->new;
         $ua->timeout(5);
-        $ua->default_header('Accept-Encoding' => scalar HTTP::Message::decodable());
+        #$ua->default_header('Accept-Encoding' => scalar HTTP::Message::decodable());
         my $res = $ua->mirror("https://duck.co/ia/repo/all/json", $f);
-        unless($res->is_success){
+        unless($res->is_success || $res->code == 304){
             debug && warn "Failed to download metdata: " . $res->status_line;
         }
     }
