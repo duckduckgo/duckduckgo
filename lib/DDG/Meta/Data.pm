@@ -98,7 +98,14 @@ unless(%ia_metadata){
             # by language for multi language wiki sources
             # check that language is set since most fatheads don't have a language
             if( my $lang = $ia->{src_options}{language}){
-                $ia_metadata{fathead_lang}{$lang} = $source;
+                # By default use current source
+                my $want_src = $source;
+                if(exists $ia_metadata{fathead_lang}{$lang}){
+                    my $prev_ia = $ia_metadata{fathead_source}{$ia_metadata{fathead_lang}{$lang}};
+                    # Skip setting lang to source if existing src_id is lower
+                    $want_src = 0 if $prev_ia->{src_id} < $ia->{src_id};
+                }
+                $ia_metadata{fathead_lang}{$lang} = $want_src if $want_src;
             }
             my $min_length = $ia->{src_options}{min_abstract_length};
             $ia_metadata{fathead_min_length}{$source} = $min_length if $min_length;
