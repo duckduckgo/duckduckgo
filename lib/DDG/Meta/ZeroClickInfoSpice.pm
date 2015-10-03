@@ -25,6 +25,8 @@ sub zeroclickinfospice_attributes {qw(
 	is_cached
 	is_unsafe
 	ttl
+        uses_browser_location
+        latlon_to
 )}
 
 my %applied;
@@ -164,6 +166,8 @@ sub apply_keywords {
 					wrap_jsonp_callback => $zcispice_params{'wrap_jsonp_callback'},
 					wrap_string_callback => $zcispice_params{'wrap_string_callback'},
 					accept_header => $zcispice_params{'accept_header'},
+                                        defined $zcispice_params{'uses_browser_location'} ? ( uses_browser_location => $zcispice_params{'uses_browser_location'} ) : (),
+                                        defined $zcispice_params{'latlon_to'} ? ( latlon_to => $zcispice_params{'latlon_to'} ) : (),
 				);
 			} else {
 				$rewrite = "";
