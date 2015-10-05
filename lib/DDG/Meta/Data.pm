@@ -6,6 +6,7 @@ use Path::Class;
 use File::ShareDir 'dist_file';
 use IO::All;
 use LWP::UserAgent;
+use File::Copy::Recursive 'pathmk';
 
 use strict;
 
@@ -28,7 +29,7 @@ unless(%ia_metadata){
 
     my $mdir = "$tmpdir/$>";
     unless(-d $mdir){
-        mkdir $mdir or die "Failed to mkdir $mdir: $!";
+        pathmk $mdir or die "Failed to mkdir $mdir: $!";
     }
 
     debug && warn "Processing metadata";
