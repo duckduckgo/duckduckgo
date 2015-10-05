@@ -24,8 +24,9 @@ my %ia_metadata;
 # Only build metadata once. Not in BUILD so we can call apply_keywords directly
 unless(%ia_metadata){
 
-    my $mdir = $ENV{METADATA_DOWNLOAD_DIR} || "/var/tmp/ddg-$>";
+    my $tmpdir = $ENV{METADATA_TMP_DIR} || '/var/tmp';
 
+	my $mdir = "$tmpdir/ddg-$>";
     unless(-d $mdir){
         mkdir $mdir or die "Failed to mkdir $mdir: $!";
     }
