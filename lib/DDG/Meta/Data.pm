@@ -24,12 +24,8 @@ my %ia_metadata;
 # Only build metadata once. Not in BUILD so we can call apply_keywords directly
 unless(%ia_metadata){
 
-    my $tmpdir = io->tmpdir;
-    unless($tmpdir){
-       die 'No system temp directory found';
-    }
+    my $mdir = $ENV{METADATA_DOWNLOAD_DIR} || "/var/tmp/ddg-$>";
 
-    my $mdir = "$tmpdir/ddg-$>";
     unless(-d $mdir){
         mkdir $mdir or die "Failed to mkdir $mdir: $!";
     }
