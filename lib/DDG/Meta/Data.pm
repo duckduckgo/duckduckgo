@@ -27,7 +27,7 @@ unless(%ia_metadata){
 
     my $tmpdir = $ENV{METADATA_TMP_DIR} || '/var/tmp/ddg-metadata';
 
-    my $mdir = "$tmpdir/$>";
+    my $mdir = "$tmpdir-$>";
     unless(-d $mdir){
         pathmk $mdir or die "Failed to mkdir $mdir: $!";
     }
