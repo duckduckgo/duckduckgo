@@ -6,6 +6,7 @@ use Path::Class;
 use File::ShareDir 'dist_file';
 use IO::All;
 use LWP::UserAgent;
+use File::Copy::Recursive 'pathmk';
 
 use strict;
 
@@ -24,14 +25,11 @@ my %ia_metadata;
 # Only build metadata once. Not in BUILD so we can call apply_keywords directly
 unless(%ia_metadata){
 
-    my $tmpdir = io->tmpdir;
-    unless($tmpdir){
-       die 'No system temp directory found';
-    }
+    my $tmpdir = $ENV{METADATA_TMP_DIR} || '/var/tmp/ddg-metadata';
 
-    my $mdir = "$tmpdir/ddg-$>";
+    my $mdir = "$tmpdir-$>";
     unless(-d $mdir){
-        mkdir $mdir or die "Failed to mkdir $mdir: $!";
+        pathmk $mdir or die "Failed to mkdir $mdir: $!";
     }
 
     debug && warn "Processing metadata";
