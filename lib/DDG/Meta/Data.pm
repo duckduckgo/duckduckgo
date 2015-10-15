@@ -4,7 +4,6 @@ package DDG::Meta::Data;
 use JSON::XS qw'decode_json encode_json';
 use Path::Class;
 use File::ShareDir 'dist_file';
-use IO::All;
 use LWP::UserAgent;
 use PerlIO::gzip;
 use File::Copy::Recursive 'pathmk';
@@ -35,7 +34,7 @@ unless(%ia_metadata){
 
     debug && warn "Processing metadata";
 
-    my $f = "$mdir/metadata.json.gz";
+    my $f = "$mdir/metadata.json";
     unless($ENV{NO_METADATA_DOWNLOAD}){
         my $ua = LWP::UserAgent->new;
         $ua->timeout(5);
@@ -46,8 +45,9 @@ unless(%ia_metadata){
         }
     }
 
-    open my $gz, '<:gzip', $f or die "Failed to open file $f: $!";
-    my $metadata = decode_json( do { local $/;  <$gz> } );
+    open my $fh, -B $f ? '<:gzip' : '<', $f or die "Failed to open file $f: $!";
+    my $metadata = decode_json( do { local $/;  <$fh> } );
+    close $fh;
 
     # One metadata file for each repo with the following format
     # { "<IA name>": {
