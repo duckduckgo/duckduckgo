@@ -6,6 +6,7 @@ use Path::Class;
 use File::ShareDir 'dist_file';
 use IO::All;
 use LWP::UserAgent;
+use PerlIO::gzip;
 use File::Copy::Recursive 'pathmk';
 
 use strict;
@@ -34,18 +35,19 @@ unless(%ia_metadata){
 
     debug && warn "Processing metadata";
 
-    my $f = "$mdir/metadata.json";
+    my $f = "$mdir/metadata.json.gz";
     unless($ENV{NO_METADATA_DOWNLOAD}){
         my $ua = LWP::UserAgent->new;
         $ua->timeout(5);
-        #$ua->default_header('Accept-Encoding' => scalar HTTP::Message::decodable());
-        my $res = $ua->mirror("https://duck.co/ia/repo/all/json", $f);
+        $ua->default_header('Accept-Encoding' => scalar HTTP::Message::decodable());
+        my $res = $ua->mirror('https://duck.co/ia/repo/all/json', $f);
         unless($res->is_success || $res->code == 304){
             debug && warn "Failed to download metdata: " . $res->status_line;
         }
     }
 
-    my $metadata = decode_json(io($f)->all);
+    open my $gz, '<:gzip', $f or die "Failed to open file $f: $!";
+    my $metadata = decode_json( do { local $/;  <$gz> } );
 
     # One metadata file for each repo with the following format
     # { "<IA name>": {
