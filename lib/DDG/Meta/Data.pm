@@ -22,7 +22,7 @@ no warnings 'uninitialized';
 # }
 my %ia_metadata;
 
-# Only build metadata once. Not in BUILD so we can call apply_keywords directly
+# Only build metadata once.
 unless(%ia_metadata){
 
     my $tmpdir = $ENV{METADATA_TMP_DIR} || '/var/tmp/ddg-metadata';
@@ -45,12 +45,15 @@ unless(%ia_metadata){
         }
     }
 
-    open my $fh, -B $f ? '<:gzip' : '<', $f or die "Failed to open file $f: $!";
-    my $metadata = decode_json( do { local $/;  <$fh> } );
+    # if we have a binary file, use gzip (preferred), otherwise a normal read (legacy)
+    my $open_arg = -B $f ? '<:gzip' : '<';
+    open my $fh, $open_arg, $f or die "Failed to open file $f: $!";
+    # slurp into a single string
+    my $json = do { local $/;  <$fh> };
     close $fh;
+    my $metadata = decode_json($json);
 
-    # One metadata file for each repo with the following format
-    # { "<IA name>": {
+    # { "<id>": {
     #     "id": " "
     #     "signal" : " "
     #     ....
