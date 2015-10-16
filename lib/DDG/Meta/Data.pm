@@ -4,8 +4,8 @@ package DDG::Meta::Data;
 use JSON::XS qw'decode_json encode_json';
 use Path::Class;
 use File::ShareDir 'dist_file';
-use IO::All;
 use LWP::UserAgent;
+use PerlIO::gzip;
 use File::Copy::Recursive 'pathmk';
 
 use strict;
@@ -22,7 +22,7 @@ no warnings 'uninitialized';
 # }
 my %ia_metadata;
 
-# Only build metadata once. Not in BUILD so we can call apply_keywords directly
+# Only build metadata once.
 unless(%ia_metadata){
 
     my $tmpdir = $ENV{METADATA_TMP_DIR} || '/var/tmp/ddg-metadata';
@@ -38,17 +38,22 @@ unless(%ia_metadata){
     unless($ENV{NO_METADATA_DOWNLOAD}){
         my $ua = LWP::UserAgent->new;
         $ua->timeout(5);
-        #$ua->default_header('Accept-Encoding' => scalar HTTP::Message::decodable());
-        my $res = $ua->mirror("https://duck.co/ia/repo/all/json", $f);
+        $ua->default_header('Accept-Encoding' => scalar HTTP::Message::decodable());
+        my $res = $ua->mirror('https://duck.co/ia/repo/all/json', $f);
         unless($res->is_success || $res->code == 304){
             debug && warn "Failed to download metdata: " . $res->status_line;
         }
     }
 
-    my $metadata = decode_json(io($f)->all);
+    # if we have a binary file, use gzip (preferred), otherwise a normal read (legacy)
+    my $open_arg = -B $f ? '<:gzip' : '<';
+    open my $fh, $open_arg, $f or die "Failed to open file $f: $!";
+    # slurp into a single string
+    my $json = do { local $/;  <$fh> };
+    close $fh;
+    my $metadata = decode_json($json);
 
-    # One metadata file for each repo with the following format
-    # { "<IA name>": {
+    # { "<id>": {
     #     "id": " "
     #     "signal" : " "
     #     ....
