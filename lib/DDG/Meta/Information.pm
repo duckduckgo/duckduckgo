@@ -313,10 +313,10 @@ This function returns the plugin's attribution information in a hash
 			my $value = shift @{$_};
 			my ( $a, $b ) = ref $value eq 'ARRAY' ? ( $value->[0], $value->[1] ) : ( $value, $value );
 			my ( $link, $val ) = @{$supported_types{$type}};
-			$link =~ s/{{a}}/$a/;
-			$link =~ s/{{b}}/$b/;
-			$val =~ s/{{a}}/$a/;
-			$val =~ s/{{b}}/$b/;
+			$link =~ s/\Q{{a}}/$a/;
+			$link =~ s/\Q{{b}}/$b/;
+			$val =~ s/\Q{{a}}/$a/;
+			$val =~ s/\Q{{b}}/$b/;
 			push @attribution_links, $link, $val;
 		}
 		return \@attribution_links;
