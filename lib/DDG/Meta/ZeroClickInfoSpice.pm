@@ -25,6 +25,7 @@ sub zeroclickinfospice_attributes {qw(
 	is_cached
 	is_unsafe
 	ttl
+        error_fallback
 )}
 
 my %applied;
@@ -164,6 +165,7 @@ sub apply_keywords {
 					wrap_jsonp_callback => $zcispice_params{'wrap_jsonp_callback'},
 					wrap_string_callback => $zcispice_params{'wrap_string_callback'},
 					accept_header => $zcispice_params{'accept_header'},
+                                        error_fallback => $zcispice_params{'error_fallback'},
 				);
 			} else {
 				$rewrite = "";
