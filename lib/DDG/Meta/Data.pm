@@ -5,7 +5,6 @@ use JSON::XS qw'decode_json encode_json';
 use Path::Class;
 use File::ShareDir 'dist_file';
 use LWP::UserAgent;
-use PerlIO::gzip;
 use File::Copy::Recursive 'pathmk';
 
 use strict;
@@ -34,20 +33,19 @@ unless(%ia_metadata){
 
     debug && warn "Processing metadata";
 
-    my $f = "$mdir/metadata.json";
+    my $f = "$mdir/metadata.json.bz2";
     unless($ENV{NO_METADATA_DOWNLOAD}){
         my $ua = LWP::UserAgent->new;
         $ua->timeout(5);
         $ua->default_header('Accept-Encoding' => scalar HTTP::Message::decodable());
-        my $res = $ua->mirror('http://ddg-community.s3.amazonaws.com/metadata/repo_all.json', $f);
+        my $res = $ua->mirror('http://ddg-community.s3.amazonaws.com/metadata/repo_all.json.bz2', $f);
         unless($res->is_success || $res->code == 304){
             debug && warn "Failed to download metdata: " . $res->status_line;
         }
     }
 
-    # if we have a binary file, use gzip (preferred), otherwise a normal read (legacy)
-    my $open_arg = -B $f ? '<:gzip' : '<';
-    open my $fh, $open_arg, $f or die "Failed to open file $f: $!";
+    # Decompress to command-line
+    open my $fh, "bzip2 -dc $f |" or die "Failed to open file $f: $!";
     # slurp into a single string
     my $json = do { local $/;  <$fh> };
     close $fh;
