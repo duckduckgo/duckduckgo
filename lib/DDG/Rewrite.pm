@@ -136,6 +136,7 @@ sub _build_nginx_conf {
 	my $wrap_jsonp_callback = $self->has_callback && $self->wrap_jsonp_callback;
 	my $wrap_string_callback = $self->has_callback && $self->wrap_string_callback;
 	my $uses_echo_module = $wrap_jsonp_callback || $wrap_string_callback;
+        my $callback = $self->has_callback ? $self->callback : '';
 
 	my $cfg = "location ^~ ".$self->path." {\n";
 	$cfg .= "\tproxy_set_header Accept '".$self->accept_header."';\n" if $self->accept_header;
@@ -159,8 +160,8 @@ sub _build_nginx_conf {
 		$cfg .= "\tinclude /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;\n";
 	}
 
-	$cfg .= "\techo_before_body '".$self->callback."(';\n" if $wrap_jsonp_callback;
-	$cfg .= "\techo_before_body '".$self->callback.qq|("';\n| if $wrap_string_callback;
+        $cfg .= "\techo_before_body '$callback(';\n" if $wrap_jsonp_callback;
+        $cfg .= "\techo_before_body '$callback".qq|("';\n| if $wrap_string_callback;
 
 	my $upstream;
 	if(my ($spice_name) = $self->path =~ m{^/js/spice/(.+)/$}){
@@ -191,22 +192,22 @@ sub _build_nginx_conf {
 	# When we get errors from the endpoint, instead of replying a blank page, it should reply the function instead with no parameters,
 	# e.g., ddg_spice_dictionary_definition();. The benefit of doing that is that we know for sure that the Spice failed, and we can do
 	# something about it (we know that the Spice failed because it should return Spice.failed('...') when the parameters are not valid).
-        if($self->callback) {
-            $cfg .= "\tproxy_intercept_errors on;\n";
-            if ($self->error_fallback) {
-                $cfg .= "\terror_page 301 302 303 403 500 502 503 504 =200 /js/failed/".$self->callback.";\n";
-                $cfg .= "\terror_page 404 =200 \@404_".$self->callback.";\n";
-            } else {
-                $cfg .= "\terror_page 301 302 303 403 404 500 502 503 504 =200 /js/failed/".$self->callback.";\n";
-            }
+        if($callback) {
+                $cfg .= "\tproxy_intercept_errors on;\n";
+                if ($self->error_fallback) {
+                    $cfg .= "\terror_page 301 302 303 403 500 502 503 504 =200 /js/failed/$callback;\n";
+                    $cfg .= "\terror_page 404 =200 \@404_$callback;\n";
+                } else {
+                    $cfg .= "\terror_page 301 302 303 403 404 500 502 503 504 =200 /js/failed/$callback;\n";
+                }
         }
 
 	$cfg .= "\texpires 1s;\n";
 	$cfg .= "}\n";
         if ($self->error_fallback) {                                                              
             my $fallback = $self->error_fallback;                                                 
-            $cfg .= "location \@404_".$self->callback.qq( {\n);
-            $cfg .= "\techo_before_body '".$self->callback."(';\n" if $wrap_jsonp_callback;
+            $cfg .= "location \@404_$callback".qq( {\n);
+            $cfg .= "\techo_before_body '$callback(';\n" if $wrap_jsonp_callback;
             $cfg .= qq(\techo '{"fallback": "$fallback"}';\n);
             $cfg .= "\techo_after_body ');';\n" if $wrap_jsonp_callback;
             $cfg .= qq( }\n);                             
