@@ -136,7 +136,7 @@ sub _build_nginx_conf {
 	my $wrap_jsonp_callback = $self->has_callback && $self->wrap_jsonp_callback;
 	my $wrap_string_callback = $self->has_callback && $self->wrap_string_callback;
 	my $uses_echo_module = $wrap_jsonp_callback || $wrap_string_callback;
-        my $callback = $self->has_callback ? $self->callback : '';
+        my $callback = $self->callback;
 
 	my $cfg = "location ^~ ".$self->path." {\n";
 	$cfg .= "\tproxy_set_header Accept '".$self->accept_header."';\n" if $self->accept_header;
@@ -193,13 +193,13 @@ sub _build_nginx_conf {
 	# e.g., ddg_spice_dictionary_definition();. The benefit of doing that is that we know for sure that the Spice failed, and we can do
 	# something about it (we know that the Spice failed because it should return Spice.failed('...') when the parameters are not valid).
         if($callback) {
-                $cfg .= "\tproxy_intercept_errors on;\n";
-                if ($self->error_fallback) {
-                    $cfg .= "\terror_page 301 302 303 403 500 502 503 504 =200 /js/failed/$callback;\n";
-                    $cfg .= "\terror_page 404 =200 \@404_$callback;\n";
-                } else {
-                    $cfg .= "\terror_page 301 302 303 403 404 500 502 503 504 =200 /js/failed/$callback;\n";
-                }
+            $cfg .= "\tproxy_intercept_errors on;\n";
+            if ($self->error_fallback) {
+                $cfg .= "\terror_page 301 302 303 403 500 502 503 504 =200 /js/failed/$callback;\n";
+                $cfg .= "\terror_page 404 =200 \@404_$callback;\n";
+            } else {
+                $cfg .= "\terror_page 301 302 303 403 404 500 502 503 504 =200 /js/failed/$callback;\n";
+            }
         }
 
 	$cfg .= "\texpires 1s;\n";
