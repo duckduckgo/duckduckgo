@@ -38,7 +38,7 @@ unless(%ia_metadata){
         my $ua = LWP::UserAgent->new;
         $ua->timeout(5);
         $ua->default_header('Accept-Encoding' => scalar HTTP::Message::decodable());
-        my $res = $ua->mirror('https://ddg-community.s3.amazonaws.com/metadata/repo_all.json.bz2', $f);
+        my $res = $ua->mirror('http://ddg-community.s3.amazonaws.com/metadata/repo_all.json.bz2', $f);
         unless($res->is_success || $res->code == 304){
             debug && warn "Failed to download metdata: " . $res->status_line;
         }
