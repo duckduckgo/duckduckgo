@@ -36,12 +36,7 @@ sub apply_keywords {
 	return if exists $applied{$target};
 	$applied{$target} = undef;
 
-	my @parts = split('::',$target);
-	my $callback = join('_',map { s/([a-z])([A-Z])/$1_$2/g; lc; } @parts);
-	shift @parts;
-	my $path = '/js/'.join('/',map { s/([a-z])([A-Z])/$1_$2/g; lc; } @parts).'/';
-	shift @parts;
-	my $answer_type = lc(join(' ',@parts));
+	my ($callback, $path, $answer_type) = @{params_from_target($target)};
 
 	my %zcispice_params = (
 		caller => $target,
@@ -155,6 +150,7 @@ sub apply_keywords {
 	$stash->add_symbol('&rewrite',sub {
 		unless (defined $rewrite) {
 			if ($target->has_rewrite) {
+				
 				$rewrite = DDG::Rewrite->new(
 					to => $zcispice_params{'to'},
 					defined $zcispice_params{'from'} ? ( from => $zcispice_params{'from'}) : (),
@@ -165,9 +161,28 @@ sub apply_keywords {
 					wrap_jsonp_callback => $zcispice_params{'wrap_jsonp_callback'},
 					wrap_string_callback => $zcispice_params{'wrap_string_callback'},
 					accept_header => $zcispice_params{'accept_header'},
-                                        error_fallback => $zcispice_params{'error_fallback'},
+					error_fallback => $zcispice_params{'error_fallback'},
 				);
-			} else {
+				if(exists $zcispice_params{alt_to}){
+					my ($base_target) = $target =~ /^(.+::)\w+$/;
+					while(my ($alt_to, $params) = each %{$zcispice_params{alt_to}}){
+						my $target = "$base_target::$alt_to";
+						my ($callback, $path, $answer_type) = @{params_from_target($target)};
+							$rewrite = DDG::Rewrite->new(
+								to => $zcispice_params{'to'},
+								defined $zcispice_params{'from'} ? ( from => $zcispice_params{'from'}) : (),
+								defined $zcispice_params{'proxy_cache_valid'} ? ( proxy_cache_valid => $zcispice_params{'proxy_cache_valid'} ) : (),
+								defined $zcispice_params{'proxy_ssl_session_reuse'} ? ( proxy_ssl_session_reuse => $zcispice_params{'proxy_ssl_session_reuse'} ) : (),
+								callback => $callback,
+								path => $path,
+								wrap_jsonp_callback => $zcispice_params{'wrap_jsonp_callback'},
+								wrap_string_callback => $zcispice_params{'wrap_string_callback'},
+								accept_header => $zcispice_params{'accept_header'},
+							);
+					}
+				}
+			} 
+			else {
 				$rewrite = "";
 			}
 		}
@@ -196,6 +211,19 @@ sub check_zeroclickinfospice_key {
 	} else {
 		croak $key." is not supported on DDG::ZeroClickInfo::Spice";
 	}
+}
+
+sub params_from_target {
+	my $target = shift;
+
+	my @parts = split('::',$target);
+	my $callback = join('_',map { s/([a-z])([A-Z])/$1_$2/g; lc; } @parts);
+	shift @parts;
+	my $path = '/js/'.join('/',map { s/([a-z])([A-Z])/$1_$2/g; lc; } @parts).'/';
+	shift @parts;
+	my $answer_type = lc(join(' ',@parts));
+
+	return [$callback, $path, $answer_type];
 }
 
 1;
