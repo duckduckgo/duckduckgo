@@ -25,7 +25,7 @@ sub zeroclickinfospice_attributes {qw(
 	is_cached
 	is_unsafe
 	ttl
-        error_fallback
+	error_fallback
 )}
 
 my %applied;
@@ -150,7 +150,6 @@ sub apply_keywords {
 	$stash->add_symbol('&rewrite',sub {
 		unless (defined $rewrite) {
 			if ($target->has_rewrite) {
-				
 				$rewrite = DDG::Rewrite->new(
 					to => $zcispice_params{'to'},
 					defined $zcispice_params{'from'} ? ( from => $zcispice_params{'from'}) : (),
@@ -163,24 +162,6 @@ sub apply_keywords {
 					accept_header => $zcispice_params{'accept_header'},
 					error_fallback => $zcispice_params{'error_fallback'},
 				);
-				if(exists $zcispice_params{alt_to}){
-					my ($base_target) = $target =~ /^(.+::)\w+$/;
-					while(my ($alt_to, $params) = each %{$zcispice_params{alt_to}}){
-						my $target = "$base_target::$alt_to";
-						my ($callback, $path, $answer_type) = @{params_from_target($target)};
-							$rewrite = DDG::Rewrite->new(
-								to => $zcispice_params{'to'},
-								defined $zcispice_params{'from'} ? ( from => $zcispice_params{'from'}) : (),
-								defined $zcispice_params{'proxy_cache_valid'} ? ( proxy_cache_valid => $zcispice_params{'proxy_cache_valid'} ) : (),
-								defined $zcispice_params{'proxy_ssl_session_reuse'} ? ( proxy_ssl_session_reuse => $zcispice_params{'proxy_ssl_session_reuse'} ) : (),
-								callback => $callback,
-								path => $path,
-								wrap_jsonp_callback => $zcispice_params{'wrap_jsonp_callback'},
-								wrap_string_callback => $zcispice_params{'wrap_string_callback'},
-								accept_header => $zcispice_params{'accept_header'},
-							);
-					}
-				}
 			} 
 			else {
 				$rewrite = "";
@@ -189,11 +170,35 @@ sub apply_keywords {
 		return $rewrite;
 	});
 
+	my $alto_conf;
+	if(my $alt_to = delete $zcispice_params{alt_to}){
+		my ($base_target) = $target =~ /^(.+::)\w+$/;
+		while(my ($to, $params) = each %$alt_to){
+			my $target = "$base_target::$to";
+			my ($callback, $path) = @{params_from_target($target)};
+			my $rewrite = DDG::Rewrite->new(
+				to => $zcispice_params{'to'},
+				defined $params->{'from'} ? ( from => $params->{'from'}) : (),
+				defined $params->{'proxy_cache_valid'} ? ( proxy_cache_valid => $params->{'proxy_cache_valid'} ) : (),
+				defined $params->{'proxy_ssl_session_reuse'} ? ( proxy_ssl_session_reuse => $params->{'proxy_ssl_session_reuse'} ) : (),
+				callback => $callback,
+				path => $path,
+				wrap_jsonp_callback => $params->{'wrap_jsonp_callback'},
+				wrap_string_callback => $params->{'wrap_string_callback'},
+				accept_header => $params->{'accept_header'},
+			);
+			$alto_confg .= $rewrite->nginx_conf;
+		}
+	}
+
 	$stash->add_symbol('&get_nginx_conf',sub {
 		my $nginx_conf_func = $stash->get_symbol('&nginx_conf');
 		return $nginx_conf_func->(@_) if $nginx_conf_func;
-		return "" unless $target->has_rewrite;
-		return $target->rewrite->nginx_conf;
+		return '' unless $target->has_rewrite;
+		my $conf = $target->rewrite->nginx_conf;
+		$conf .= "\n$alto_confg" if $alto_conf;
+		warn "conf: $conf";
+		return $conf;
 	});
 
 	### SHOULD GET DEPRECATED vvvv ###
