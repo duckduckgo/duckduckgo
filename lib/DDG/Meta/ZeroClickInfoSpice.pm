@@ -26,6 +26,7 @@ sub zeroclickinfospice_attributes {qw(
 	is_unsafe
 	ttl
 	error_fallback
+	alt_to
 )}
 
 my %applied;
@@ -150,54 +151,32 @@ sub apply_keywords {
 	$stash->add_symbol('&rewrite',sub {
 		unless (defined $rewrite) {
 			if ($target->has_rewrite) {
-				$rewrite = DDG::Rewrite->new(
-					to => $zcispice_params{'to'},
-					defined $zcispice_params{'from'} ? ( from => $zcispice_params{'from'}) : (),
-					defined $zcispice_params{'proxy_cache_valid'} ? ( proxy_cache_valid => $zcispice_params{'proxy_cache_valid'} ) : (),
-					defined $zcispice_params{'proxy_ssl_session_reuse'} ? ( proxy_ssl_session_reuse => $zcispice_params{'proxy_ssl_session_reuse'} ) : (),
-					callback => $callback,
-					path => $path,
-					wrap_jsonp_callback => $zcispice_params{'wrap_jsonp_callback'},
-					wrap_string_callback => $zcispice_params{'wrap_string_callback'},
-					accept_header => $zcispice_params{'accept_header'},
-					error_fallback => $zcispice_params{'error_fallback'},
-				);
+				$rewrite = create_rewrite($callback, $path, \%zcispice_params);
 			} 
 			else {
-				$rewrite = "";
+				$rewrite = '';
 			}
 		}
 		return $rewrite;
 	});
-
-	my $alto_conf;
-	if(my $alt_to = delete $zcispice_params{alt_to}){
-		my ($base_target) = $target =~ /^(.+::)\w+$/;
-		while(my ($to, $params) = each %$alt_to){
-			my $target = "$base_target::$to";
-			my ($callback, $path) = @{params_from_target($target)};
-			my $rewrite = DDG::Rewrite->new(
-				to => $zcispice_params{'to'},
-				defined $params->{'from'} ? ( from => $params->{'from'}) : (),
-				defined $params->{'proxy_cache_valid'} ? ( proxy_cache_valid => $params->{'proxy_cache_valid'} ) : (),
-				defined $params->{'proxy_ssl_session_reuse'} ? ( proxy_ssl_session_reuse => $params->{'proxy_ssl_session_reuse'} ) : (),
-				callback => $callback,
-				path => $path,
-				wrap_jsonp_callback => $params->{'wrap_jsonp_callback'},
-				wrap_string_callback => $params->{'wrap_string_callback'},
-				accept_header => $params->{'accept_header'},
-			);
-			$alto_confg .= $rewrite->nginx_conf;
-		}
-	}
 
 	$stash->add_symbol('&get_nginx_conf',sub {
 		my $nginx_conf_func = $stash->get_symbol('&nginx_conf');
 		return $nginx_conf_func->(@_) if $nginx_conf_func;
 		return '' unless $target->has_rewrite;
 		my $conf = $target->rewrite->nginx_conf;
-		$conf .= "\n$alto_confg" if $alto_conf;
-		warn "conf: $conf";
+
+		# check if we have alternate end points to add
+		if(my $alt_to = $zcispice_params{alt_to}){
+			my ($base_target) = $target =~ /^(.+::)\w+$/;
+			while(my ($to, $params) = each %$alt_to){
+				my $target = "${base_target}::$to";
+				my ($callback, $path) = @{params_from_target($target)};
+				my $rewrite = create_rewrite($callback, $path, $params);
+				$conf .= $rewrite->nginx_conf;
+			}
+		}
+
 		return $conf;
 	});
 
@@ -229,6 +208,23 @@ sub params_from_target {
 	my $answer_type = lc(join(' ',@parts));
 
 	return [$callback, $path, $answer_type];
+}
+
+sub create_rewrite {
+	my ($callback, $path, $params) = @_;
+
+	return DDG::Rewrite->new(
+		to => $params->{to},
+		defined $params->{from} ? ( from => $params->{from}) : (),
+		defined $params->{proxy_cache_valid} ? ( proxy_cache_valid => $params->{proxy_cache_valid} ) : (),
+		defined $params->{proxy_ssl_session_reuse} ? ( proxy_ssl_session_reuse => $params->{proxy_ssl_session_reuse} ) : (),
+		callback => $callback,
+		path => $path,
+		wrap_jsonp_callback => $params->{wrap_jsonp_callback},
+		wrap_string_callback => $params->{wrap_string_callback},
+		accept_header => $params->{accept_header},
+		error_fallback => $params->{error_fallback}
+	);
 }
 
 1;
