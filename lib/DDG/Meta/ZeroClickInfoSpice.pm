@@ -160,6 +160,22 @@ sub apply_keywords {
 		return $rewrite;
 	});
 
+	# make these accessbile, e.g. for duckpan
+	$stash->add_symbol('&alt_rewrites', sub {
+		my %rewrites;
+		# check if we have alternate end points to add
+		if(my $alt_to = $zcispice_params{alt_to}){
+			my ($base_target) = $target =~ /^(.+::)\w+$/;
+			while(my ($to, $params) = each %$alt_to){
+				my $target = "$base_target$to";
+				my ($callback, $path) = @{params_from_target($target)};
+				$rewrites{$to} = create_rewrite($callback, $path, $params);
+			}
+		}
+
+		return \%rewrites;
+	});
+
 	$stash->add_symbol('&get_nginx_conf',sub {
 		my $nginx_conf_func = $stash->get_symbol('&nginx_conf');
 		return $nginx_conf_func->(@_) if $nginx_conf_func;
@@ -167,14 +183,8 @@ sub apply_keywords {
 		my $conf = $target->rewrite->nginx_conf;
 
 		# check if we have alternate end points to add
-		if(my $alt_to = $zcispice_params{alt_to}){
-			my ($base_target) = $target =~ /^(.+::)\w+$/;
-			while(my ($to, $params) = each %$alt_to){
-				my $target = "$base_target$to";
-				my ($callback, $path) = @{params_from_target($target)};
-				my $rewrite = create_rewrite($callback, $path, $params);
-				$conf .= $rewrite->nginx_conf;
-			}
+		for my $r (values %{$target->alt_rewrites}){
+			$conf .= $r->nginx_conf;
 		}
 
 		return $conf;
