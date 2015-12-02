@@ -167,6 +167,7 @@ sub apply_keywords {
 		if(my $alt_to = $zcispice_params{alt_to}){
 			my ($base_target) = $target =~ /^(.+::)\w+$/;
 			while(my ($to, $params) = each %$alt_to){
+				check_zeroclickinfospice_key($_) for keys %$params;
 				my $target = "$base_target$to";
 				my ($callback, $path) = @{params_from_target($target)};
 				$rewrites{$to} = create_rewrite($callback, $path, $params);
