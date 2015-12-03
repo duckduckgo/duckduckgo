@@ -93,6 +93,44 @@ testing your L<DDG::Spice> alone or in combination with others.
 		}
 	},@_)});
 
+=keyword alt_to_test
+
+Use this function to verify your spice's alt_to definitions:
+
+	alt_to_test('DDG::Spice::My::Spice', [qw(alt1 alt2 alt3)]);
+
+This would check for the following:
+
+	callbacks 'ddg_spice_my_alt[123]'
+	paths '/js/spice/my/alt[123]/'
+
+=cut
+
+	$stash->add_symbol('&alt_to_test', sub {
+		my ($spice, $alt_tos) = @_;
+
+		require_ok($spice);
+		my $d = $spice->new(block => 1);
+
+		my $rewrites = $d->alt_rewrites;
+		ok($rewrites, "$spice has rewrites");
+
+		my ($base) =~ $spice =~ /^DDG::(.+)::/;
+		ok($base, "Extract base from $spice");
+
+		$base = lc $base;
+		my $cb_base = $base;
+		$cb_base =~ s/::/_/g;
+		my $path_base = $base;
+		$path_base =~ s|::|/|g;
+
+		for my $alt (@$alt_tos){
+			my $rw = $rewrites->{$alt};
+			ok($rw, "$alt exists");
+			ok($rw->callback eq "ddg_${cb_base}_$alt", "$alt callback");
+			ok($rw->path eq "/js/$cb_base/$alt/", "$alt path");
+		}
+	});
 }
 
 1;
