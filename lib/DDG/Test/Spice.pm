@@ -8,6 +8,7 @@ use Test::More;
 use DDG::Test::Block;
 use DDG::ZeroClickInfo::Spice;
 use Package::Stash;
+use Class::Load 'load_class';
 
 =head1 DESCRIPTION
 
@@ -109,14 +110,13 @@ This would check for the following:
 	$stash->add_symbol('&alt_to_test', sub {
 		my ($spice, $alt_tos) = @_;
 
-		require_ok($spice);
-		my $d = $spice->new(block => 1);
+		load_class($spice);
 
-		my $rewrites = $d->alt_rewrites;
+		my $rewrites = $spice->alt_rewrites;
 		ok($rewrites, "$spice has rewrites");
 
-		my ($base) =~ $spice =~ /^DDG::(.+)::/;
-		ok($base, "Extract base from $spice");
+		ok($spice =~ /^DDG::(.+)::/, "Extract base from $spice");
+		my $base = $1;
 
 		$base = lc $base;
 		my $cb_base = $base;
@@ -128,7 +128,7 @@ This would check for the following:
 			my $rw = $rewrites->{$alt};
 			ok($rw, "$alt exists");
 			ok($rw->callback eq "ddg_${cb_base}_$alt", "$alt callback");
-			ok($rw->path eq "/js/$cb_base/$alt/", "$alt path");
+			ok($rw->path eq "/js/$path_base/$alt/", "$alt path");
 		}
 	});
 }
