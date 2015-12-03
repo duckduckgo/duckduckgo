@@ -115,11 +115,10 @@ This would check for the following:
 		my $rewrites = $spice->alt_rewrites;
 		ok($rewrites, "$spice has rewrites");
 
-		ok($spice =~ /^DDG::(.+)::/, "Extract base from $spice");
-		my $base = $1;
+		ok($spice =~ /^(DDG.*?)::(.+)::/, "Extract base from $spice");
+		my ($ddg, $base) = map {lc} ($1, $2);
 
-		$base = lc $base;
-		my $cb_base = $base;
+		my $cb_base = "${ddg}_$base";
 		$cb_base =~ s/::/_/g;
 		my $path_base = $base;
 		$path_base =~ s|::|/|g;
@@ -127,7 +126,7 @@ This would check for the following:
 		for my $alt (@$alt_tos){
 			my $rw = $rewrites->{$alt};
 			ok($rw, "$alt exists");
-			ok($rw->callback eq "ddg_${cb_base}_$alt", "$alt callback");
+			ok($rw->callback eq "${cb_base}_$alt", "$alt callback");
 			ok($rw->path eq "/js/$path_base/$alt/", "$alt path");
 		}
 	});
