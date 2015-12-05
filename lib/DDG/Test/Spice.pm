@@ -7,6 +7,7 @@ use Carp;
 use Test::More;
 use DDG::Test::Block;
 use DDG::ZeroClickInfo::Spice;
+use DDG::Meta::ZeroClickInfoSpice;
 use Package::Stash;
 use Class::Load 'load_class';
 
@@ -115,19 +116,15 @@ This would check for the following:
 		my $rewrites = $spice->alt_rewrites;
 		ok($rewrites, "$spice has rewrites");
 
-		ok($spice =~ /^(DDG.*?)::(.+)::/, "Extract base from $spice");
-		my ($ddg, $base) = map {lc} ($1, $2);
-
-		my $cb_base = "${ddg}_$base";
-		$cb_base =~ s/::/_/g;
-		my $path_base = $base;
-		$path_base =~ s|::|/|g;
+		ok($spice =~ /^(DDG.+::)/, "Extract base from $spice");
+		my $base = $1;
 
 		for my $alt (@$alt_tos){
+			my ($cb, $path) = @{DDG::Meta::ZeroClickInfoSpice::params_from_target("$base$alt")};
 			my $rw = $rewrites->{$alt};
 			ok($rw, "$alt exists");
-			ok($rw->callback eq "${cb_base}_$alt", "$alt callback");
-			ok($rw->path eq "/js/$path_base/$alt/", "$alt path");
+			ok($rw->callback eq $cb, "$alt callback");
+			ok($rw->path eq $path, "$alt path");
 		}
 	});
 }
