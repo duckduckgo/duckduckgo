@@ -180,8 +180,11 @@ sub apply_keywords {
 	$stash->add_symbol('&get_nginx_conf',sub {
 		my $nginx_conf_func = $stash->get_symbol('&nginx_conf');
 		return $nginx_conf_func->(@_) if $nginx_conf_func;
-		return '' unless $target->has_rewrite;
-		my $conf = $target->rewrite->nginx_conf;
+
+		my $conf = ''; # (20151208 zt) just in case can't handle undef ;-/
+		if($target->has_rewrite){
+			$conf = $target->rewrite->nginx_conf;
+		}
 
 		# check if we have alternate end points to add
 		for my $r (values %{$target->alt_rewrites}){
