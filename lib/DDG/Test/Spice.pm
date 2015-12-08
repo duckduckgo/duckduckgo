@@ -7,7 +7,9 @@ use Carp;
 use Test::More;
 use DDG::Test::Block;
 use DDG::ZeroClickInfo::Spice;
+use DDG::Meta::ZeroClickInfoSpice;
 use Package::Stash;
+use Class::Load 'load_class';
 
 =head1 DESCRIPTION
 
@@ -93,6 +95,38 @@ testing your L<DDG::Spice> alone or in combination with others.
 		}
 	},@_)});
 
+=keyword alt_to_test
+
+Use this function to verify your spice's alt_to definitions:
+
+	alt_to_test('DDG::Spice::My::Spice', [qw(alt1 alt2 alt3)]);
+
+This would check for the following:
+
+	callbacks 'ddg_spice_my_alt[123]'
+	paths '/js/spice/my/alt[123]/'
+
+=cut
+
+	$stash->add_symbol('&alt_to_test', sub {
+		my ($spice, $alt_tos) = @_;
+
+		load_class($spice);
+
+		my $rewrites = $spice->alt_rewrites;
+		ok($rewrites, "$spice has rewrites");
+
+		ok($spice =~ /^(DDG.+::)/, "Extract base from $spice");
+		my $base = $1;
+
+		for my $alt (@$alt_tos){
+			my ($cb, $path) = @{DDG::Meta::ZeroClickInfoSpice::params_from_target("$base$alt")};
+			my $rw = $rewrites->{$alt};
+			ok($rw, "$alt exists");
+			ok($rw->callback eq $cb, "$alt callback");
+			ok($rw->path eq $path, "$alt path");
+		}
+	});
 }
 
 1;
