@@ -95,7 +95,7 @@ sub apply_keywords {
 			if ($params{'call_type'} eq 'include') {
 				$params{'call'} = $target->path.join('/',map { uri_encode($_,1) } @call);
 			} elsif (scalar @call == 1) {
-				$params{'call'} = $call[0];
+				$params{'call'} = uri_encode($call[0]);
 			} else {
 				croak "DDG::ZeroClickInfo::Spice can't handle more then one value in return list on non include call_type";
 			}

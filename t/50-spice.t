@@ -79,6 +79,7 @@ ddg_spice_test(
 		DDGTest::Spice::ChangeCached
 		DDGTest::Spice::MultiTriggerType
 		DDGTest::Spice::AltTo
+		DDGTest::Spice::CallTypeSelf
 	)],
 	'data test' => test_spice( 
 		'/js/spice/data/test',
@@ -137,6 +138,12 @@ ddg_spice_test(
 		'/js/spice/alt_to/test',
 		call_type => 'include',
 		caller => 'DDGTest::Spice::AltTo',
+		is_cached => 1
+	),
+	'call type self "999"' => test_spice(
+		'%22999%22',
+		call_type => 'self',
+		caller => 'DDGTest::Spice::CallTypeSelf',
 		is_cached => 1
 	),
 	# 'flash version' => test_spice( 
