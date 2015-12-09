@@ -87,7 +87,7 @@ sub apply_keywords {
 			} elsif (!defined $_) {
 				# do nothing
 			} else {
-				push @call, $_;
+				push @call, uri_encode($_);
 			}
 		}
 		$params{'call_data'} = $data->data if $data;
