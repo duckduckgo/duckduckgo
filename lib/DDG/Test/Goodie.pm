@@ -5,6 +5,7 @@ use strict;
 use warnings;
 use Carp;
 use Test::More;
+use Test::Deep;
 use DDG::Test::Block;
 use DDG::ZeroClickInfo;
 use Package::Stash;
@@ -108,7 +109,7 @@ testing your L<DDG::Goodie> alone or in combination with others.
 					}
 				}
 				$zci->{caller} = $answer->caller;    # TODO: Review all this cheating; seriously.
-				is_deeply($answer,$zci,'Deep: full ZCI object');
+				cmp_deeply($answer,$zci,'Deep: full ZCI object');
 			} else {
 				fail('Expected result but dont get one on '.$query) unless defined $answer;
 			}
