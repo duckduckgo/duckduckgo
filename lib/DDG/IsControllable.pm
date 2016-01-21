@@ -17,7 +17,6 @@ anything else.
 
 has is_cached => (
 	is => 'ro',
-	coerce => sub { shift . '' }, # make a normal int if it's been promoted to BigX
 	default => sub { shift->isa('DDG::ZeroClickInfo::Spice') ? 1 : 0 },
 );
 
