@@ -17,7 +17,8 @@ anything else.
 
 has is_cached => (
 	is => 'ro',
-	default => sub { shift->isa("DDG::ZeroClickInfo::Spice") ? 1 : 0 },
+	coerce => sub { shift . '' }, # make a normal int if it's been promoted to BigX
+	default => sub { shift->isa('DDG::ZeroClickInfo::Spice') ? 1 : 0 },
 );
 
 =attr is_unsafe
