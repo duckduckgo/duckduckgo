@@ -145,4 +145,22 @@ my $upstream_rewrite = DDG::Rewrite->new(
 
 like($upstream_rewrite->nginx_conf, qr/set \$spice_name_upstream http:\/\/some\.api:80;/,'Checking upstream rewrite');
 
+my $xmlrewrite = DDG::Rewrite->new(
+	path => '/js/spice/spice_name/',
+	to => 'http://some.api/$1',
+	is_xml => 1,
+);
+
+isa_ok($xmlrewrite,'DDG::Rewrite');
+
+is($xmlrewrite->nginx_conf,'location ^~ /js/spice/spice_name/ {
+	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
+	set $spice_name_upstream https://duckduckgo.com:443;
+	rewrite ^/js/spice/spice_name/(.*) /x.js?u=http://some.api/$1 break;
+	proxy_pass $spice_name_upstream;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	expires 1s;
+}
+','Checking generated nginx.conf');
+
 done_testing;
