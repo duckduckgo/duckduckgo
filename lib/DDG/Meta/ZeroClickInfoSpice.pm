@@ -228,10 +228,10 @@ sub params_from_target {
 
 sub create_rewrite {
 	my ($callback, $path, $params) = @_;
-	$params->{to} = 'https://duckduckgo.com/x.js?u=' . $params->{to} if $params->{is_xml};
 
 	return DDG::Rewrite->new(
 		to => $params->{to},
+		defined $params->{is_xml} ? ( is_xml => $params->{is_xml} ) : (),
 		defined $params->{from} ? ( from => $params->{from}) : (),
 		defined $params->{proxy_cache_valid} ? ( proxy_cache_valid => $params->{proxy_cache_valid} ) : (),
 		defined $params->{proxy_ssl_session_reuse} ? ( proxy_ssl_session_reuse => $params->{proxy_ssl_session_reuse} ) : (),

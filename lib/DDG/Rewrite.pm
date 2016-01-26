@@ -7,7 +7,7 @@ use URI;
 
 sub BUILD {
 	my ( $self ) = @_;
-	my $to = $self->to;
+	my $to = ( $self->is_xml ? 'https://duckduckgo.com/x.js?u=' : '' ) . $self->to;
 	my $callback = $self->has_callback ? $self->callback : "";
 	croak "Missing callback attribute for {{callback}} in to" if ($to =~ s/\Q{{callback}}/$callback/g && !$self->has_callback);
 	# Make sure we replace "{{dollar}}"" with "{dollar}".
@@ -91,6 +91,11 @@ has wrap_string_callback => (
 has accept_header => (
     is => 'ro',
     default => sub { 0 },
+);
+
+has is_xml => (
+	is => 'ro',
+	default => sub { 0 },
 );
 
 has proxy_cache_valid => (
