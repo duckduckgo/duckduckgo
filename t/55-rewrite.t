@@ -102,6 +102,7 @@ is($minrewrite_https->nginx_conf,'location ^~ /js/spice/spice_name/ {
 	set $spice_name_upstream https://some.api:443;
 	rewrite ^/js/spice/spice_name/(.*) /$1 break;
 	proxy_pass $spice_name_upstream;
+	proxy_ssl_server_name on;
 	expires 1s;
 }
 ','Checking generated nginx.conf');
