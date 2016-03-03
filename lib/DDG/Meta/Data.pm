@@ -59,20 +59,10 @@ unless(%ia_metadata){
 
     IA: while (my ($id, $ia) = each %{ $metadata }) {
 
-        # 20150502 (zt) Can't filter like this yet as some tests depend on non-live IA metadata
-        #next unless $ia->{status} eq 'live';
-
         # check for bad metadata.  We need a perl_module for the by_module key
         if($ia->{perl_module} !~ /DDG::.+::.+/){
             warn "Invalid perl_module for IA $id: $ia->{perl_module} in metadata...skipping" if $ia->{status} eq 'live';
             next IA;
-        }
-
-        # generic IsAwesome goodie metadata since these are always the same
-        if($ia->{perl_module} =~ /IsAwesome/){
-            next IA if $ia_metadata{module}{'DDG::Goodie::IsAwesome'};
-            $ia->{id} = 'is_awesome';
-            $ia->{perl_module} = 'DDG::Goodie::IsAwesome'
         }
 
         # warn if we run into a duplicate id.  These should be unique within *and*
@@ -124,8 +114,6 @@ sub get_ia {
     my ($self, $by, $lookup) = @_;
     warn 'Get IA obj lookup params: ', p($lookup) if debug;
     
-    $lookup =~ s/^DDG::Goodie::IsAwesome\K::.+$//;
-
     my $m = $ia_metadata{$by}{$lookup};
     warn 'Returning IA ', p($m) if debug;
     return $m;
