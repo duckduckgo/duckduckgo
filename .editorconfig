@@ -1,0 +1,28 @@
+# EditorConfig is awesome: http://EditorConfig.org
+# https://duck.co/duckduckhack/code_styleguide
+# http://javascript.crockford.com/code.html
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+# Matches multiple files with brace expansion notation
+# Set default charset
+[*.{js,css,json,pl,pm,tt2,py,t}]
+charset = utf-8
+
+# 4 space indentation
+[*.{pl,pm,t}]
+indent_style = space
+indent_size = 4
+
+# Indentation override for files under share directory
+[share/**.{js,css,json}]
+indent_style = space
+indent_size = 4
+
+# Matches the exact files either package.json or .travis.yml
+[{package.json,.travis.yml}]
+indent_style = space
+indent_size = 2
