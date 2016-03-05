@@ -66,7 +66,6 @@ subtest 'rand_int' => sub {
 
 	for (my $i=10; $i<500; $i+=25) {
 		$res = DDGTest::Goodie::MetaOnly::rand_int($i);
-		diag("got $res for rand_int($i)");
 		ok(($res>=0||$res<=$i), "between 0-$i");
 	}
 };
