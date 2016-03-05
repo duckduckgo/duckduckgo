@@ -29,12 +29,12 @@ This meta class installs some helper functions.
 my %applied;
 
 sub apply_keywords {
-    my ( $class, $target ) = @_;
+	my ( $class, $target ) = @_;
 
-    return if exists $applied{$target};
-    $applied{$target} = undef;
+	return if exists $applied{$target};
+	$applied{$target} = undef;
 
-    my $stash = Package::Stash->new($target);
+	my $stash = Package::Stash->new($target);
 
 =keyword html_enc
 
@@ -42,7 +42,7 @@ encodes entities to safely post random data on HTML output.
 
 =cut
 
-    $stash->add_symbol('&html_enc', sub { return (wantarray) ? map { encode_entities($_) } @_ : encode_entities(join '', @_) });
+	$stash->add_symbol('&html_enc', sub { return (wantarray) ? map { encode_entities($_) } @_ : encode_entities(join '', @_) });
 
 =keyword uri_esc
 
@@ -55,7 +55,7 @@ values there, this will just lead to double encoding!
 
 =cut
 
-    $stash->add_symbol('&uri_esc', sub { return (wantarray) ? map { uri_escape($_) } @_ : uri_escape(join '', @_) });
+	$stash->add_symbol('&uri_esc', sub { return (wantarray) ? map { uri_escape($_) } @_ : uri_escape(join '', @_) });
 
 =keyword Booleans (true/false)
 
@@ -72,10 +72,10 @@ generates random integer between 0 and supplied max integer (max defaults to 1).
 
 =cut
 
-    $stash->add_symbol('&rand_int', sub {   
-        my $max = shift || 1;
-        return rand_int($max);
-    });
+	$stash->add_symbol('&rand_int', sub { 	
+		my $max = shift || 1;
+		return rand_int($max);
+	});
 }
 
 1;
