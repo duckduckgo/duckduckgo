@@ -68,13 +68,6 @@ unless(%ia_metadata){
             next IA;
         }
 
-        # generic IsAwesome goodie metadata since these are always the same
-        if($ia->{perl_module} =~ /IsAwesome/){
-            next IA if $ia_metadata{module}{'DDG::Goodie::IsAwesome'};
-            $ia->{id} = 'is_awesome';
-            $ia->{perl_module} = 'DDG::Goodie::IsAwesome'
-        }
-
         # warn if we run into a duplicate id.  These should be unique within *and*
         # across all IA types
         if( $ia_metadata{id}{$id} ){
@@ -123,8 +116,6 @@ unless(%ia_metadata){
 sub get_ia {
     my ($self, $by, $lookup) = @_;
     warn 'Get IA obj lookup params: ', p($lookup) if debug;
-    
-    $lookup =~ s/^DDG::Goodie::IsAwesome\K::.+$//;
 
     my $m = $ia_metadata{$by}{$lookup};
     warn 'Returning IA ', p($m) if debug;
