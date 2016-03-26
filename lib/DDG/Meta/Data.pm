@@ -43,6 +43,8 @@ unless(%ia_metadata){
 			unless($res->is_success || $res->code == 304){
 					debug && warn "Failed to download metadata: " . $res->status_line;
 			}
+		} else {
+			debug && warn "Not fetching new metadata, cache timeout not yet expired";
 		}
 
     # Decompress to command-line
