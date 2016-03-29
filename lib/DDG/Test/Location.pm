@@ -56,6 +56,7 @@ our %locations = (
 		city => 'Kuala Lumpur',
 		latitude => '3.1667',
 		longitude => '101.7000',
+		time_zone => 'Asia/Kuala_Lumpur',
 		area_code => 0,
 		continent_code => 'AS',
 		metro_code => 0,
