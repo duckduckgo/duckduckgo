@@ -21,7 +21,7 @@ sub zci {
         caller => $caller,
 		answer => $answer,
 		answer_type => $answer_type,
-		is_cached => $is_cached ? 1 : 0,
+		is_cached => 1,
 		%extra_attributes,
 	);
 }
