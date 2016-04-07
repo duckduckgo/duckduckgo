@@ -175,6 +175,7 @@ sub _build_nginx_conf {
 	$cfg .= "\trewrite ^".$self->path.($self->has_from ? $self->from : "(.*)")." ".$uri_path." break;\n";
 	$cfg .= "\tproxy_pass $upstream;\n";
 	$cfg .= "\tproxy_set_header ".$self->proxy_x_forwarded_for.";\n" if $is_duckduckgo;
+	$cfg .= "\tproxy_ssl_server_name on;\n" if $scheme =~ /https/;
 
 	if($self->has_proxy_cache_valid) {
 		# This tells Nginx how long the response should be kept.
