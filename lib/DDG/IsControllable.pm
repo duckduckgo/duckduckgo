@@ -17,7 +17,7 @@ anything else.
 
 has is_cached => (
 	is => 'ro',
-	default => sub { shift->isa("DDG::ZeroClickInfo::Spice") ? 1 : 0 },
+	default => sub { shift->isa('DDG::ZeroClickInfo::Spice') ? 1 : 0 },
 );
 
 =attr is_unsafe
