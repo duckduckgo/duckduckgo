@@ -10,7 +10,7 @@ Before you can do anything, you first need a [GitHub account](https://github.com
 
 - Firstly, please make sure the bug is related to the **DuckDuckGo** repository. If this bug is about the DuckDuckGo API, or the relevancy of our search results, please visit our feedback page at <https://duckduckgo.com/feedback>. If you're unsure, its best to use the feedback page (your message will be passed along to the correct people).
 
-- Check the **DuckDuckGo** [issues](#link-to-issues) to see if an issue already exists for the given bug or suggestion
+- Check the **DuckDuckGo** [issues](https://github.com/duckduckgo/duckduckgo/issues) to see if an issue already exists for the given bug or suggestion
   - If one doesn't exist, create a GitHub issue in the **DuckDuckGo** repository
     - Clearly describe the bug/improvemnt, including steps to reproduce when it is a bug
   - If one already exists, please add any additional comments you have regarding the matter
@@ -20,18 +20,18 @@ If you're submitting a **pull request** (bugfix/addition):
 
 ## Making Changes
 
-- Before making any changes, refer to the [DuckDuckHack Styleguide](https://duck.co/duckduckhack/styleguide_overview) to ensure your changes are made in the correct fashion
+- Before making any changes, refer to the [DuckDuckHack Styleguide](https://github.com/duckduckgo/duckduckgo-documentation/blob/master/duckduckhack/resources/code_styleguide.md) to ensure your changes are made in the correct fashion
 - Make sure your commits are of a reasonable size. They shouldn't be too big (or too small)
 - Make sure your commit messages effectively explain what changes have been made, and please identify which instant answer or file has been modified:
 
   ```shell
-  CONTRIBUTING.md - Added the example commit message because it was missing
+  CONTRIBUTING.md - Add the example commit message because it was missing
   ```
 
   is much better than:
 
   ```shell
-  <bad_commit_example>
+  Improve README
   ```
 
 - Make sure you have added the necessary tests for your changes
