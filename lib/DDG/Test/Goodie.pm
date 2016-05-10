@@ -90,9 +90,6 @@ testing your L<DDG::Goodie> alone or in combination with others.
 					if (ref $zci->$_ eq 'Regexp') {
 						like($answer->$_, $zci->$_, 'Regexp: ' . $_ );
 						$zci->{$_} = $answer->$_;
-					} elsif ($zci->$_ eq '-ANY-') {
-						pass('-ALL- pass: ' . $_);
-						$zci->{$_} = $answer->$_;
 					}
 				}
 				if ($zci->has_structured_answer) {
@@ -101,9 +98,6 @@ testing your L<DDG::Goodie> alone or in combination with others.
 					foreach my $key (grep { defined $e_sa->{$_} } sort keys %$e_sa) {
 						if (ref $e_sa->{$key} eq 'Regexp') {
 							like($g_sa->{$key}, $e_sa->{$key}, 'Regexp: structured_answer{' . $key . '}');
-							$g_sa->{$key} = $e_sa->{$key};
-						} elsif ($e_sa->{$key} eq '-ANY-') {
-							pass('-ALL- pass: structured_answer{' . $key . '}');
 							$g_sa->{$key} = $e_sa->{$key};
 						}
 					}
