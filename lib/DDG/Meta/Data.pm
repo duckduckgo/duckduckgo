@@ -6,6 +6,7 @@ use Path::Class;
 use File::ShareDir 'dist_file';
 use LWP::UserAgent;
 use File::Copy::Recursive 'pathmk';
+use List::Util qw( pairs );
 
 use strict;
 
@@ -113,6 +114,8 @@ unless(%ia_metadata){
     }
 }
 
+my @ia_container = sort values by_id();
+
 sub get_ia {
     my ($self, $by, $lookup) = @_;
     warn 'Get IA obj lookup params: ', p($lookup) if debug;
@@ -120,6 +123,26 @@ sub get_ia {
     my $m = $ia_metadata{$by}{$lookup};
     warn 'Returning IA ', p($m) if debug;
     return $m;
+}
+
+sub _satisfy {
+	my ($ia, $by, $lookup) = @_;
+	return $by->($ia, $lookup) if ref $by eq 'CODE';
+	my $pby = $ia->{$by};
+	ref $lookup eq 'CODE' ? $lookup->($pby) : $pby eq $lookup;
+}
+
+# get_ias(repo => 'goodies', dev_milestone => 'live'...)
+# Lookups combine as an AND operation.
+sub get_ias {
+	my (@lookups) = @_;
+	my @results = @ia_container;
+	foreach (pairs @lookups) {
+		return () unless @results;
+		my ($by, $lookup) = @$_;
+		@results = grep { _satisfy($_, $by, $lookup) } @results;
+	}
+	return @results;
 }
 
 sub get_js {
