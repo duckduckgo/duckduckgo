@@ -32,6 +32,7 @@ sub apply_keywords {
 	#
 
 	my $triggers;
+	my $matcher;
 	my $stash = Package::Stash->new($target);
 
 =keyword triggers_block_type
@@ -68,6 +69,12 @@ L<DDG::Block::Words> or L<DDG::Block::Regexp> for more informations.
 	$stash->add_symbol('&triggers',sub {
 		$triggers = DDG::Block::Blockable::Triggers->new unless $triggers;
 		$triggers->add(@_)
+	});
+
+	$stash->add_symbol('&get_matcher',sub { return $matcher });
+
+	$stash->add_symbol('&matcher',sub {
+			$matcher = DDG::GoodieRole::WhatIs::Matcher->new(@_) unless $matcher;
 	});
 
 	#

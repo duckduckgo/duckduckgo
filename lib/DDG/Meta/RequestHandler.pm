@@ -38,6 +38,12 @@ my @request_array_attributes = qw(
 
 );
 
+my @request_hash_attributes = qw(
+
+	matcher
+
+);
+
 my $default_handler = 'query_raw';
 
 =method apply_keywords
@@ -148,6 +154,19 @@ or language at all you can use B<$has_loc> and B<$has_lang>.
 				my $default = $request->$default_handler;
 				for ($default) {
 					@result = $code->(@{$request->$handler});
+				}
+				$class->reset_request_symbols($stash);
+				return @result ? $result_handler->($self,@result) : ();
+			});
+		} elsif (grep { $_ eq $handler } @request_hash_attributes) {
+			$stash->add_symbol('&handle_request_matches',sub {
+				my ( $self, $request ) = @_;
+				$class->request_symbols($stash,$request);
+				my @result;
+				my $default = $request->$default_handler;
+				for ($default) {
+					my $match = $self->matcher->full_match($_);
+					@result = $match ? $code->($match) : ();
 				}
 				$class->reset_request_symbols($stash);
 				return @result ? $result_handler->($self,@result) : ();

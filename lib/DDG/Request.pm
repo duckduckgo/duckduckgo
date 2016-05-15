@@ -264,6 +264,17 @@ Takes L</query_parts> and join them with one space.
 
 =cut
 
+has matcher => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => 1,
+);
+
+sub _build_matcher {
+    my $self = shift;
+    return @_;
+}
+
 has query => (
 	is => 'ro',
 	lazy => 1,
