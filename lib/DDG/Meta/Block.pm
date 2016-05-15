@@ -74,7 +74,9 @@ L<DDG::Block::Words> or L<DDG::Block::Regexp> for more informations.
 	$stash->add_symbol('&get_matcher',sub { return $matcher });
 
 	$stash->add_symbol('&matcher',sub {
-			$matcher = DDG::GoodieRole::WhatIs::Matcher->new(@_) unless $matcher;
+			$matcher = DDG::GoodieRole::WhatIs::Matcher->new(
+				groups => shift, @_
+			) unless $matcher;
 	});
 
 	#
