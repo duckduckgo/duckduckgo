@@ -108,6 +108,11 @@ has proxy_x_forwarded_for => (
         default => sub { 'X-Forwarded-For $proxy_add_x_forwarded_for' }
 );
 
+has post_body => (
+	is => 'ro',
+	predicate => 'has_post_body',
+);
+
 has nginx_conf => (
 	is => 'ro',
 	lazy => 1,
@@ -140,7 +145,11 @@ sub _build_nginx_conf {
 
 	my $cfg = "location ^~ ".$self->path." {\n";
 	$cfg .= "\tproxy_set_header Accept '".$self->accept_header."';\n" if $self->accept_header;
-	
+
+	if ( $self->has_post_body ) {
+		$cfg .= "\tproxy_method POST;\n";
+		$cfg .= "\tproxy_set_body '" . $self->post_body . "';\n";
+	}
 	if($uses_echo_module) {
 		# we need to make sure we have plain text coming back until we have a way
 		# to unilaterally gunzip responses from the upstream since the echo module
