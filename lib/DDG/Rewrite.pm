@@ -151,6 +151,10 @@ sub _build_nginx_conf {
 	if ( $self->has_post_body ) {
 		$cfg .= "\tproxy_method POST;\n";
 		$cfg .= "\tproxy_set_body '" . $self->post_body . "';\n";
+		my $cache_keys = join '', sort keys {
+			map { $_ => 1 } ( $self->post_body =~ m/\$[0-9]+/g )
+		};
+		$cfg .= "\tproxy_cache_key spice_${spice_name}_$cache_keys;\n"
 	}
 	if($uses_echo_module) {
 		# we need to make sure we have plain text coming back until we have a way

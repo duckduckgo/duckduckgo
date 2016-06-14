@@ -83,6 +83,7 @@ my $postrewrite = DDG::Rewrite->new(
 is($postrewrite->nginx_conf, 'location ^~ /js/spice/spice_name/ {
 	proxy_method POST;
 	proxy_set_body \'{"param2":"$2","param1":"$1"}\';
+	proxy_cache_key spice_spice_name_$1$2;
 	set $spice_name_upstream http://some.api:80;
 	rewrite ^/js/spice/spice_name/(.*) /$1 break;
 	proxy_pass $spice_name_upstream;
