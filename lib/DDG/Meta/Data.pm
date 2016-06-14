@@ -132,9 +132,9 @@ sub _satisfy {
 	ref $lookup eq 'CODE' ? $lookup->($pby) : $pby eq $lookup;
 }
 
-# get_ias(repo => 'goodies', dev_milestone => 'live'...)
+# filter_ias(repo => 'goodies', dev_milestone => 'live'...)
 # Lookups combine as an AND operation.
-sub get_ias {
+sub filter_ias {
 	my (@lookups) = @_;
 	my @results = @ia_container;
 	foreach (pairs @lookups) {
