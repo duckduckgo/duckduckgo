@@ -6,7 +6,7 @@ use Path::Class;
 use File::ShareDir 'dist_file';
 use LWP::UserAgent;
 use File::Copy::Recursive 'pathmk';
-use List::Util qw( any pairs );
+use List::Util qw( any );
 
 use strict;
 
@@ -132,14 +132,13 @@ sub _satisfy {
 	ref $lookup eq 'CODE' ? $lookup->($pby) : $pby eq $lookup;
 }
 
-# filter_ias(repo => 'goodies', dev_milestone => 'live'...)
+# filter_ias({ repo => 'goodies', dev_milestone => 'live'... })
 # Lookups combine as an AND operation.
 sub filter_ias {
 	my ($lookups) = @_;
 	my @results = @ia_container;
-	foreach (pairs @$lookups) {
+	while (my ($by, $lookup) = each %$lookups) {
 		return () unless @results;
-		my ($by, $lookup) = @$_;
 		my @lookup = ref $lookup eq 'ARRAY' ? @$lookup : ($lookup);
 		@results = grep {
 			my $ia = $_;
