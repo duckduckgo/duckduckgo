@@ -135,14 +135,14 @@ sub _satisfy {
 # filter_ias(repo => 'goodies', dev_milestone => 'live'...)
 # Lookups combine as an AND operation.
 sub filter_ias {
-	my (@lookups) = @_;
+	my ($lookups) = @_;
 	my @results = @ia_container;
-	foreach (pairs @lookups) {
+	foreach (pairs @$lookups) {
 		return () unless @results;
 		my ($by, $lookup) = @$_;
 		@results = grep { _satisfy($_, $by, $lookup) } @results;
 	}
-	return @results;
+	return \@results;
 }
 
 sub get_js {
