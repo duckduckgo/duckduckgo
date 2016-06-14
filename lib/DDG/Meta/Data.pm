@@ -6,7 +6,7 @@ use Path::Class;
 use File::ShareDir 'dist_file';
 use LWP::UserAgent;
 use File::Copy::Recursive 'pathmk';
-use List::Util qw( pairs );
+use List::Util qw( any pairs );
 
 use strict;
 
@@ -140,7 +140,11 @@ sub filter_ias {
 	foreach (pairs @$lookups) {
 		return () unless @results;
 		my ($by, $lookup) = @$_;
-		@results = grep { _satisfy($_, $by, $lookup) } @results;
+		my @lookup = ref $lookup eq 'ARRAY' ? @$lookup : ($lookup);
+		@results = grep {
+			my $ia = $_;
+			any { _satisfy($ia, $by, $_) } @lookup;
+		} @results;
 	}
 	return \@results;
 }
