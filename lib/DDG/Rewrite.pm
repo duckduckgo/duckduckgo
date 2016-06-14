@@ -142,6 +142,8 @@ sub _build_nginx_conf {
 	my $wrap_string_callback = $self->has_callback && $self->wrap_string_callback;
 	my $uses_echo_module = $wrap_jsonp_callback || $wrap_string_callback;
 	my $callback = $self->callback;
+	my ($spice_name) = $self->path =~ m{^/js/spice/(.+)/$};
+	$spice_name =~ s|/|_|og if $spice_name;
 
 	my $cfg = "location ^~ ".$self->path." {\n";
 	$cfg .= "\tproxy_set_header Accept '".$self->accept_header."';\n" if $self->accept_header;
@@ -173,8 +175,7 @@ sub _build_nginx_conf {
 	$cfg .= "\techo_before_body '$callback".qq|("';\n| if $wrap_string_callback;
 
 	my $upstream;
-	if(my ($spice_name) = $self->path =~ m{^/js/spice/(.+)/$}){
-		$spice_name =~ s|/|_|og;
+	if( $spice_name ) {
 		$upstream = '$'.$spice_name.'_upstream';
 		$cfg .= "\tset $upstream $scheme://$host:$port;\n";
 	} else {
