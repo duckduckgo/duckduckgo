@@ -88,9 +88,9 @@ has wrap_string_callback => (
     default => sub { 0 },
 );
 
-has accept_header => (
+has headers => (
     is => 'ro',
-    default => sub { 0 },
+    predicate => 'has_headers',
 );
 
 has proxy_cache_valid => (
@@ -139,8 +139,23 @@ sub _build_nginx_conf {
 	my $callback = $self->callback;
 
 	my $cfg = "location ^~ ".$self->path." {\n";
-	$cfg .= "\tproxy_set_header Accept '".$self->accept_header."';\n" if $self->accept_header;
-	
+
+	if ( $self->has_headers ) {
+		if ( ref $self->headers eq 'HASH' ) {
+			for my $header ( sort keys $self->headers ) {
+				$cfg .= "\tproxy_set_header $header " . $self->headers->{$header} . ";\n";
+			}
+		}
+		elsif ( ref $self->headers eq 'ARRAY' ) {
+			for my $header ( @{ $self->headers } ) {
+				$cfg .= "\tproxy_set_header $header;\n";
+			}
+		}
+		else {
+			$cfg .= "\tproxy_set_header " . $self->headers . ";\n";
+		}
+	}
+
 	if($uses_echo_module) {
 		# we need to make sure we have plain text coming back until we have a way
 		# to unilaterally gunzip responses from the upstream since the echo module
@@ -156,7 +171,7 @@ sub _build_nginx_conf {
 		$cfg .= "\tmore_set_headers 'Content-Type: application/javascript; charset=utf-8';\n";
 	}
 
-	if($uses_echo_module || $self->accept_header || $is_duckduckgo) {
+	if($uses_echo_module || $self->has_headers || $is_duckduckgo) {
 		$cfg .= "\tinclude /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;\n";
 	}
 
