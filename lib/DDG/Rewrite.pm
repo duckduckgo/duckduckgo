@@ -151,6 +151,14 @@ sub _build_nginx_conf {
 	if ( $self->has_post_body ) {
 		$cfg .= "\tproxy_method POST;\n";
 		$cfg .= "\tproxy_set_body '" . $self->post_body . "';\n";
+
+		# This block sets the proxy cache key from the spice name and the combined
+		# set of captured GET parameters. The 'map' builds a hash of these capture
+		# parameters as keys to ensure each one occurs only once. We can then pull these
+		# out consistently by calling 'sort keys' on the returned hash and 'join' turns
+		# the sorted keys into a single string.
+		# e.g. post_body '{"method":"$2","query":"$1","cleaned_query":"$1"}'
+		# Would give a $cache_keys value of '$1$2'
 		my $cache_keys = join '', sort keys {
 			map { $_ => 1 } ( $self->post_body =~ m/\$[0-9]+/g )
 		};
