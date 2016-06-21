@@ -137,6 +137,62 @@ my $ddgrewrite = DDG::Rewrite->new(
 isa_ok($ddgrewrite,'DDG::Rewrite');
 like($ddgrewrite->nginx_conf,qr/X-Forwarded-For/,'Checking DuckDuckGo rewrite');
 
+my $headers_rewrite = DDG::Rewrite->new(
+	path => '/js/spice/spice_name/',
+	to => 'https://some.api/$1',
+	headers => 'Accept application/vnd.citationstyles.csl+json'
+);
+
+my $headers_nginx_conf = 'location ^~ /js/spice/spice_name/ {
+	proxy_set_header Accept application/vnd.citationstyles.csl+json;
+	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
+	set $spice_name_upstream https://some.api:443;
+	rewrite ^/js/spice/spice_name/(.*) /$1 break;
+	proxy_pass $spice_name_upstream;
+	proxy_ssl_server_name on;
+	expires 1s;
+}
+';
+
+is($headers_rewrite->nginx_conf, $headers_nginx_conf,'Checking generated nginx.conf with custom headers');
+
+$headers_rewrite = DDG::Rewrite->new(
+	path => '/js/spice/spice_name/',
+	to => 'https://some.api/$1',
+	headers => [ q{Accept application/vnd.citationstyles.csl+json} ]
+);
+
+is($headers_rewrite->nginx_conf, $headers_nginx_conf, 'Checking generated nginx.conf with custom headers (array)');
+
+$headers_rewrite = DDG::Rewrite->new(
+	path => '/js/spice/spice_name/',
+	to => 'https://some.api/$1',
+	headers => { Accept => 'application/vnd.citationstyles.csl+json' }
+);
+
+is($headers_rewrite->nginx_conf, $headers_nginx_conf, 'Checking generated nginx.conf with custom headers (hash)');
+
+$headers_rewrite = DDG::Rewrite->new(
+	path => '/js/spice/spice_name/',
+	to => 'https://some.api/$1',
+	headers => {
+	       Accept => 'application/vnd.citationstyles.csl+json',
+	       Range  => '1024-2047',
+	}
+);
+
+is($headers_rewrite->nginx_conf, 'location ^~ /js/spice/spice_name/ {
+	proxy_set_header Accept application/vnd.citationstyles.csl+json;
+	proxy_set_header Range 1024-2047;
+	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
+	set $spice_name_upstream https://some.api:443;
+	rewrite ^/js/spice/spice_name/(.*) /$1 break;
+	proxy_pass $spice_name_upstream;
+	proxy_ssl_server_name on;
+	expires 1s;
+}
+', 'Checking generated nginx.conf with custom headers (hash multi)');
+
 my $upstream_rewrite = DDG::Rewrite->new(
         path => '/js/spice/spice_name/',
         from => '([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|)',
