@@ -140,7 +140,7 @@ sub _build_nginx_conf {
 
 	my $cfg = "location ^~ ".$self->path." {\n";
 
-	if ( $self->has_headers ) {
+	if ( $self->headers ) {
 		if ( ref $self->headers eq 'HASH' ) {
 			for my $header ( sort keys $self->headers ) {
 				$cfg .= "\tproxy_set_header $header " . $self->headers->{$header} . ";\n";
@@ -171,7 +171,7 @@ sub _build_nginx_conf {
 		$cfg .= "\tmore_set_headers 'Content-Type: application/javascript; charset=utf-8';\n";
 	}
 
-	if($uses_echo_module || $self->has_headers || $is_duckduckgo) {
+	if($uses_echo_module || $self->headers || $is_duckduckgo) {
 		$cfg .= "\tinclude /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;\n";
 	}
 
