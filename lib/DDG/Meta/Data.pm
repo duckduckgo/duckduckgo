@@ -127,7 +127,6 @@ sub get_ia {
 
 sub _satisfy {
 	my ($ia, $by, $lookup) = @_;
-	return $by->($ia, $lookup) if ref $by eq 'CODE';
 	my $pby = $ia->{$by};
 	ref $lookup eq 'CODE' ? $lookup->($pby) : $pby eq $lookup;
 }
