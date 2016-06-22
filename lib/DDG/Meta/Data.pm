@@ -160,7 +160,7 @@ sub get_js {
 
     my $id = $ia->{id};
     my $metaj = eval { JSON::XS->new->ascii->encode($ia) } || return;
-    return qq(DDH.$id=DDH.$id||{};DDH.$id.meta=$metaj;); 
+    return qq(DDH.$id=DDH.$id||{};DDH.$id.meta=$metaj;);
 }
 
 # return a hash of IA objects by id
