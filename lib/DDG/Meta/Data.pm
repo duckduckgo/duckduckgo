@@ -114,8 +114,6 @@ unless(%ia_metadata){
     }
 }
 
-my @ia_container = sort values by_id();
-
 sub get_ia {
     my ($self, $by, $lookup) = @_;
     warn 'Get IA obj lookup params: ', p($lookup) if debug;
