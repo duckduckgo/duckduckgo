@@ -136,6 +136,7 @@ sub filter_ias {
 	my ($lookups) = @_;
 	my %ias = %{by_id()};
 	my %lookups = %$lookups;
+	# Ensure lookups are of the form (by => [lookup...])
 	map {
 		my $cond = $lookups{$_};
 		$lookups{$_} = [$cond] unless ref $cond eq 'ARRAY';
