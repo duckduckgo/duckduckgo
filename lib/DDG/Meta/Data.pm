@@ -6,7 +6,7 @@ use Path::Class;
 use File::ShareDir 'dist_file';
 use LWP::UserAgent;
 use File::Copy::Recursive 'pathmk';
-use List::Util qw( any );
+use List::Util qw( all any );
 
 use strict;
 
@@ -143,12 +143,10 @@ sub filter_ias {
 		$lookups{$_} = [$cond] unless ref $cond eq 'ARRAY';
 	} (keys %lookups);
 	while (my ($id, $ia) = each %ias) {
-		# This is weird, if we don't have some expression here involving %lookups
-		# then last won't run properly.
-		%lookups = %lookups;
-		while (my ($by, $lookup) = each %lookups) {
-			delete $ias{$id} and last unless any { _satisfy($ia, $by, $_) } @$lookup;
-		};
+		delete $ias{$id} unless all {
+			my ($by, $lookup) = ($_, $lookups{$_});
+			any { _satisfy($ia, $by, $_) } @$lookup;
+		} (keys %lookups);
 	}
 	return \%ias;
 }
