@@ -134,6 +134,13 @@ sub _satisfy {
 
 # filter_ias({ repo => 'goodies', dev_milestone => 'live'... })
 # Lookups combine as an AND operation.
+# Each condition consists of a $key and $lookup.
+# $lookup should be either a string, ARRAY ref, or CODE ref.
+# If a string, then $lookup is compared with `eq'
+# If a CODE ref, then $lookup is called with the IAs $key attribute and
+# should return a boolean value.
+# If an ARRAY ref, then the above two rules are used with each element, the
+# IA only needs to satisfy one.
 sub filter_ias {
 	my ($lookups) = @_;
 	my %ias = %{by_id()};
