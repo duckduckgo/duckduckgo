@@ -136,16 +136,21 @@ sub _satisfy {
 # Lookups combine as an AND operation.
 sub filter_ias {
 	my ($lookups) = @_;
-	my @results = @ia_container;
-	while (my ($by, $lookup) = each %$lookups) {
-		return () unless @results;
-		my @lookup = ref $lookup eq 'ARRAY' ? @$lookup : ($lookup);
-		@results = grep {
-			my $ia = $_;
-			any { _satisfy($ia, $by, $_) } @lookup;
-		} @results;
+	my %ias = %{by_id()};
+	my %lookups = %$lookups;
+	map {
+		my $cond = $lookups{$_};
+		$lookups{$_} = [$cond] unless ref $cond eq 'ARRAY';
+	} (keys %lookups);
+	while (my ($id, $ia) = each %ias) {
+		# This is weird, if we don't have some expression here involving %lookups
+		# then last won't run properly.
+		%lookups = %lookups;
+		while (my ($by, $lookup) = each %lookups) {
+			delete $ias{$id} and last unless any { _satisfy($ia, $by, $_) } @$lookup;
+		};
 	}
-	return \@results;
+	return \%ias;
 }
 
 sub get_js {
