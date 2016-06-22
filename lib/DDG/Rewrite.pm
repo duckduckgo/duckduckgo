@@ -108,6 +108,11 @@ has proxy_x_forwarded_for => (
         default => sub { 'X-Forwarded-For $proxy_add_x_forwarded_for' }
 );
 
+has post_body => (
+	is => 'ro',
+	predicate => 'has_post_body',
+);
+
 has nginx_conf => (
 	is => 'ro',
 	lazy => 1,
@@ -137,10 +142,28 @@ sub _build_nginx_conf {
 	my $wrap_string_callback = $self->has_callback && $self->wrap_string_callback;
 	my $uses_echo_module = $wrap_jsonp_callback || $wrap_string_callback;
 	my $callback = $self->callback;
+	my ($spice_name) = $self->path =~ m{^/js/spice/(.+)/$};
+	$spice_name =~ s|/|_|og if $spice_name;
 
 	my $cfg = "location ^~ ".$self->path." {\n";
 	$cfg .= "\tproxy_set_header Accept '".$self->accept_header."';\n" if $self->accept_header;
-	
+
+	if ( $self->has_post_body ) {
+		$cfg .= "\tproxy_method POST;\n";
+		$cfg .= "\tproxy_set_body '" . $self->post_body . "';\n";
+
+		# This block sets the proxy cache key from the spice name and the combined
+		# set of captured GET parameters. The 'map' builds a hash of these capture
+		# parameters as keys to ensure each one occurs only once. We can then pull these
+		# out consistently by calling 'sort keys' on the returned hash and 'join' turns
+		# the sorted keys into a single string.
+		# e.g. post_body '{"method":"$2","query":"$1","cleaned_query":"$1"}'
+		# Would give a $cache_keys value of '$1$2'
+		my $cache_keys = join '', sort keys {
+			map { $_ => 1 } ( $self->post_body =~ m/\$[0-9]+/g )
+		};
+		$cfg .= "\tproxy_cache_key spice_${spice_name}_$cache_keys;\n"
+	}
 	if($uses_echo_module) {
 		# we need to make sure we have plain text coming back until we have a way
 		# to unilaterally gunzip responses from the upstream since the echo module
@@ -164,8 +187,7 @@ sub _build_nginx_conf {
 	$cfg .= "\techo_before_body '$callback".qq|("';\n| if $wrap_string_callback;
 
 	my $upstream;
-	if(my ($spice_name) = $self->path =~ m{^/js/spice/(.+)/$}){
-		$spice_name =~ s|/|_|og;
+	if( $spice_name ) {
 		$upstream = '$'.$spice_name.'_upstream';
 		$cfg .= "\tset $upstream $scheme://$host:$port;\n";
 	} else {
