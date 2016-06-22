@@ -125,6 +125,8 @@ sub get_ia {
 
 # filter_ias({ repo => 'goodies', dev_milestone => 'live'... })
 # Lookups combine as an AND operation.
+# Returns a list of IAs on `wantarray', otherwise an (id => ia) HASH ref.
+#
 # Each condition consists of a $key and $lookup.
 # $lookup should be either a string, ARRAY ref, or CODE ref.
 # If a string, then $lookup is compared with `eq'
@@ -149,7 +151,7 @@ sub filter_ias {
 			} @$lookup;
 		} (keys %lookups);
 	}
-	return \%ias;
+	return wantarray ? (values %ias) : \%ias;
 }
 
 sub get_js {
