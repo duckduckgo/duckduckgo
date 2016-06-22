@@ -125,12 +125,6 @@ sub get_ia {
     return $m;
 }
 
-sub _satisfy {
-	my ($ia, $by, $lookup) = @_;
-	my $pby = $ia->{$by};
-	ref $lookup eq 'CODE' ? $lookup->($pby) : $pby eq $lookup;
-}
-
 # filter_ias({ repo => 'goodies', dev_milestone => 'live'... })
 # Lookups combine as an AND operation.
 # Each condition consists of a $key and $lookup.
@@ -151,7 +145,9 @@ sub filter_ias {
 	while (my ($id, $ia) = each %ias) {
 		delete $ias{$id} unless all {
 			my ($by, $lookup) = ($_, $lookups{$_});
-			any { _satisfy($ia, $by, $_) } @$lookup;
+			any {
+				ref $_ eq 'CODE' ? $_->($ia->{$by}) : $_ eq $ia->{$by};
+			} @$lookup;
 		} (keys %lookups);
 	}
 	return \%ias;
