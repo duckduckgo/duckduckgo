@@ -138,18 +138,19 @@ sub filter_ias {
 	my ($lookups) = @_;
 	my %ias = %{by_id()};
 	my %lookups = %$lookups;
+	my @by = keys %lookups;
 	# Ensure lookups are of the form (by => [lookup...])
 	map {
 		my $cond = $lookups{$_};
 		$lookups{$_} = [$cond] unless ref $cond eq 'ARRAY';
-	} (keys %lookups);
+	} @by;
 	while (my ($id, $ia) = each %ias) {
 		delete $ias{$id} unless all {
 			my ($by, $lookup) = ($_, $lookups{$_});
 			any {
 				ref $_ eq 'CODE' ? $_->($ia->{$by}) : $_ eq $ia->{$by};
 			} @$lookup;
-		} (keys %lookups);
+		} @by;
 	}
 	return wantarray ? (values %ias) : \%ias;
 }
