@@ -6,6 +6,7 @@ use Path::Class;
 use File::ShareDir 'dist_file';
 use LWP::UserAgent;
 use File::Copy::Recursive 'pathmk';
+use List::Util qw( all any );
 
 use strict;
 
@@ -122,6 +123,38 @@ sub get_ia {
     return $m;
 }
 
+# filter_ias({ repo => 'goodies', dev_milestone => 'live'... })
+# Lookups combine as an AND operation.
+# Returns a list of IAs on `wantarray', otherwise an (id => ia) HASH ref.
+#
+# Each condition consists of a $key and $lookup.
+# $lookup should be either a string, ARRAY ref, or CODE ref.
+# If a string, then $lookup is compared with `eq'
+# If a CODE ref, then $lookup is called with the IAs $key attribute and
+# should return a boolean value.
+# If an ARRAY ref, then the above two rules are used with each element, the
+# IA only needs to satisfy one.
+sub filter_ias {
+	my $lookups = $_[1];
+	my %ias = %{by_id()};
+	my %lookups = %$lookups;
+	my @by = keys %lookups;
+	# Ensure lookups are of the form (by => [lookup...])
+	map {
+		my $cond = $lookups{$_};
+		$lookups{$_} = [$cond] unless ref $cond eq 'ARRAY';
+	} @by;
+	while (my ($id, $ia) = each %ias) {
+		delete $ias{$id} unless all {
+			my ($by, $lookup) = ($_, $lookups{$_});
+			any {
+				ref $_ eq 'CODE' ? $_->($ia->{$by}) : $_ eq $ia->{$by};
+			} @$lookup;
+		} @by;
+	}
+	return wantarray ? (values %ias) : \%ias;
+}
+
 sub get_js {
     my ($self, $by, $lookup) = @_;
     return unless $by =~ /id|source/;
@@ -130,7 +163,7 @@ sub get_js {
 
     my $id = $ia->{id};
     my $metaj = eval { JSON::XS->new->ascii->encode($ia) } || return;
-    return qq(DDH.$id=DDH.$id||{};DDH.$id.meta=$metaj;); 
+    return qq(DDH.$id=DDH.$id||{};DDH.$id.meta=$metaj;);
 }
 
 # return a hash of IA objects by id
