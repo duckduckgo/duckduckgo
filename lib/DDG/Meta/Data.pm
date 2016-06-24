@@ -135,7 +135,7 @@ sub get_ia {
 # If an ARRAY ref, then the above two rules are used with each element, the
 # IA only needs to satisfy one.
 sub filter_ias {
-	my ($lookups) = @_;
+	my $lookups = $_[1];
 	my %ias = %{by_id()};
 	my %lookups = %$lookups;
 	my @by = keys %lookups;
