@@ -6,6 +6,8 @@ use Carp;
 use Class::Load ':all';
 use POSIX qw(strftime);
 
+use DDG::Meta::Data;
+
 requires qw(
 	request
 );
@@ -305,6 +307,34 @@ which is implemented there via L<DDG::Meta::RequestHandler>.
 
 =cut
 
+my %by_id = %{DDG::Meta::Data::by_id()};
+
+sub build_related_infobox {
+	my $ias = shift;
+	my @ias = @$ias;
+	my @related = map { $by_id{$_} } @ias;
+	return [
+		{ heading => 'Related Instant Answers' },
+		map { {
+			label => $_->{name}, url => $_->{example_query}
+				? "https://duckduckgo.com/?q=" . join '+', (
+					split ' ', $_->{example_query}
+				) : ''
+		} } @related,
+	];
+}
+
+sub normalize_result {
+	my $result = shift;
+	my $sa = $result->{structured_answer};
+	return $result unless defined $sa->{data}{related_ias};
+	if ($sa->{templates}{group} eq 'text') {
+		my $infobox = build_related_infobox($sa->{data}{related_ias});
+		$sa->{data}{infoboxData} = $infobox;
+	}
+	return $result;
+}
+
 sub handle_request_matches {
 	my ( $self, $plugin, $request, @args ) = @_;
 	my $plugin_class = ref $plugin;
@@ -317,6 +347,7 @@ sub handle_request_matches {
 	}
 	push @{$request->seen_plugins}, $plugin_class;
 	my @results = $plugin->handle_request_matches($request, @args);
+	@results = map { normalize_result $_ } @results;
 	$self->trace("Got",scalar @results,"results");
 	return @results;
 }
