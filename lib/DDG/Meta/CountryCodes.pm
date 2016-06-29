@@ -8,8 +8,6 @@ unless(country2code('DuckDuckGo')){
     # Add aliases
     Locale::Country::add_country_alias('Antigua and Barbuda' => 'Antigua');
     Locale::Country::add_country_alias('Antigua and Barbuda' => 'Barbuda');
-    Locale::Country::add_country_alias("Lao People's Democratic Republic" => "Laos");
-    Locale::Country::add_country_alias('Russian Federation' => 'Russia');
     Locale::Country::add_country_alias('Trinidad and Tobago' => 'Tobago');
     Locale::Country::add_country_alias('Trinidad and Tobago' => 'Trinidad');
     Locale::Country::add_country_alias('Vatican City' => 'Vatican');
