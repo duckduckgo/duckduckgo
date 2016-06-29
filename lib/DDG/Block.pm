@@ -327,6 +327,18 @@ sub build_related_infobox {
 sub normalize_result {
 	my $result = shift;
 	my $sa = $result->{structured_answer};
+	# This would be in the metadata rather than the code; this way we could
+	# generate it however we wish (manually or automatically).
+	#
+	# To test this out, set:
+	# related_ias => [
+	#     'id1', 'id2', 'id3', ...
+	# ],
+	# In the 'data' field of a structured_answer.
+	#
+	# The infobox will consist of the names of the structured answers, with
+	# each name linking to a search for the example query of that Instant
+	# Answer.
 	return $result unless defined $sa->{data}{related_ias};
 	if ($sa->{templates}{group} eq 'text') {
 		my $infobox = build_related_infobox($sa->{data}{related_ias});
