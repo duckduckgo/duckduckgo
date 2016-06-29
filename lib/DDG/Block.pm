@@ -340,6 +340,7 @@ sub normalize_result {
 	# each name linking to a search for the example query of that Instant
 	# Answer.
 	return $result unless defined $sa->{data}{related_ias};
+	return $result if exists $sa->{data}{infoboxData};
 	if ($sa->{templates}{group} eq 'text') {
 		my $infobox = build_related_infobox($sa->{data}{related_ias});
 		$sa->{data}{infoboxData} = $infobox;
