@@ -51,6 +51,7 @@ is_deeply(DDGTest::Spice::Regexp->get_triggers,{
 },'Checking resulting get_triggers of DDGTest::Spice::Regexp',);
 
 is(DDGTest::Spice::Regexp->get_nginx_conf,'location ^~ /js/spice/regexp/ {
+	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
 	set $regexp_upstream http://some.api:80;
 	rewrite ^/js/spice/regexp/(.*) / break;
 	proxy_pass $regexp_upstream;

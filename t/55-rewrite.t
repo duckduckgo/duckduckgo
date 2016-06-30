@@ -67,6 +67,7 @@ my $dollarrewrite = DDG::Rewrite->new(
 );
 
 is($dollarrewrite->nginx_conf,'location ^~ /js/spice/spice_name/ {
+	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
 	set $spice_name_upstream http://some.api:80;
 	rewrite ^/js/spice/spice_name/(.*) /${dollar} break;
 	proxy_pass $spice_name_upstream;
@@ -84,6 +85,7 @@ is($postrewrite->nginx_conf, 'location ^~ /js/spice/spice_name/ {
 	proxy_method POST;
 	proxy_set_body \'{"param2":"$2","param1":"$1"}\';
 	proxy_cache_key spice_spice_name_$1$2;
+	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
 	set $spice_name_upstream http://some.api:80;
 	rewrite ^/js/spice/spice_name/(.*) /$1 break;
 	proxy_pass $spice_name_upstream;
@@ -100,6 +102,7 @@ isa_ok($minrewrite,'DDG::Rewrite');
 
 is($minrewrite->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
 is($minrewrite->nginx_conf,'location ^~ /js/spice/spice_name/ {
+	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
 	set $spice_name_upstream http://some.api:80;
 	rewrite ^/js/spice/spice_name/(.*) /$1 break;
 	proxy_pass $spice_name_upstream;
@@ -116,6 +119,7 @@ isa_ok($minrewrite_https,'DDG::Rewrite');
 
 is($minrewrite_https->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
 is($minrewrite_https->nginx_conf,'location ^~ /js/spice/spice_name/ {
+	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
 	set $spice_name_upstream https://some.api:443;
 	rewrite ^/js/spice/spice_name/(.*) /$1 break;
 	proxy_pass $spice_name_upstream;
@@ -133,6 +137,7 @@ isa_ok($minrewrite_with_port,'DDG::Rewrite');
 
 is($minrewrite_with_port->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
 is($minrewrite_with_port->nginx_conf,'location ^~ /js/spice/spice_test2/ {
+	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
 	set $spice_test2_upstream http://some.api:3000;
 	rewrite ^/js/spice/spice_test2/(.*) /$1 break;
 	proxy_pass $spice_test2_upstream;
