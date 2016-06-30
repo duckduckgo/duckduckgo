@@ -179,9 +179,7 @@ sub _build_nginx_conf {
 		$cfg .= "\tmore_set_headers 'Content-Type: application/javascript; charset=utf-8';\n";
 	}
 
-	if($uses_echo_module || $self->accept_header || $is_duckduckgo) {
-		$cfg .= "\tinclude /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;\n";
-	}
+	$cfg .= "\tinclude /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;\n";
 
 	$cfg .= "\techo_before_body '$callback(';\n" if $wrap_jsonp_callback;
 	$cfg .= "\techo_before_body '$callback".qq|("';\n| if $wrap_string_callback;
