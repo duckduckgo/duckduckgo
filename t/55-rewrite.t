@@ -139,11 +139,11 @@ like($ddgrewrite->nginx_conf,qr/X-Forwarded-For/,'Checking DuckDuckGo rewrite');
 my $headers_rewrite = DDG::Rewrite->new(
 	path => '/js/spice/spice_name/',
 	to => 'https://some.api/$1',
-	headers => 'Accept application/vnd.citationstyles.csl+json'
+	headers => 'Accept "application/vnd.citationstyles.csl+json"'
 );
 
 my $headers_nginx_conf = 'location ^~ /js/spice/spice_name/ {
-	proxy_set_header Accept application/vnd.citationstyles.csl+json;
+	proxy_set_header Accept "application/vnd.citationstyles.csl+json";
 	set $spice_name_upstream https://some.api:443;
 	rewrite ^/js/spice/spice_name/(.*) /$1 break;
 	proxy_pass $spice_name_upstream;
@@ -157,7 +157,7 @@ is($headers_rewrite->nginx_conf, $headers_nginx_conf,'Checking generated nginx.c
 $headers_rewrite = DDG::Rewrite->new(
 	path => '/js/spice/spice_name/',
 	to => 'https://some.api/$1',
-	headers => [ q{Accept application/vnd.citationstyles.csl+json} ]
+	headers => [ q{Accept "application/vnd.citationstyles.csl+json"} ]
 );
 
 is($headers_rewrite->nginx_conf, $headers_nginx_conf, 'Checking generated nginx.conf with custom headers (array)');
@@ -180,8 +180,8 @@ $headers_rewrite = DDG::Rewrite->new(
 );
 
 is($headers_rewrite->nginx_conf, 'location ^~ /js/spice/spice_name/ {
-	proxy_set_header Accept application/vnd.citationstyles.csl+json;
-	proxy_set_header Range 1024-2047;
+	proxy_set_header Accept "application/vnd.citationstyles.csl+json";
+	proxy_set_header Range "1024-2047";
 	set $spice_name_upstream https://some.api:443;
 	rewrite ^/js/spice/spice_name/(.*) /$1 break;
 	proxy_pass $spice_name_upstream;
