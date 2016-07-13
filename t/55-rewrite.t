@@ -47,7 +47,6 @@ is($rewrite->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
 is($rewrite->nginx_conf,'location ^~ /js/spice/spice_name/ {
 	proxy_set_header Accept-Encoding \'\';
 	more_set_headers \'Content-Type: application/javascript; charset=utf-8\';
-	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
 	echo_before_body \'test(\';
 	set $spice_name_upstream http://some.api:80;
 	rewrite ^/js/spice/spice_name/([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|) /$1/?a=$2&b=$3&cb=test&ak=1 break;
@@ -145,7 +144,6 @@ my $headers_rewrite = DDG::Rewrite->new(
 
 my $headers_nginx_conf = 'location ^~ /js/spice/spice_name/ {
 	proxy_set_header Accept application/vnd.citationstyles.csl+json;
-	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
 	set $spice_name_upstream https://some.api:443;
 	rewrite ^/js/spice/spice_name/(.*) /$1 break;
 	proxy_pass $spice_name_upstream;
@@ -184,7 +182,6 @@ $headers_rewrite = DDG::Rewrite->new(
 is($headers_rewrite->nginx_conf, 'location ^~ /js/spice/spice_name/ {
 	proxy_set_header Accept application/vnd.citationstyles.csl+json;
 	proxy_set_header Range 1024-2047;
-	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
 	set $spice_name_upstream https://some.api:443;
 	rewrite ^/js/spice/spice_name/(.*) /$1 break;
 	proxy_pass $spice_name_upstream;
