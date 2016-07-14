@@ -18,6 +18,8 @@ eval {
 like($@,qr/Missing callback attribute for {{callback}}/,'Seeking proper error on missing callback');
 
 delete $ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY} if defined $ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY};
+$ENV{DDGTEST_BASIC_AUTH_USERNAME} = 'aladdin';
+$ENV{DDGTEST_BASIC_AUTH_PASSWORD} = 'opensesame';
 
 my $missing_rewrite = DDG::Rewrite->new(
 	path => '/js/spice/spice_name/',
@@ -139,10 +141,15 @@ like($ddgrewrite->nginx_conf,qr/X-Forwarded-For/,'Checking DuckDuckGo rewrite');
 my $headers_rewrite = DDG::Rewrite->new(
 	path => '/js/spice/spice_name/',
 	to => 'https://some.api/$1',
-	headers => 'Accept "application/vnd.citationstyles.csl+json"'
+	headers => 'Accept "application/vnd.citationstyles.csl+json"',
+	basic_auth => {
+		username => $ENV{DDGTEST_BASIC_AUTH_USERNAME},
+		password => $ENV{DDGTEST_BASIC_AUTH_PASSWORD},
+	}
 );
 
 my $headers_nginx_conf = 'location ^~ /js/spice/spice_name/ {
+	proxy_set_header Authorization "Basic YWxhZGRpbjpvcGVuc2VzYW1l";
 	proxy_set_header Accept "application/vnd.citationstyles.csl+json";
 	set $spice_name_upstream https://some.api:443;
 	rewrite ^/js/spice/spice_name/(.*) /$1 break;
@@ -157,7 +164,8 @@ is($headers_rewrite->nginx_conf, $headers_nginx_conf,'Checking generated nginx.c
 $headers_rewrite = DDG::Rewrite->new(
 	path => '/js/spice/spice_name/',
 	to => 'https://some.api/$1',
-	headers => [ q{Accept "application/vnd.citationstyles.csl+json"} ]
+	headers => [ q{Accept "application/vnd.citationstyles.csl+json"} ],
+	basic_auth => $ENV{DDGTEST_BASIC_AUTH_USERNAME} . ':' . $ENV{DDGTEST_BASIC_AUTH_PASSWORD},
 );
 
 is($headers_rewrite->nginx_conf, $headers_nginx_conf, 'Checking generated nginx.conf with custom headers (array)');
@@ -165,7 +173,11 @@ is($headers_rewrite->nginx_conf, $headers_nginx_conf, 'Checking generated nginx.
 $headers_rewrite = DDG::Rewrite->new(
 	path => '/js/spice/spice_name/',
 	to => 'https://some.api/$1',
-	headers => { Accept => 'application/vnd.citationstyles.csl+json' }
+	headers => { Accept => 'application/vnd.citationstyles.csl+json' },
+	basic_auth => {
+		username => $ENV{DDGTEST_BASIC_AUTH_USERNAME},
+		password => $ENV{DDGTEST_BASIC_AUTH_PASSWORD},
+	}
 );
 
 is($headers_rewrite->nginx_conf, $headers_nginx_conf, 'Checking generated nginx.conf with custom headers (hash)');

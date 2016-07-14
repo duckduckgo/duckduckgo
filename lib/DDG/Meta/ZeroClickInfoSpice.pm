@@ -22,6 +22,7 @@ sub zeroclickinfospice_attributes {qw(
 	wrap_jsonp_callback
 	wrap_string_callback
 	headers
+	basic_auth
 	is_cached
 	is_unsafe
 	ttl
@@ -238,6 +239,7 @@ sub create_rewrite {
 		wrap_jsonp_callback => $params->{wrap_jsonp_callback},
 		wrap_string_callback => $params->{wrap_string_callback},
 		headers => $params->{headers},
+		basic_auth => $params->{basic_auth},
 		error_fallback => $params->{error_fallback}
 	);
 }

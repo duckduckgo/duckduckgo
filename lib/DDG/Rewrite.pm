@@ -4,6 +4,7 @@ package DDG::Rewrite;
 use Moo;
 use Carp qw( croak );
 use URI;
+use MIME::Base64 qw/ encode_base64url /;
 
 sub BUILD {
 	my ( $self ) = @_;
@@ -93,6 +94,11 @@ has headers => (
     predicate => 'has_headers',
 );
 
+has basic_auth => (
+    is => 'ro',
+    predicate => 'has_basic_auth',
+);
+
 has proxy_cache_valid => (
 	is => 'ro',
 	predicate => 'has_proxy_cache_valid',
@@ -139,6 +145,20 @@ sub _build_nginx_conf {
 	my $callback = $self->callback;
 
 	my $cfg = "location ^~ ".$self->path." {\n";
+
+	if ( $self->has_basic_auth ) {
+		croak "Must have a HTTPS endpoint to send credentials" if ( lc( $scheme ) ne 'https' );
+
+		my $auth_string;
+		if ( ref $self->basic_auth eq 'HASH' ) {
+			$auth_string = sprintf '%s:%s', $self->basic_auth->{username}, $self->basic_auth->{password};
+		}
+		else {
+			$auth_string = $self->basic_auth;
+		}
+
+		$cfg .= "\tproxy_set_header Authorization \"Basic " . encode_base64url( $auth_string ) . "\";\n";
+	}
 
 	if ( $self->headers ) {
 		if ( ref $self->headers eq 'HASH' ) {
