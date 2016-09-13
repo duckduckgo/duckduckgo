@@ -15,7 +15,7 @@ install:
       DDG::SpiceBundle::OpenSourceDuckDuckGo
       DDG::FatheadBundle::OpenSourceDuckDuckGo
       DDG::LongtailBundle::OpenSourceDuckDuckGo
-  - dzil authordeps | grep -ve '^\W' | xargs -n 5 -P 10 cpanm --quiet --notest
+  - dzil authordeps | grep -ve '^\W' | xargs -n 5 -P 10 cpanm --mirror http://cpan.org --mirror http://duckpan.org --quiet --notest
   - dzil listdeps | grep -ve '^\W' | cpanm --quiet --notest --mirror http://www.cpan.org/ --mirror http://duckpan.org
 language: perl
 perl:
