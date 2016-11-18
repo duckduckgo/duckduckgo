@@ -159,9 +159,9 @@ sub _build_nginx_conf {
 		# the sorted keys into a single string.
 		# e.g. post_body '{"method":"$2","query":"$1","cleaned_query":"$1"}'
 		# Would give a $cache_keys value of '$1$2'
-		my $cache_keys = join '', sort keys {
+		my $cache_keys = join '', sort keys %{ {
 			map { $_ => 1 } ( $self->post_body =~ m/\$[0-9]+/g )
-		};
+		} };
 		$cfg .= "\tproxy_cache_key spice_${spice_name}_$cache_keys;\n"
 	}
 	if($uses_echo_module) {
