@@ -22,6 +22,7 @@ sub zeroclickinfospice_attributes {qw(
 	wrap_jsonp_callback
 	wrap_string_callback
 	headers
+	post_body
 	is_cached
 	is_unsafe
 	ttl
@@ -233,6 +234,7 @@ sub create_rewrite {
 		defined $params->{from} ? ( from => $params->{from}) : (),
 		defined $params->{proxy_cache_valid} ? ( proxy_cache_valid => $params->{proxy_cache_valid} ) : (),
 		defined $params->{proxy_ssl_session_reuse} ? ( proxy_ssl_session_reuse => $params->{proxy_ssl_session_reuse} ) : (),
+		defined $params->{post_body} ? ( post_body => $params->{post_body} ) : (),
 		callback => $callback,
 		path => $path,
 		wrap_jsonp_callback => $params->{wrap_jsonp_callback},

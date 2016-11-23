@@ -6,6 +6,7 @@ use Path::Class;
 use File::ShareDir 'dist_file';
 use LWP::UserAgent;
 use File::Copy::Recursive 'pathmk';
+use List::Util qw( all any );
 
 use strict;
 
@@ -62,28 +63,26 @@ unless(%ia_metadata){
         # 20150502 (zt) Can't filter like this yet as some tests depend on non-live IA metadata
         #next unless $ia->{status} eq 'live';
 
-        # check for bad metadata.  We need a perl_module for the by_module key
-        if($ia->{perl_module} !~ /DDG::.+::.+/){
-            warn "Invalid perl_module for IA $id: $ia->{perl_module} in metadata...skipping" if $ia->{status} eq 'live';
-            next IA;
-        }
-
         # warn if we run into a duplicate id.  These should be unique within *and*
         # across all IA types
         if( $ia_metadata{id}{$id} ){
             warn "Duplicate ID for IA with ID: $id";
         }
 
-        my $perl_module = $ia->{perl_module};
+        # Perl modules aren't strictly required, e.g. Fatheads and Longtails
+        # It's ok not to have every IA represented in the by_module view
+        # We may need to update the parameter to _js_callback_name in the future
+        if(my $perl_module = $ia->{perl_module}){
+            #add new ia to ia_metadata{module}. Multiple ias per module possible
+            push @{$ia_metadata{module}{$perl_module}}, $ia;
+            $ia->{js_callback_name} = _js_callback_name($perl_module);
+        }
 
         # Clean up/set some values
         $ia->{signal_from} ||= $ia->{id};
-        $ia->{js_callback_name} = _js_callback_name($perl_module);
 
         #add new ia to ia_metadata{id}
         $ia_metadata{id}{$id} = $ia;
-        #add new ia to ia_metadata{module}. Multiple ias per module possible
-        push @{$ia_metadata{module}{$perl_module}}, $ia;
         # by language for multilang wiki
         if($ia->{repo} eq 'fathead'){
             my $source = $ia->{src_id};
@@ -122,6 +121,38 @@ sub get_ia {
     return $m;
 }
 
+# filter_ias({ repo => 'goodies', dev_milestone => 'live'... })
+# Lookups combine as an AND operation.
+# Returns a list of IAs on `wantarray', otherwise an (id => ia) HASH ref.
+#
+# Each condition consists of a $key and $lookup.
+# $lookup should be either a string, ARRAY ref, or CODE ref.
+# If a string, then $lookup is compared with `eq'
+# If a CODE ref, then $lookup is called with the IAs $key attribute and
+# should return a boolean value.
+# If an ARRAY ref, then the above two rules are used with each element, the
+# IA only needs to satisfy one.
+sub filter_ias {
+    my $lookups = $_[1];
+    my %ias = %{by_id()};
+    my %lookups = %$lookups;
+    my @by = keys %lookups;
+    # Ensure lookups are of the form (by => [lookup...])
+    map {
+        my $cond = $lookups{$_};
+        $lookups{$_} = [$cond] unless ref $cond eq 'ARRAY';
+    } @by;
+    while (my ($id, $ia) = each %ias) {
+        delete $ias{$id} unless all {
+            my ($by, $lookup) = ($_, $lookups{$_});
+            any {
+                ref $_ eq 'CODE' ? $_->($ia->{$by}) : $_ eq $ia->{$by};
+            } @$lookup;
+        } @by;
+    }
+    return wantarray ? (values %ias) : \%ias;
+}
+
 sub get_js {
     my ($self, $by, $lookup) = @_;
     return unless $by =~ /id|source/;
@@ -130,7 +161,7 @@ sub get_js {
 
     my $id = $ia->{id};
     my $metaj = eval { JSON::XS->new->ascii->encode($ia) } || return;
-    return qq(DDH.$id=DDH.$id||{};DDH.$id.meta=$metaj;); 
+    return qq(DDH.$id=DDH.$id||{};DDH.$id.meta=$metaj;);
 }
 
 # return a hash of IA objects by id

@@ -73,6 +73,23 @@ is($dollarrewrite->nginx_conf,'location ^~ /js/spice/spice_name/ {
 }
 ','Checking {{dollar}} replacement');
 
+my $postrewrite = DDG::Rewrite->new(
+       path => '/js/spice/spice_name/',
+       to => 'http://some.api/$1',
+       post_body => '{"param2":"$2","param1":"$1"}',
+);
+
+is($postrewrite->nginx_conf, 'location ^~ /js/spice/spice_name/ {
+	proxy_method POST;
+	proxy_set_body \'{"param2":"$2","param1":"$1"}\';
+	proxy_cache_key spice_spice_name_$1$2;
+	set $spice_name_upstream http://some.api:80;
+	rewrite ^/js/spice/spice_name/(.*) /$1 break;
+	proxy_pass $spice_name_upstream;
+	expires 1s;
+}
+', 'Check POST body rewrite');
+
 my $minrewrite = DDG::Rewrite->new(
 	path => '/js/spice/spice_name/',
 	to => 'http://some.api/$1',
