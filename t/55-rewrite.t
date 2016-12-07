@@ -15,7 +15,7 @@ eval {
 		to => 'http://some.api/$1&cb={{callback}}',
 	);
 };
-like($@,qr/Missing callback attribute for {{callback}}/,'Seeking proper error on missing callback');
+like($@,qr/Missing callback attribute for \{\{callback\}\}/,'Seeking proper error on missing callback');
 
 delete $ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY} if defined $ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY};
 
