@@ -1,6 +1,6 @@
 # DuckDuckGo (Core) [![Build Status](https://travis-ci.org/duckduckgo/duckduckgo.png?branch=master)](https://travis-ci.org/duckduckgo/duckduckgo)
 
-Join us on Slack! [Request invite](mailto:QuackSlack@duckduckgo.com?subject=AddMe)
+Join us on Slack! [Request invite](https://quackslack.herokuapp.com/)
 
 This repository contains the core code responsible for triggering and handling the DuckDuckHack Instant Answers. It is the base of the DuckDuckHack Instant Answer infrastructure.  
 
