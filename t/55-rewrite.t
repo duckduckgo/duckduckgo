@@ -47,7 +47,6 @@ is($rewrite->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
 is($rewrite->nginx_conf,'location ^~ /js/spice/spice_name/ {
 	proxy_set_header Accept-Encoding \'\';
 	more_set_headers \'Content-Type: application/javascript; charset=utf-8\';
-	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
 	echo_before_body \'test(\';
 	set $spice_name_upstream http://some.api:80;
 	rewrite ^/js/spice/spice_name/([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|) /$1/?a=$2&b=$3&cb=test&ak=1 break;
@@ -67,7 +66,6 @@ my $dollarrewrite = DDG::Rewrite->new(
 );
 
 is($dollarrewrite->nginx_conf,'location ^~ /js/spice/spice_name/ {
-	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
 	set $spice_name_upstream http://some.api:80;
 	rewrite ^/js/spice/spice_name/(.*) /${dollar} break;
 	proxy_pass $spice_name_upstream;
@@ -85,7 +83,6 @@ is($postrewrite->nginx_conf, 'location ^~ /js/spice/spice_name/ {
 	proxy_method POST;
 	proxy_set_body \'{"param2":"$2","param1":"$1"}\';
 	proxy_cache_key spice_spice_name_$1$2;
-	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
 	set $spice_name_upstream http://some.api:80;
 	rewrite ^/js/spice/spice_name/(.*) /$1 break;
 	proxy_pass $spice_name_upstream;
@@ -102,7 +99,6 @@ isa_ok($minrewrite,'DDG::Rewrite');
 
 is($minrewrite->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
 is($minrewrite->nginx_conf,'location ^~ /js/spice/spice_name/ {
-	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
 	set $spice_name_upstream http://some.api:80;
 	rewrite ^/js/spice/spice_name/(.*) /$1 break;
 	proxy_pass $spice_name_upstream;
@@ -119,7 +115,6 @@ isa_ok($minrewrite_https,'DDG::Rewrite');
 
 is($minrewrite_https->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
 is($minrewrite_https->nginx_conf,'location ^~ /js/spice/spice_name/ {
-	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
 	set $spice_name_upstream https://some.api:443;
 	rewrite ^/js/spice/spice_name/(.*) /$1 break;
 	proxy_pass $spice_name_upstream;
@@ -137,7 +132,6 @@ isa_ok($minrewrite_with_port,'DDG::Rewrite');
 
 is($minrewrite_with_port->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
 is($minrewrite_with_port->nginx_conf,'location ^~ /js/spice/spice_test2/ {
-	include /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;
 	set $spice_test2_upstream http://some.api:3000;
 	rewrite ^/js/spice/spice_test2/(.*) /$1 break;
 	proxy_pass $spice_test2_upstream;
@@ -158,6 +152,60 @@ my $ddgrewrite = DDG::Rewrite->new(
 );
 isa_ok($ddgrewrite,'DDG::Rewrite');
 like($ddgrewrite->nginx_conf,qr/X-Forwarded-For/,'Checking DuckDuckGo rewrite');
+
+my $headers_rewrite = DDG::Rewrite->new(
+	path => '/js/spice/spice_name/',
+	to => 'https://some.api/$1',
+	headers => 'Accept "application/vnd.citationstyles.csl+json"'
+);
+
+my $headers_nginx_conf = 'location ^~ /js/spice/spice_name/ {
+	proxy_set_header Accept "application/vnd.citationstyles.csl+json";
+	set $spice_name_upstream https://some.api:443;
+	rewrite ^/js/spice/spice_name/(.*) /$1 break;
+	proxy_pass $spice_name_upstream;
+	proxy_ssl_server_name on;
+	expires 1s;
+}
+';
+
+is($headers_rewrite->nginx_conf, $headers_nginx_conf,'Checking generated nginx.conf with custom headers');
+
+$headers_rewrite = DDG::Rewrite->new(
+	path => '/js/spice/spice_name/',
+	to => 'https://some.api/$1',
+	headers => [ q{Accept "application/vnd.citationstyles.csl+json"} ]
+);
+
+is($headers_rewrite->nginx_conf, $headers_nginx_conf, 'Checking generated nginx.conf with custom headers (array)');
+
+$headers_rewrite = DDG::Rewrite->new(
+	path => '/js/spice/spice_name/',
+	to => 'https://some.api/$1',
+	headers => { Accept => 'application/vnd.citationstyles.csl+json' }
+);
+
+is($headers_rewrite->nginx_conf, $headers_nginx_conf, 'Checking generated nginx.conf with custom headers (hash)');
+
+$headers_rewrite = DDG::Rewrite->new(
+	path => '/js/spice/spice_name/',
+	to => 'https://some.api/$1',
+	headers => {
+	       Accept => 'application/vnd.citationstyles.csl+json',
+	       Range  => '1024-2047',
+	}
+);
+
+is($headers_rewrite->nginx_conf, 'location ^~ /js/spice/spice_name/ {
+	proxy_set_header Accept "application/vnd.citationstyles.csl+json";
+	proxy_set_header Range "1024-2047";
+	set $spice_name_upstream https://some.api:443;
+	rewrite ^/js/spice/spice_name/(.*) /$1 break;
+	proxy_pass $spice_name_upstream;
+	proxy_ssl_server_name on;
+	expires 1s;
+}
+', 'Checking generated nginx.conf with custom headers (hash multi)');
 
 my $upstream_rewrite = DDG::Rewrite->new(
         path => '/js/spice/spice_name/',

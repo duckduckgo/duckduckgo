@@ -21,7 +21,7 @@ sub zeroclickinfospice_attributes {qw(
 	to
 	wrap_jsonp_callback
 	wrap_string_callback
-	accept_header
+	headers
 	post_body
 	is_cached
 	is_unsafe
@@ -239,7 +239,7 @@ sub create_rewrite {
 		path => $path,
 		wrap_jsonp_callback => $params->{wrap_jsonp_callback},
 		wrap_string_callback => $params->{wrap_string_callback},
-		accept_header => $params->{accept_header},
+		headers => $params->{headers},
 		error_fallback => $params->{error_fallback}
 	);
 }

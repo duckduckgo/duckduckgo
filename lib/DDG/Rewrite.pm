@@ -88,9 +88,9 @@ has wrap_string_callback => (
     default => sub { 0 },
 );
 
-has accept_header => (
+has headers => (
     is => 'ro',
-    default => sub { 0 },
+    predicate => 'has_headers',
 );
 
 has proxy_cache_valid => (
@@ -146,7 +146,22 @@ sub _build_nginx_conf {
 	$spice_name =~ s|/|_|og if $spice_name;
 
 	my $cfg = "location ^~ ".$self->path." {\n";
-	$cfg .= "\tproxy_set_header Accept '".$self->accept_header."';\n" if $self->accept_header;
+
+	if ( $self->headers ) {
+		if ( ref $self->headers eq 'HASH' ) {
+			for my $header ( sort keys $self->headers ) {
+				$cfg .= "\tproxy_set_header $header \"" . $self->headers->{$header} . "\";\n";
+			}
+		}
+		elsif ( ref $self->headers eq 'ARRAY' ) {
+			for my $header ( @{ $self->headers } ) {
+				$cfg .= "\tproxy_set_header $header;\n";
+			}
+		}
+		else {
+			$cfg .= "\tproxy_set_header " . $self->headers . ";\n";
+		}
+	}
 
 	if ( $self->has_post_body ) {
 		$cfg .= "\tproxy_method POST;\n";
@@ -164,6 +179,7 @@ sub _build_nginx_conf {
 		} };
 		$cfg .= "\tproxy_cache_key spice_${spice_name}_$cache_keys;\n"
 	}
+
 	if($uses_echo_module) {
 		# we need to make sure we have plain text coming back until we have a way
 		# to unilaterally gunzip responses from the upstream since the echo module
@@ -178,8 +194,6 @@ sub _build_nginx_conf {
 		# mime type mismatches.
 		$cfg .= "\tmore_set_headers 'Content-Type: application/javascript; charset=utf-8';\n";
 	}
-
-	$cfg .= "\tinclude /usr/local/nginx/conf/nginx_inc_proxy_headers.conf;\n";
 
 	$cfg .= "\techo_before_body '$callback(';\n" if $wrap_jsonp_callback;
 	$cfg .= "\techo_before_body '$callback".qq|("';\n| if $wrap_string_callback;
