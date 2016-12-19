@@ -85,6 +85,7 @@ unless(%ia_metadata){
         $ia_metadata{id}{$id} = $ia;
         # by language for multilang wiki
         if($ia->{repo} eq 'fathead'){
+            $ia->{src_id} ||= _get_tmp_src_id($ia);
             my $source = $ia->{src_id};
             # by source number for fatheads
             $ia_metadata{fathead_source}{$source} = $ia;
@@ -186,6 +187,18 @@ sub _js_callback_name {
         $fn = lc $fn;
     }
     return $fn;
+}
+
+# generate a tmp source id
+# for fatheads in testing
+sub _get_tmp_src_id {
+    my ($ia) = @_;
+    my $char_val;
+    $char_val += ord $_ for split //, $ia->{id};
+    my $tmp_id = ($char_val + $day + $month ) % 32767;
+    # don't conflict with existing sources
+    $tmp_id += 2000 if $tmp_id < 2000;
+    return $tmp_id;
 }
 
 1;
