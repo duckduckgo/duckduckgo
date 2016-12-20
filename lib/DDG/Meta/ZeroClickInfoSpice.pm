@@ -28,6 +28,7 @@ sub zeroclickinfospice_attributes {qw(
 	ttl
 	error_fallback
 	alt_to
+	is_xml
 )}
 
 my %applied;
@@ -231,6 +232,7 @@ sub create_rewrite {
 
 	return DDG::Rewrite->new(
 		to => $params->{to},
+		defined $params->{is_xml} ? ( is_xml => $params->{is_xml} ) : (),
 		defined $params->{from} ? ( from => $params->{from}) : (),
 		defined $params->{proxy_cache_valid} ? ( proxy_cache_valid => $params->{proxy_cache_valid} ) : (),
 		defined $params->{proxy_ssl_session_reuse} ? ( proxy_ssl_session_reuse => $params->{proxy_ssl_session_reuse} ) : (),
