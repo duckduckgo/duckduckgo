@@ -149,7 +149,7 @@ sub _build_nginx_conf {
 
 	if ( $self->headers ) {
 		if ( ref $self->headers eq 'HASH' ) {
-			for my $header ( sort keys $self->headers ) {
+			for my $header ( sort keys %{$self->headers} ) {
 				$cfg .= "\tproxy_set_header $header \"" . $self->headers->{$header} . "\";\n";
 			}
 		}
