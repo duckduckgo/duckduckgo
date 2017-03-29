@@ -124,6 +124,12 @@ has error_fallback => (
         default => sub { 0 },
 );
 
+has upstream_timeouts => (
+    is => 'lazy',
+    predicate => 'has_upstream_timeouts',
+    default => sub { +{} },
+);
+
 sub _build_nginx_conf {
 	my ( $self ) = @_;
 
@@ -146,6 +152,13 @@ sub _build_nginx_conf {
 	$spice_name =~ s|/|_|og if $spice_name;
 
 	my $cfg = "location ^~ ".$self->path." {\n";
+
+        my $timeouts = $self->has_upstream_timeouts && $self->upstream_timeouts;
+        if (ref $timeouts eq 'HASH' && keys %$timeouts) {
+            $cfg .= "\tproxy_connect_timeout $timeouts->{connect};\n" if $timeouts->{connect};
+            $cfg .= "\tproxy_send_timeout $timeouts->{send};\n" if $timeouts->{send};
+            $cfg .= "\tproxy_read_timeout $timeouts->{read};\n" if $timeouts->{read};
+        }
 
 	if ( $self->headers ) {
 		if ( ref $self->headers eq 'HASH' ) {

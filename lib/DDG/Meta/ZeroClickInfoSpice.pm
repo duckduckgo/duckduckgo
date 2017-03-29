@@ -28,6 +28,7 @@ sub zeroclickinfospice_attributes {qw(
 	ttl
 	error_fallback
 	alt_to
+        upstream_timeouts
 )}
 
 my %applied;
@@ -47,6 +48,7 @@ sub apply_keywords {
 		wrap_jsonp_callback => 0,
 		wrap_string_callback => 0,
 		accept_header => 0,
+                upstream_timeouts => +{},
 	);
 
 	my $stash = Package::Stash->new($target);
@@ -60,6 +62,7 @@ sub apply_keywords {
 		delete $params{'accept_header'};
 		delete $params{'proxy_cache_valid'};
 		delete $params{'proxy_ssl_session_reuse'};
+                delete $params{'upstream_timeouts'};
 		return DDG::ZeroClickInfo::Spice->new(
 			%params,
 		);
@@ -240,7 +243,8 @@ sub create_rewrite {
 		wrap_jsonp_callback => $params->{wrap_jsonp_callback},
 		wrap_string_callback => $params->{wrap_string_callback},
 		headers => $params->{headers},
-		error_fallback => $params->{error_fallback}
+		error_fallback => $params->{error_fallback},
+                upstream_timeouts => $params->{upstream_timeouts},
 	);
 }
 

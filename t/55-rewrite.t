@@ -216,4 +216,25 @@ my $upstream_rewrite = DDG::Rewrite->new(
 
 like($upstream_rewrite->nginx_conf, qr/set \$spice_name_upstream http:\/\/some\.api:80;/,'Checking upstream rewrite');
 
+my $upstream_timeouts_rewrite = DDG::Rewrite->new(
+	path => '/js/spice/spice_name/',
+	to => 'https://some.api/$1',
+        upstream_timeouts => +{ connect => '10ms', send => '20ms', read => '30ms' },
+);
+
+isa_ok($upstream_timeouts_rewrite,'DDG::Rewrite');
+
+is($upstream_timeouts_rewrite->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
+is($upstream_timeouts_rewrite->nginx_conf,'location ^~ /js/spice/spice_name/ {
+	proxy_connect_timeout 10ms;
+	proxy_send_timeout 20ms;
+	proxy_read_timeout 30ms;
+	set $spice_name_upstream https://some.api:443;
+	rewrite ^/js/spice/spice_name/(.*) /$1 break;
+	proxy_pass $spice_name_upstream;
+	proxy_ssl_server_name on;
+	expires 1s;
+}
+','Checking generated nginx.conf');
+
 done_testing;
