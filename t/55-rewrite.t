@@ -235,6 +235,6 @@ is($upstream_timeouts_rewrite->nginx_conf,'location ^~ /js/spice/spice_name/ {
 	proxy_ssl_server_name on;
 	expires 1s;
 }
-','Checking generated nginx.conf');
+','Checking generated nginx.conf for upstream timeouts.');
 
 done_testing;
