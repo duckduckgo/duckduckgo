@@ -48,7 +48,7 @@ sub apply_keywords {
 
 	my $share;
 
-	if ( -e $basedir->child('lib') and -e $basedir->child('share') ) {
+	if ( get_lib($basedir) and get_share($basedir) ) {
 		my $dir = dir($basedir,$share_path);
 		$share = $dir if -d $dir;
 	} else {
@@ -100,4 +100,15 @@ B<share/spice/test_test>.
 
 }
 
+sub get_lib {
+	my $basedir = shift;
+	return -e $basedir->subdir('lib') if $basedir->can('subdir');
+	return -e $basedir->child('lib');
+}
+
+sub get_share {
+	my $basedir = shift;
+	return -e $basedir->subdir('share') if $basedir->can('subdir');
+	return -e $basedir->child('share');
+}
 1;
