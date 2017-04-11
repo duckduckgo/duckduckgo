@@ -75,7 +75,7 @@ installation of the module.
 
 		$stash->add_symbol('&share', sub {
 			@_ ? -d dir($share,@_)
-				? $share->sudir(@_)
+				? $share->subdir(@_)
 				: $share->file(@_)
 			: $share
 		});
