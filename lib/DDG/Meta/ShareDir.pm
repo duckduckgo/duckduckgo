@@ -48,7 +48,7 @@ sub apply_keywords {
 
 	my $share;
 
-	if ( -e $basedir->subdir('lib') and -e $basedir->subdir('share') ) {
+	if ( -e $basedir->child('lib') and -e $basedir->child('share') ) {
 		my $dir = dir($basedir,$share_path);
 		$share = $dir if -d $dir;
 	} else {
