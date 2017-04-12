@@ -100,6 +100,10 @@ B<share/spice/test_test>.
 
 }
 
+# Temporarily add support for both `subdir` and `child` methods
+# to ensure backwards compatibilty while we upgrade Module::Data
+# throughout our stack
+# More info: https://github.com/duckduckgo/duckduckgo/pull/244 
 sub get_lib {
 	my $basedir = shift;
 	return -e $basedir->subdir('lib') if $basedir->can('subdir');
