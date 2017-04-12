@@ -48,7 +48,7 @@ sub apply_keywords {
 
 	my $share;
 
-	if ( -e $basedir->subdir('lib') and -e $basedir->subdir('share') ) {
+	if ( get_lib($basedir) and get_share($basedir) ) {
 		my $dir = dir($basedir,$share_path);
 		$share = $dir if -d $dir;
 	} else {
@@ -100,4 +100,19 @@ B<share/spice/test_test>.
 
 }
 
+# Temporarily add support for both `subdir` and `child` methods
+# to ensure backwards compatibilty while we upgrade Module::Data
+# throughout our stack
+# More info: https://github.com/duckduckgo/duckduckgo/pull/244 
+sub get_lib {
+	my $basedir = shift;
+	return -e $basedir->subdir('lib') if $basedir->can('subdir');
+	return -e $basedir->child('lib');
+}
+
+sub get_share {
+	my $basedir = shift;
+	return -e $basedir->subdir('share') if $basedir->can('subdir');
+	return -e $basedir->child('share');
+}
 1;
