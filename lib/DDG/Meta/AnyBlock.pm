@@ -16,13 +16,8 @@ actually really install keywords.
 
 =cut
 
-my %applied;
-
 sub apply_keywords {
 	my ( $class, $target ) = @_;
-
-	return if exists $applied{$target};
-	$applied{$target} = undef;
 
 	Moo::Role->apply_role_to_package($target,'DDG::Block::Blockable::Any');
 

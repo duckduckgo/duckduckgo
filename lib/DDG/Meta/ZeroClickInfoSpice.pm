@@ -31,13 +31,8 @@ sub zeroclickinfospice_attributes {qw(
         upstream_timeouts
 )}
 
-my %applied;
-
 sub apply_keywords {
 	my ( $class, $target ) = @_;
-	
-	return if exists $applied{$target};
-	$applied{$target} = undef;
 
 	my ($callback, $path, $answer_type) = @{params_from_target($target)};
 

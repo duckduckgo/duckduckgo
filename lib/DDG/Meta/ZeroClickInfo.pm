@@ -36,13 +36,9 @@ Uses a given classname to install the described keywords.
 
 =cut
 
-my %applied;
 
 sub apply_keywords {
 	my ( $class, $target ) = @_;
-
-	return if exists $applied{$target};
-	$applied{$target} = undef;
 
 	my @parts = split('::',$target);
 	shift @parts;

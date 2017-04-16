@@ -50,14 +50,9 @@ L<DDG::Spice>.
 
 =cut
 
-my %applied;
-
 sub apply_keywords {
 	my ( $class, $target, $result_handler, $role ) = @_;
 
-	return if exists $applied{$target};
-	$applied{$target} = undef;
-	
 	my $stash = Package::Stash->new($target);
 
 	$class->reset_request_symbols($stash);
