@@ -9,6 +9,7 @@ use DDG::ZeroClickInfo::Spice::Data;
 use DDG::Rewrite;
 use Package::Stash;
 use URI::Encode qw(uri_encode uri_decode);
+use URI::Escape;
 use IO::All;
 
 sub zeroclickinfospice_attributes {qw(
@@ -99,7 +100,7 @@ sub apply_keywords {
 			if ($params{'call_type'} eq 'include') {
 				$params{'call'} = $target->path.join('/',map { uri_encode($_,1) } @call);
 			} elsif (scalar @call == 1) {
-				$params{'call'} = uri_encode($call[0]);
+				$params{'call'} = uri_escape_utf8($call[0]);
 			} else {
 				croak "DDG::ZeroClickInfo::Spice can't handle more then one value in return list on non include call_type";
 			}
