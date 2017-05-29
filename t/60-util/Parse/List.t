@@ -5,30 +5,25 @@ use warnings;
 
 use Test::Most;
 use List::Util qw( pairs );
+use DDG::Util::Parse::List;
 
 sub parse_test {
     my ($to_parse, $expected, %options) = @_;
-    my $parsed = ListTester::parse_list($to_parse, %options);
+    my $parsed = parse_list($to_parse, %options);
     cmp_deeply($parsed, $expected, "parse $to_parse");
 }
 
 sub parse_test_no {
     my ($to_parse, %options) = @_;
-    my $parsed = ListTester::parse_list($to_parse, %options);
+    my $parsed = parse_list($to_parse, %options);
     is($parsed, undef, "parse @{[$to_parse // 'undef']}");
 }
 
 sub format_test {
     my ($to_format, $expected, %options) = @_;
-    my $formatted = ListTester::format_list($to_format, %options);
+    my $formatted = format_list($to_format, %options);
     cmp_deeply($formatted, $expected, "format @$to_format");
 }
-
-subtest initialization => sub {
-    { package ListTester; use Moo; with 'DDG::Util::Parse::List'; 1; }
-
-    new_ok('ListTester', [], 'Applied to a class');
-};
 
 subtest parse_list => sub {
     subtest 'varying brackets' => sub {
@@ -104,7 +99,7 @@ subtest parse_list => sub {
                 };
                 subtest 'invalid' => sub {
                     foreach my $invalid (@{$cases->{invalid}}) {
-                        is(ListTester::parse_list($invalid, item => qr/$re/), undef, "parse $invalid");
+                        is(parse_list($invalid, item => qr/$re/), undef, "parse $invalid");
                     }
                 };
             };

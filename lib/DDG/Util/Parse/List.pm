@@ -5,6 +5,15 @@ use strict;
 use warnings;
 use utf8;
 
+BEGIN {
+    require Exporter;
+    our @ISA = qw(Exporter);
+    our @EXPORT = qw(
+        format_list
+        parse_list
+    );
+}
+
 use List::Util qw( all pairs );
 use Data::Record;
 use Regexp::Common;
@@ -66,10 +75,6 @@ sub join_with_last {
         ? $items[$#items] : $join_last . $items[$#items];
     return join($join, @items[0..$#items-1]) . $last;
 };
-
-use namespace::autoclean;
-
-use Moo::Role;
 
 sub parse_list {
     my ($list_text, %options) = @_;
