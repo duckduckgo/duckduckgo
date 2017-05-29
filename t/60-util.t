@@ -536,7 +536,7 @@ subtest 'ImageLoader' => sub {
 
     subtest 'object with no share' => sub {
         # We have to wrap the function in a method in order to get the call-stack correct.
-        { package ImgUtilTester; use Moo; with 'DDG::Util::ImageLoader'; sub img_wrap { shift; goodie_img_tag(@_); } 1; }
+        { package ImgUtilTester; use Moo; use DDG::Util::ImageLoader; sub img_wrap { shift; goodie_img_tag(@_); } 1; }
 
         my $no_share;
         subtest 'Initialization' => sub {
@@ -569,7 +569,7 @@ subtest 'ImageLoader' => sub {
             use HTML::Entities;
             use Path::Class;    # Hopefully the real share stays implemented this way.
             use MIME::Base64;
-            with 'DDG::Util::ImageLoader';
+            use DDG::Util::ImageLoader;
             our $tmp_dir = Path::Class::tempdir(CLEANUP => 1);
             our $tmp_file = file(($tmp_dir->tempfile(TEMPLATE => 'img_XXXXXX', SUFFIX => '.gif'))[1]);
             # Always return the same file for our purposes here.

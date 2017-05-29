@@ -4,7 +4,13 @@ package DDG::Util::ImageLoader;
 use strict;
 use warnings;
 
-use Moo::Role;
+BEGIN {
+    require Exporter;
+    our @ISA = qw(Exporter);
+    our @EXPORT = qw(
+        goodie_img_tag
+    );
+}
 
 use Devel::StackTrace;
 use List::MoreUtils qw( all );
