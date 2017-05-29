@@ -1,4 +1,4 @@
-package DDG::GoodieRole::ImageLoader;
+package DDG::Role::ImageLoader;
 # ABSTRACT: A role to allow Goodies to load images to pretty up their output.
 
 use strict;

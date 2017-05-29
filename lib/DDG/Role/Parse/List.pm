@@ -1,4 +1,4 @@
-package DDG::GoodieRole::Parse::List;
+package DDG::Role::Parse::List;
 # ABSTRACT: Parse and format lists.
 
 use strict;
@@ -128,11 +128,11 @@ sub format_list {
 
 =head1 NAME
 
-DDG::GoodieRole::Parse::List - Utilities for working with lists in queries.
+DDG::Role::Parse::List - Utilities for working with lists in queries.
 
 =head1 SYNOPSIS
 
-    with 'DDG::GoodieRole::Parse::List';
+    with 'DDG::Role::Parse::List';
 
     my $list_text = '(1, 2, 3)';
 

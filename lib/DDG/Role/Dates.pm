@@ -1,4 +1,4 @@
-package DDG::GoodieRole::Dates;
+package DDG::Role::Dates;
 # ABSTRACT: A role to allow Goodies to recognize and work with dates in different notations.
 
 use strict;

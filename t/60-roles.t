@@ -10,7 +10,7 @@ use DDG::Test::Location;
 
 subtest 'NumberStyler' => sub {
 
-    { package NumberRoleTester; use Moo; with 'DDG::GoodieRole::NumberStyler'; 1; }
+    { package NumberRoleTester; use Moo; with 'DDG::Role::NumberStyler'; 1; }
 
     subtest 'Initialization' => sub {
         new_ok('NumberRoleTester', [], 'Applied to a class');
@@ -64,7 +64,7 @@ subtest 'NumberStyler' => sub {
 
 subtest 'Dates' => sub {
 
-    { package DatesRoleTester; use Moo; with 'DDG::GoodieRole::Dates'; 1; }
+    { package DatesRoleTester; use Moo; with 'DDG::Role::Dates'; 1; }
 
     my $test_datestring_regex;
     my $test_formatted_datestring_regex;
@@ -497,7 +497,7 @@ subtest 'Dates' => sub {
         {
             package DDG::Goodie::FakerDater;
             use Moo;
-            with 'DDG::GoodieRole::Dates';
+            with 'DDG::Role::Dates';
             our $loc = $test_location;
             sub pds { shift; parse_datestring_to_date(@_); }
             1;
@@ -541,7 +541,7 @@ subtest 'ImageLoader' => sub {
 
     subtest 'object with no share' => sub {
         # We have to wrap the function in a method in order to get the call-stack correct.
-        { package ImgRoleTester; use Moo; with 'DDG::GoodieRole::ImageLoader'; sub img_wrap { shift; goodie_img_tag(@_); } 1; }
+        { package ImgRoleTester; use Moo; with 'DDG::Role::ImageLoader'; sub img_wrap { shift; goodie_img_tag(@_); } 1; }
 
         my $no_share;
         subtest 'Initialization' => sub {
@@ -574,7 +574,7 @@ subtest 'ImageLoader' => sub {
             use HTML::Entities;
             use Path::Class;    # Hopefully the real share stays implemented this way.
             use MIME::Base64;
-            with 'DDG::GoodieRole::ImageLoader';
+            with 'DDG::Role::ImageLoader';
             our $tmp_dir = Path::Class::tempdir(CLEANUP => 1);
             our $tmp_file = file(($tmp_dir->tempfile(TEMPLATE => 'img_XXXXXX', SUFFIX => '.gif'))[1]);
             # Always return the same file for our purposes here.
