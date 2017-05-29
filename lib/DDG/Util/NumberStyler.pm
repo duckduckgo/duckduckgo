@@ -4,7 +4,15 @@ package DDG::Util::NumberStyler;
 use strict;
 use warnings;
 
-use Moo::Role;
+BEGIN {
+    require Exporter;
+    our @ISA = qw(Exporter);
+    our @EXPORT = qw(
+        number_style_for
+        number_style_regex
+    );
+}
+
 use DDG::Util::NumberStyle;
 
 use List::Util qw( all first );

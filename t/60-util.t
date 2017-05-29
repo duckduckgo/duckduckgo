@@ -10,11 +10,9 @@ use DDG::Test::Location;
 
 subtest 'NumberStyler' => sub {
 
-    { package NumberUtilTester; use Moo; with 'DDG::Util::NumberStyler'; 1; }
-
     subtest 'Initialization' => sub {
-        new_ok('NumberUtilTester', [], 'Applied to a class');
-        isa_ok(NumberUtilTester::number_style_regex(), 'Regexp', 'number_style_regex()');
+        use DDG::Util::NumberStyler;
+        isa_ok(number_style_regex(), 'Regexp', 'number_style_regex()');
     };
 
     subtest 'Valid numbers' => sub {
@@ -33,11 +31,11 @@ subtest 'NumberStyler' => sub {
             [['-1,1E25', '4,5E-25'] => 'euro'],
         );
 
-        my $number_style_regex = NumberUtilTester::number_style_regex();
+        my $number_style_regex = number_style_regex();
         foreach my $tc (@valid_test_cases) {
             my @numbers           = @{$tc->[0]};
             my $expected_style_id = $tc->[1];
-            is(NumberUtilTester::number_style_for(@numbers)->id,
+            is(number_style_for(@numbers)->id,
                 $expected_style_id, '"' . join(' ', @numbers) . '" yields a style of ' . $expected_style_id);
             like($_, qr/^$number_style_regex$/, "$_ matches the number_style_regex") for(@numbers);
         }
@@ -56,7 +54,7 @@ subtest 'NumberStyler' => sub {
         foreach my $tc (@invalid_test_cases) {
             my @numbers = @{$tc->[0]};
             my $why_not = $tc->[1];
-            is(NumberUtilTester::number_style_for(@numbers), undef, '"' . join(' ', @numbers) . '" fails because it ' . $why_not);
+            is(number_style_for(@numbers), undef, '"' . join(' ', @numbers) . '" fails because it ' . $why_not);
         }
     };
 
