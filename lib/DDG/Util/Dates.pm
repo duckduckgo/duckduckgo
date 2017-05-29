@@ -17,6 +17,9 @@ BEGIN {
         parse_datestring_to_date
         parse_descriptive_datestring_to_date
         parse_formatted_datestring_to_date
+        relative_dates_regex
+        time_12h_regex
+        time_24h_regex
     );
 }
 

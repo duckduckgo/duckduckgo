@@ -11,6 +11,9 @@ use DDG::Test::Location;
 my $test_datestring_regex;
 my $test_formatted_datestring_regex;
 my $test_descriptive_datestring_regex;
+my $test_relative_dates_regex;
+my $test_time_12h_regex;
+my $test_time_24h_regex;
 
 subtest 'Initialization' => sub {
     use DDG::Util::Dates;
@@ -20,6 +23,12 @@ subtest 'Initialization' => sub {
     isa_ok($test_formatted_datestring_regex, 'Regexp', 'formatted_datestring_regex()');
     $test_descriptive_datestring_regex = descriptive_datestring_regex();
     isa_ok($test_descriptive_datestring_regex, 'Regexp', 'descriptive_datestring_regex()');
+    $test_descriptive_datestring_regex = descriptive_datestring_regex();
+    isa_ok($test_descriptive_datestring_regex, 'Regexp', 'descriptive_datestring_regex()');
+    $test_time_12h_regex = time_12h_regex();
+    isa_ok($test_time_12h_regex, 'Regexp', 'time_12h_regex()');
+    $test_time_24h_regex = time_24h_regex();
+    isa_ok($test_time_24h_regex, 'Regexp', 'time_24h_regex()');
 };
 
 subtest 'Working single dates' => sub {
