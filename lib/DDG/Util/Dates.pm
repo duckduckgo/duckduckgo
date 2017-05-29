@@ -4,7 +4,21 @@ package DDG::Util::Dates;
 use strict;
 use warnings;
 
-use Moo::Role;
+BEGIN {
+    require Exporter;
+    our @ISA = qw(Exporter);
+    our @EXPORT = qw(
+        date_output_string
+        datestring_regex
+        descriptive_datestring_regex
+        formatted_datestring_regex
+        is_valid_year
+        parse_all_datestrings_to_date
+        parse_datestring_to_date
+        parse_descriptive_datestring_to_date
+        parse_formatted_datestring_to_date
+    );
+}
 
 use DateTime;
 use Devel::StackTrace;

@@ -62,19 +62,17 @@ subtest 'NumberStyler' => sub {
 
 subtest 'Dates' => sub {
 
-    { package DatesUtilTester; use Moo; with 'DDG::Util::Dates'; 1; }
-
     my $test_datestring_regex;
     my $test_formatted_datestring_regex;
     my $test_descriptive_datestring_regex;
 
     subtest 'Initialization' => sub {
-        new_ok('DatesUtilTester', [], 'Applied to a class');
-        $test_datestring_regex = DatesUtilTester::datestring_regex();
+        use DDG::Util::Dates;
+        $test_datestring_regex = datestring_regex();
         isa_ok($test_datestring_regex, 'Regexp', 'datestring_regex()');
-        $test_formatted_datestring_regex = DatesUtilTester::formatted_datestring_regex();
+        $test_formatted_datestring_regex = formatted_datestring_regex();
         isa_ok($test_formatted_datestring_regex, 'Regexp', 'formatted_datestring_regex()');
-        $test_descriptive_datestring_regex = DatesUtilTester::descriptive_datestring_regex();
+        $test_descriptive_datestring_regex = descriptive_datestring_regex();
         isa_ok($test_descriptive_datestring_regex, 'Regexp', 'descriptive_datestring_regex()');
     };
 
@@ -153,7 +151,7 @@ subtest 'Dates' => sub {
             $test_formatted_datestring_regex =~ qr/^$test_datestring_regex$/;
             ok(scalar @- == 1 && scalar @+ == 1, ' with no sub-captures.');
 
-            my $date_object = DatesUtilTester::parse_formatted_datestring_to_date($test_date);
+            my $date_object = parse_formatted_datestring_to_date($test_date);
             isa_ok($date_object, 'DateTime', $test_date);
             is($date_object->epoch, $dates_to_match{$test_date}, '... which represents the correct time.');
         }
@@ -208,7 +206,7 @@ subtest 'Dates' => sub {
 
         foreach my $set (@date_sets) {
             my @source = @{$set->{src}};
-            eq_or_diff([map { $_->epoch } (DatesUtilTester::parse_all_datestrings_to_date(@source))],
+            eq_or_diff([map { $_->epoch } (parse_all_datestrings_to_date(@source))],
                 $set->{output}, '"' . join(', ', @source) . '": dates parsed correctly');
         }
     };
@@ -245,7 +243,7 @@ subtest 'Dates' => sub {
         foreach my $set (@date_sets) {
             my @source = @{$set->{src}};
             my @expectation = @{$set->{out}};
-            my @result = DatesUtilTester::parse_all_datestrings_to_date(@source);
+            my @result = parse_all_datestrings_to_date(@source);
             is_deeply(\@result, \@expectation, join(", ", @source));
         }
 
@@ -279,7 +277,7 @@ subtest 'Dates' => sub {
 
             my @source = @{$time_strings{$query_time}{src}};
             my @expectation = @{$time_strings{$query_time}{output}};
-            my @result = DatesUtilTester::parse_all_datestrings_to_date(@source);
+            my @result = parse_all_datestrings_to_date(@source);
 
             is_deeply(\@result, \@expectation);
         }
@@ -305,7 +303,7 @@ subtest 'Dates' => sub {
             }
 
             my $result;
-            lives_ok { $result = DatesUtilTester::parse_formatted_datestring_to_date($test_string) } '... and does not kill the parser.';
+            lives_ok { $result = parse_formatted_datestring_to_date($test_string) } '... and does not kill the parser.';
             is($result, undef, '... and returns undef to signal failure.');
         }
     };
@@ -322,7 +320,7 @@ subtest 'Dates' => sub {
 
         foreach my $set (@invalid_date_sets) {
             my @source       = @$set;
-            my @date_results = DatesUtilTester::parse_all_datestrings_to_date(@source);
+            my @date_results = parse_all_datestrings_to_date(@source);
             is(@date_results, 0, '"' . join(', ', @source) . '": cannot be parsed in combination.');
         }
     };
@@ -335,7 +333,7 @@ subtest 'Dates' => sub {
 
         foreach my $result (sort keys %date_strings) {
             foreach my $test_string (@{$date_strings{$result}}) {
-                is(DatesUtilTester::date_output_string($test_string), $result, $test_string . ' normalizes for output as ' . $result);
+                is(date_output_string($test_string), $result, $test_string . ' normalizes for output as ' . $result);
             }
         }
     };
@@ -349,7 +347,7 @@ subtest 'Dates' => sub {
         );
         foreach my $result (sort keys %date_strings) {
             foreach my $test_string (@{$date_strings{$result}}) {
-                is(DatesUtilTester::date_output_string($test_string, 1), $result, $test_string . ' normalizes for output as ' . $result);
+                is(date_output_string($test_string, 1), $result, $test_string . ' normalizes for output as ' . $result);
             }
         }
     };
@@ -357,11 +355,10 @@ subtest 'Dates' => sub {
         my %bad_stuff = (
             'Empty string' => '',
             'Hashref'      => {},
-            'Object'       => DatesUtilTester->new,
         );
         foreach my $description (sort keys %bad_stuff) {
             my $result;
-            lives_ok { $result = DatesUtilTester::date_output_string($bad_stuff{$description}) } $description . ' does not kill the string output';
+            lives_ok { $result = date_output_string($bad_stuff{$description}) } $description . ' does not kill the string output';
             is($result, '', '... and yields an empty string as a result');
         }
     };
@@ -446,9 +443,9 @@ subtest 'Dates' => sub {
             my %strings = %{$time_strings{$query_time}};
             foreach my $test_date (sort keys %strings) {
                 like($test_date, qr/^$test_descriptive_datestring_regex$/, "$test_date matches the descriptive_datestring_regex");
-                my $result = DatesUtilTester::parse_descriptive_datestring_to_date($test_date);
+                my $result = parse_descriptive_datestring_to_date($test_date);
                 isa_ok($result, 'DateTime', $test_date);
-                is(DatesUtilTester::date_output_string($result), $strings{$test_date}, $test_date . ' relative to ' . $query_time);
+                is(date_output_string($result), $strings{$test_date}, $test_date . ' relative to ' . $query_time);
             }
         }
         restore_time();
@@ -482,7 +479,7 @@ subtest 'Dates' => sub {
 
         foreach my $test_mixed_date (sort keys %mixed_dates_to_test) {
             like($test_mixed_date, qr/^$test_datestring_regex$/, "$test_mixed_date matches the datestring_regex");
-            my $parsed_date_object = DatesUtilTester::parse_datestring_to_date($test_mixed_date);
+            my $parsed_date_object = parse_datestring_to_date($test_mixed_date);
             isa_ok($parsed_date_object, 'DateTime', $test_mixed_date);
             is($parsed_date_object->epoch, $mixed_dates_to_test{$test_mixed_date}, ' ... represents the correct time.');
         }
@@ -495,7 +492,7 @@ subtest 'Dates' => sub {
         {
             package DDG::Goodie::FakerDater;
             use Moo;
-            with 'DDG::Util::Dates';
+            use DDG::Util::Dates;
             our $loc = $test_location;
             sub pds { shift; parse_datestring_to_date(@_); }
             1;
@@ -520,7 +517,7 @@ subtest 'Dates' => sub {
         foreach my $case (@valids) {
             my $result;
             lives_ok {
-                $result = DatesUtilTester::is_valid_year($case)
+                $result = is_valid_year($case)
             };
             is($result, "1", "$case is a valid year");
         }
@@ -528,7 +525,7 @@ subtest 'Dates' => sub {
         foreach my $case (@invalids) {
             my $result;
             lives_ok {
-                $result = DatesUtilTester::is_valid_year($case)
+                $result = is_valid_year($case)
             };
             is($result, '', "$case is an invalid year");
         }
