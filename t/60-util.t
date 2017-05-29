@@ -10,11 +10,11 @@ use DDG::Test::Location;
 
 subtest 'NumberStyler' => sub {
 
-    { package NumberRoleTester; use Moo; with 'DDG::Role::NumberStyler'; 1; }
+    { package NumberUtilTester; use Moo; with 'DDG::Util::NumberStyler'; 1; }
 
     subtest 'Initialization' => sub {
-        new_ok('NumberRoleTester', [], 'Applied to a class');
-        isa_ok(NumberRoleTester::number_style_regex(), 'Regexp', 'number_style_regex()');
+        new_ok('NumberUtilTester', [], 'Applied to a class');
+        isa_ok(NumberUtilTester::number_style_regex(), 'Regexp', 'number_style_regex()');
     };
 
     subtest 'Valid numbers' => sub {
@@ -33,11 +33,11 @@ subtest 'NumberStyler' => sub {
             [['-1,1E25', '4,5E-25'] => 'euro'],
         );
 
-        my $number_style_regex = NumberRoleTester::number_style_regex();
+        my $number_style_regex = NumberUtilTester::number_style_regex();
         foreach my $tc (@valid_test_cases) {
             my @numbers           = @{$tc->[0]};
             my $expected_style_id = $tc->[1];
-            is(NumberRoleTester::number_style_for(@numbers)->id,
+            is(NumberUtilTester::number_style_for(@numbers)->id,
                 $expected_style_id, '"' . join(' ', @numbers) . '" yields a style of ' . $expected_style_id);
             like($_, qr/^$number_style_regex$/, "$_ matches the number_style_regex") for(@numbers);
         }
@@ -56,7 +56,7 @@ subtest 'NumberStyler' => sub {
         foreach my $tc (@invalid_test_cases) {
             my @numbers = @{$tc->[0]};
             my $why_not = $tc->[1];
-            is(NumberRoleTester::number_style_for(@numbers), undef, '"' . join(' ', @numbers) . '" fails because it ' . $why_not);
+            is(NumberUtilTester::number_style_for(@numbers), undef, '"' . join(' ', @numbers) . '" fails because it ' . $why_not);
         }
     };
 
@@ -64,19 +64,19 @@ subtest 'NumberStyler' => sub {
 
 subtest 'Dates' => sub {
 
-    { package DatesRoleTester; use Moo; with 'DDG::Role::Dates'; 1; }
+    { package DatesUtilTester; use Moo; with 'DDG::Util::Dates'; 1; }
 
     my $test_datestring_regex;
     my $test_formatted_datestring_regex;
     my $test_descriptive_datestring_regex;
 
     subtest 'Initialization' => sub {
-        new_ok('DatesRoleTester', [], 'Applied to a class');
-        $test_datestring_regex = DatesRoleTester::datestring_regex();
+        new_ok('DatesUtilTester', [], 'Applied to a class');
+        $test_datestring_regex = DatesUtilTester::datestring_regex();
         isa_ok($test_datestring_regex, 'Regexp', 'datestring_regex()');
-        $test_formatted_datestring_regex = DatesRoleTester::formatted_datestring_regex();
+        $test_formatted_datestring_regex = DatesUtilTester::formatted_datestring_regex();
         isa_ok($test_formatted_datestring_regex, 'Regexp', 'formatted_datestring_regex()');
-        $test_descriptive_datestring_regex = DatesRoleTester::descriptive_datestring_regex();
+        $test_descriptive_datestring_regex = DatesUtilTester::descriptive_datestring_regex();
         isa_ok($test_descriptive_datestring_regex, 'Regexp', 'descriptive_datestring_regex()');
     };
 
@@ -155,7 +155,7 @@ subtest 'Dates' => sub {
             $test_formatted_datestring_regex =~ qr/^$test_datestring_regex$/;
             ok(scalar @- == 1 && scalar @+ == 1, ' with no sub-captures.');
 
-            my $date_object = DatesRoleTester::parse_formatted_datestring_to_date($test_date);
+            my $date_object = DatesUtilTester::parse_formatted_datestring_to_date($test_date);
             isa_ok($date_object, 'DateTime', $test_date);
             is($date_object->epoch, $dates_to_match{$test_date}, '... which represents the correct time.');
         }
@@ -210,7 +210,7 @@ subtest 'Dates' => sub {
 
         foreach my $set (@date_sets) {
             my @source = @{$set->{src}};
-            eq_or_diff([map { $_->epoch } (DatesRoleTester::parse_all_datestrings_to_date(@source))],
+            eq_or_diff([map { $_->epoch } (DatesUtilTester::parse_all_datestrings_to_date(@source))],
                 $set->{output}, '"' . join(', ', @source) . '": dates parsed correctly');
         }
     };
@@ -247,7 +247,7 @@ subtest 'Dates' => sub {
         foreach my $set (@date_sets) {
             my @source = @{$set->{src}};
             my @expectation = @{$set->{out}};
-            my @result = DatesRoleTester::parse_all_datestrings_to_date(@source);
+            my @result = DatesUtilTester::parse_all_datestrings_to_date(@source);
             is_deeply(\@result, \@expectation, join(", ", @source));
         }
 
@@ -281,7 +281,7 @@ subtest 'Dates' => sub {
 
             my @source = @{$time_strings{$query_time}{src}};
             my @expectation = @{$time_strings{$query_time}{output}};
-            my @result = DatesRoleTester::parse_all_datestrings_to_date(@source);
+            my @result = DatesUtilTester::parse_all_datestrings_to_date(@source);
 
             is_deeply(\@result, \@expectation);
         }
@@ -307,7 +307,7 @@ subtest 'Dates' => sub {
             }
 
             my $result;
-            lives_ok { $result = DatesRoleTester::parse_formatted_datestring_to_date($test_string) } '... and does not kill the parser.';
+            lives_ok { $result = DatesUtilTester::parse_formatted_datestring_to_date($test_string) } '... and does not kill the parser.';
             is($result, undef, '... and returns undef to signal failure.');
         }
     };
@@ -324,7 +324,7 @@ subtest 'Dates' => sub {
 
         foreach my $set (@invalid_date_sets) {
             my @source       = @$set;
-            my @date_results = DatesRoleTester::parse_all_datestrings_to_date(@source);
+            my @date_results = DatesUtilTester::parse_all_datestrings_to_date(@source);
             is(@date_results, 0, '"' . join(', ', @source) . '": cannot be parsed in combination.');
         }
     };
@@ -337,7 +337,7 @@ subtest 'Dates' => sub {
 
         foreach my $result (sort keys %date_strings) {
             foreach my $test_string (@{$date_strings{$result}}) {
-                is(DatesRoleTester::date_output_string($test_string), $result, $test_string . ' normalizes for output as ' . $result);
+                is(DatesUtilTester::date_output_string($test_string), $result, $test_string . ' normalizes for output as ' . $result);
             }
         }
     };
@@ -351,7 +351,7 @@ subtest 'Dates' => sub {
         );
         foreach my $result (sort keys %date_strings) {
             foreach my $test_string (@{$date_strings{$result}}) {
-                is(DatesRoleTester::date_output_string($test_string, 1), $result, $test_string . ' normalizes for output as ' . $result);
+                is(DatesUtilTester::date_output_string($test_string, 1), $result, $test_string . ' normalizes for output as ' . $result);
             }
         }
     };
@@ -359,11 +359,11 @@ subtest 'Dates' => sub {
         my %bad_stuff = (
             'Empty string' => '',
             'Hashref'      => {},
-            'Object'       => DatesRoleTester->new,
+            'Object'       => DatesUtilTester->new,
         );
         foreach my $description (sort keys %bad_stuff) {
             my $result;
-            lives_ok { $result = DatesRoleTester::date_output_string($bad_stuff{$description}) } $description . ' does not kill the string output';
+            lives_ok { $result = DatesUtilTester::date_output_string($bad_stuff{$description}) } $description . ' does not kill the string output';
             is($result, '', '... and yields an empty string as a result');
         }
     };
@@ -448,9 +448,9 @@ subtest 'Dates' => sub {
             my %strings = %{$time_strings{$query_time}};
             foreach my $test_date (sort keys %strings) {
                 like($test_date, qr/^$test_descriptive_datestring_regex$/, "$test_date matches the descriptive_datestring_regex");
-                my $result = DatesRoleTester::parse_descriptive_datestring_to_date($test_date);
+                my $result = DatesUtilTester::parse_descriptive_datestring_to_date($test_date);
                 isa_ok($result, 'DateTime', $test_date);
-                is(DatesRoleTester::date_output_string($result), $strings{$test_date}, $test_date . ' relative to ' . $query_time);
+                is(DatesUtilTester::date_output_string($result), $strings{$test_date}, $test_date . ' relative to ' . $query_time);
             }
         }
         restore_time();
@@ -484,7 +484,7 @@ subtest 'Dates' => sub {
 
         foreach my $test_mixed_date (sort keys %mixed_dates_to_test) {
             like($test_mixed_date, qr/^$test_datestring_regex$/, "$test_mixed_date matches the datestring_regex");
-            my $parsed_date_object = DatesRoleTester::parse_datestring_to_date($test_mixed_date);
+            my $parsed_date_object = DatesUtilTester::parse_datestring_to_date($test_mixed_date);
             isa_ok($parsed_date_object, 'DateTime', $test_mixed_date);
             is($parsed_date_object->epoch, $mixed_dates_to_test{$test_mixed_date}, ' ... represents the correct time.');
         }
@@ -497,7 +497,7 @@ subtest 'Dates' => sub {
         {
             package DDG::Goodie::FakerDater;
             use Moo;
-            with 'DDG::Role::Dates';
+            with 'DDG::Util::Dates';
             our $loc = $test_location;
             sub pds { shift; parse_datestring_to_date(@_); }
             1;
@@ -522,7 +522,7 @@ subtest 'Dates' => sub {
         foreach my $case (@valids) {
             my $result;
             lives_ok {
-                $result = DatesRoleTester::is_valid_year($case)
+                $result = DatesUtilTester::is_valid_year($case)
             };
             is($result, "1", "$case is a valid year");
         }
@@ -530,7 +530,7 @@ subtest 'Dates' => sub {
         foreach my $case (@invalids) {
             my $result;
             lives_ok {
-                $result = DatesRoleTester::is_valid_year($case)
+                $result = DatesUtilTester::is_valid_year($case)
             };
             is($result, '', "$case is an invalid year");
         }
@@ -541,11 +541,11 @@ subtest 'ImageLoader' => sub {
 
     subtest 'object with no share' => sub {
         # We have to wrap the function in a method in order to get the call-stack correct.
-        { package ImgRoleTester; use Moo; with 'DDG::Role::ImageLoader'; sub img_wrap { shift; goodie_img_tag(@_); } 1; }
+        { package ImgUtilTester; use Moo; with 'DDG::Util::ImageLoader'; sub img_wrap { shift; goodie_img_tag(@_); } 1; }
 
         my $no_share;
         subtest 'Initialization' => sub {
-            $no_share = new_ok('ImgRoleTester', [], 'Applied to class');
+            $no_share = new_ok('ImgUtilTester', [], 'Applied to class');
         };
 
         subtest 'non-share enabled object attempts' => sub {
@@ -574,7 +574,7 @@ subtest 'ImageLoader' => sub {
             use HTML::Entities;
             use Path::Class;    # Hopefully the real share stays implemented this way.
             use MIME::Base64;
-            with 'DDG::Role::ImageLoader';
+            with 'DDG::Util::ImageLoader';
             our $tmp_dir = Path::Class::tempdir(CLEANUP => 1);
             our $tmp_file = file(($tmp_dir->tempfile(TEMPLATE => 'img_XXXXXX', SUFFIX => '.gif'))[1]);
             # Always return the same file for our purposes here.

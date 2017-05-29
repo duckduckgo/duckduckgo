@@ -1,4 +1,4 @@
-package DDG::Role::Parse::List;
+package DDG::Util::Parse::List;
 # ABSTRACT: Parse and format lists.
 
 use strict;
@@ -128,11 +128,11 @@ sub format_list {
 
 =head1 NAME
 
-DDG::Role::Parse::List - Utilities for working with lists in queries.
+DDG::Util::Parse::List - Utilities for working with lists in queries.
 
 =head1 SYNOPSIS
 
-    with 'DDG::Role::Parse::List';
+    with 'DDG::Util::Parse::List';
 
     my $list_text = '(1, 2, 3)';
 
@@ -144,7 +144,7 @@ DDG::Role::Parse::List - Utilities for working with lists in queries.
 
 =head1 DESCRIPTION
 
-This Role provides utilities for parsing, formatting, and working with lists
+This Util provides utilities for parsing, formatting, and working with lists
 in queries.
 
 =head2 ROUTINES

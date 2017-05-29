@@ -1,4 +1,4 @@
-package DDG::Role::Chess;
+package DDG::Util::Chess;
 # ABSTRACT: Helper function to parse a FEN string and draw a chessboard. 
 # We could in principle use Chess::PGN::EPD, but that module does not provide
 # the HTML output, so we just implement what we need and don't add a dependecny.

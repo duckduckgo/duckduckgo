@@ -25,7 +25,7 @@ sub format_test {
 }
 
 subtest initialization => sub {
-    { package ListTester; use Moo; with 'DDG::Role::Parse::List'; 1; }
+    { package ListTester; use Moo; with 'DDG::Util::Parse::List'; 1; }
 
     new_ok('ListTester', [], 'Applied to a class');
 };

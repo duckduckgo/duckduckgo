@@ -1,23 +1,23 @@
-package DDG::Role::NumberStyler;
+package DDG::Util::NumberStyler;
 # ABSTRACT: A role to allow Goodies to recognize and work with numbers in different notations.
 
 use strict;
 use warnings;
 
 use Moo::Role;
-use DDG::Role::NumberStyle;
+use DDG::Util::NumberStyle;
 
 use List::Util qw( all first );
 
 # If it could fit more than one the first in order gets preference.
 my @known_styles = (
-    DDG::Role::NumberStyle->new({
+    DDG::Util::NumberStyle->new({
             id        => 'perl',
             decimal   => '.',
             thousands => ',',
         }
     ),
-    DDG::Role::NumberStyle->new({
+    DDG::Util::NumberStyle->new({
             id        => 'euro',
             decimal   => ',',
             thousands => '.',
