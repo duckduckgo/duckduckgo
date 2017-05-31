@@ -7,6 +7,7 @@ use File::ShareDir 'dist_file';
 use LWP::UserAgent;
 use File::Copy::Recursive 'pathmk';
 use List::Util qw( all any );
+use File::Copy;
 
 use strict;
 
@@ -35,22 +36,48 @@ unless(%ia_metadata){
     debug && warn "Processing metadata";
 
     my $f = "$mdir/metadata.json.bz2";
+    my $tmp_bak = "$f.bak";
+    my @timestamps = (stat $f)[8,9];
+    if(-e $f){
+        copy $f, $tmp_bak or die "Failed to copy $f to $tmp_bak: $!";;
+    }
+    utime @timestamps, $tmp_bak;
+    my $restore_backup = sub {
+        move $tmp_bak, $f or die "Failed to move backup $tmp_bak to $f: $!";
+        utime @timestamps, $f;
+    };
+
     unless($ENV{NO_METADATA_DOWNLOAD}){
         my $ua = LWP::UserAgent->new;
         $ua->timeout(5);
         $ua->default_header('Accept-Encoding' => scalar HTTP::Message::decodable());
         my $res = $ua->mirror('http://ddg-community.s3.amazonaws.com/metadata/repo_all.json.bz2', $f);
         unless($res->is_success || $res->code == 304){
-            debug && warn "Failed to download metdata: " . $res->status_line;
+            debug && warn "Failed to download metdata: " . $res->status_line . " .  Restoring backup from $tmp_bak";
+            $restore_backup->();
         }
     }
 
-    # Decompress to command-line
-    open my $fh, "bzip2 -dc $f |" or die "Failed to open file $f: $!";
-    # slurp into a single string
-    my $json = do { local $/;  <$fh> };
-    close $fh;
-    my $metadata = decode_json($json);
+    my $metadata;
+    while(!$metadata){
+        eval {
+            # Decompress to command-line
+            open my $fh, "bzip2 -dc $f |" or die "Failed to open file $f: $!";
+            # slurp into a single string
+            my $json = do { local $/;  <$fh> };
+            $metadata = decode_json($json);
+        }
+        or do {
+            if(-e $tmp_bak){
+                debug && warn "Failed to process metadata $f: $@. Restoring backup from $tmp_bak";
+                $restore_backup->();
+            }
+            else{
+                die "Failed to to process metadata from $f: $@";
+            }
+        };
+    }
+    unlink $tmp_bak if -e $tmp_bak;
 
     # { "<id>": {
     #     "id": " "
