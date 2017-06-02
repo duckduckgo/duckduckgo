@@ -36,6 +36,11 @@ has block_type => (
 	predicate => 'has_block_type',
 );
 
+has has_triggers => (
+	is      => 'ro',
+	default => 0,
+);
+
 sub get { shift->triggers }
 
 sub add {
@@ -48,12 +53,19 @@ sub add {
 	} elsif (ref $args[0] eq 'Regexp') {
 		%params = ( $default_regexp_type => [@args] );
 	} else {
-		if (scalar @args > 2) {
-			%params = ( $args[0] => [@args[1..(scalar @args-1)]] );
-		} else {
-			%params = ( $args[0] => $args[1] );
+		my @words;
+		if (ref $args[1] eq 'ARRAY') {
+			@words = grep { defined } @{$args[1]};
 		}
+		elsif (scalar @args > 2) {
+			@words = grep { defined } @args[1..(scalar @args-1)];
+		}
+		else {
+			%params = ( $args[0] => $args[1] ) if defined $args[1];
+		}
+		%params = ( $args[0] => \@words ) if @words;
 	}
+	$self->{has_triggers} = 1 if (keys %params);
 	for (keys %params) {
 		my $trigger_type = $_;
 		my @triggers = ref $params{$trigger_type} eq 'ARRAY' ? @{$params{$trigger_type}} : ($params{$trigger_type});
@@ -79,7 +91,6 @@ sub add_triggers {
 		}
 	}
 	croak "your trigger_type '".$trigger_type."' is unknown" unless $self->has_block_type;
-	$self->triggers->{$_} = [] unless defined $self->triggers->{$_};
 	push @{$self->triggers->{$_}}, @triggers;
 }
 

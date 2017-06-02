@@ -56,7 +56,9 @@ Gives back if the plugin has triggers at all
 
 =cut
 
-	$stash->add_symbol('&has_triggers',sub { $triggers ? 1 : 0 });
+	$stash->add_symbol('&has_triggers',sub {
+			defined($triggers) && $triggers->has_triggers;
+	});
 
 =keyword triggers
 
