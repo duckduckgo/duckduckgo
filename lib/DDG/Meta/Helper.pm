@@ -7,6 +7,7 @@ use Carp qw( croak );
 use Package::Stash;
 use HTML::Entities;
 use URI::Escape;
+use Data::Entropy::Algorithms qw(rand_int);
 
 =head1 SYNOPSIS
 
@@ -64,6 +65,17 @@ Use booleans true and false to set options.
 
     $stash->add_symbol('&true', sub { 1 });
     $stash->add_symbol('&false', sub { 0 });
+
+=keyword rand_int
+
+generates random integer between 0 and supplied max integer (max defaults to 1).
+
+=cut
+
+	$stash->add_symbol('&rand_int', sub { 	
+		my $max = shift || 1;
+		return rand_int($max);
+	});
 }
 
 1;

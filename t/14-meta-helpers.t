@@ -56,4 +56,20 @@ subtest 'uri_esc' => sub {
     };
 };
 
+subtest 'rand_int' => sub {
+	my $res = DDGTest::Goodie::MetaOnly::rand_int();
+	ok(($res==0||$res==1), 'no input');
+
+	$res = DDGTest::Goodie::MetaOnly::rand_int(10);
+	ok(($res>=0||$res<=10), 'between 0-10');
+	ok($res==int($res),   'is integer');
+
+	for (my $i=10; $i<500; $i+=25) {
+		$res = DDGTest::Goodie::MetaOnly::rand_int($i);
+		ok(($res>=0||$res<=$i), "between 0-$i");
+	}
+};
+
+
+
 done_testing;
