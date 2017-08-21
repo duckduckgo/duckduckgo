@@ -35,6 +35,7 @@ unless(country2code('DuckDuckGo')){
     Locale::Country::rename_country('va' => 'the Holy See (Vatican City State)');
     Locale::Country::rename_country('vg' => 'the British Virgin Islands');
     Locale::Country::rename_country('vi' => 'the US Virgin Islands');
+    Locale::Country::rename_country('cz' => 'Czechia');
     
     # Easter eggs
     Locale::Country::add_country_alias('Russian Federation' => 'Kremlin');
