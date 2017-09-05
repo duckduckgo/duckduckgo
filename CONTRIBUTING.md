@@ -1,22 +1,31 @@
-# Contributing to the **DuckDuckGo** repository
+<p align="center">
+  <img src="https://pbs.twimg.com/profile_images/542062260600840192/nK5NSKBY_400x400.png" height="180px" width="180px" alt="ddg logo" />
+</p>
 
-At DuckDuckGo, we truly appreciate our community members taking the time to contribute to our open-source repositories. In an effort to ensure contributions are easy for you to make and for us to manage, we have written some guidelines that we ask our contributors to follow so that we can handle pull requests in a timely manner with as little friction as possible.
+<p align="center">
+  <a href="https://duckduckhack.com/contributing.html">>> DUCKDUCKHACK CONTRIBUTING.MD <<</a>
+</p>
+  
+<p align="center">This document is hosted on our community website. Please use above link or the table of contents below.</p>
 
-## Getting Started
+* * *
 
-Before you can do anything, you first need a [GitHub account](https://github.com/signup/free). This is required because we use GitHub to handle all incoming *Pull Requests* (code modifications) and *Issues* (bug reports) which cannot be made without a GitHub account.
+# In Maintenance
 
-## Submitting a **Bug** or **Suggestion**
+DuckDuckHack is now in maintenance mode. We are only accepting pull requests for essential bug fixes. For more information see [duckduckhack.com](https://duckduckhack.com). 
 
-- Firstly, please make sure the bug is related to the **DuckDuckGo** repository. If this bug is about the DuckDuckGo API, or the relevancy of our search results, please visit our feedback page at <https://duckduckgo.com/feedback>. If you're unsure, its best to use the feedback page (your message will be passed along to the correct people).
 
-- Check the **DuckDuckGo** [issues](https://github.com/duckduckgo/duckduckgo/issues) to see if an issue already exists for the given bug or suggestion
-  - If one doesn't exist, create a GitHub issue in the **DuckDuckGo** repository
-    - Clearly describe the bug/improvemnt, including steps to reproduce when it is a bug
-  - If one already exists, please add any additional comments you have regarding the matter
+## Contents
 
-## Submitting Changes
+- [Our Core Values](https://duckduckhack.com/contributing.html#our-core-values)
+- [Reporting Issues](https://duckduckhack.com/contributing.html#reporting-issues)
+- [Making Pull Requests](https://duckduckhack.com/contributing.html#pull-requests)
+  - [New Instant Answers](https://duckduckhack.com/contributing.html#new-instant-answers)
+  - [Improvements](https://duckduckhack.com/contributing.html#improvements)
+- [Not Following these guidelines?](https://duckduckhack.com/contributing.html#not-following-these-guidelines)
+- [Not Sure?](https://duckduckhack.com/contributing.html#not-sure)
 
-- Find detailed instructions for adding an **Instant Answer** [here](http://docs.duckduckhack.com/submitting/pull-request.html)
-- For other changes, see [this handy guide](http://docs.duckduckhack.com/resources/git-workflow.html) on submitting a pull request
 
+## DuckDuckGo.com & DuckDuckGo API Bugs
+
+Bugs related to the DuckDuckGo API, or the relevancy of our search results, should be reported on our feedback page at <https://duckduckgo.com/feedback>. If you're unsure, its best to use the feedback page (your message will be passed along to the correct people).
