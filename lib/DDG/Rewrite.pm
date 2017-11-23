@@ -153,6 +153,7 @@ sub _build_nginx_conf {
 	my $wrap_jsonp_callback = $self->has_callback && $self->wrap_jsonp_callback;
 	my $wrap_string_callback = $self->has_callback && $self->wrap_string_callback;
 	my $uses_echo_module = $wrap_jsonp_callback || $wrap_string_callback;
+	my $content_type_javascript = $self->has_content_type_javascript;
 	my $callback = $self->callback;
 	my ($spice_name) = $self->path =~ m{^/js/spice/(.+)/$};
 	$spice_name =~ s|/|_|og if $spice_name;
@@ -205,11 +206,13 @@ sub _build_nginx_conf {
 		# will intersperse plaintext with gzip which results in encoding errors.
 		# https://github.com/agentzh/echo-nginx-module/issues/30
 		$cfg .= "\tproxy_set_header Accept-Encoding '';\n";
+	}
 
+	if($uses_echo_module || $content_type_javascript) {
 		# This is a workaround that deals with endpoints that don't support callback functions.
 		# So endpoints that don't support callback functions return a content-type of 'application/json'
 		# because what they're returning is not meant to be executed in the first place.
-		# Setting content-type to application/javascript for those endpoints solves blocking due to 
+		# Setting content-type to application/javascript for those endpoints solves blocking due to
 		# mime type mismatches.
 		$cfg .= "\tmore_set_headers 'Content-Type: application/javascript; charset=utf-8';\n";
 	}
