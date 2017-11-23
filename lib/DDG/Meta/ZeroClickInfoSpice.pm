@@ -36,7 +36,7 @@ my %applied;
 
 sub apply_keywords {
 	my ( $class, $target ) = @_;
-	
+
 	return if exists $applied{$target};
 	$applied{$target} = undef;
 
@@ -48,8 +48,9 @@ sub apply_keywords {
 		call => $path,
 		wrap_jsonp_callback => 0,
 		wrap_string_callback => 0,
+		content_type_javascript => 0,
 		accept_header => 0,
-                upstream_timeouts => +{},
+		upstream_timeouts => +{},
 	);
 
 	my $stash = Package::Stash->new($target);
@@ -158,7 +159,7 @@ sub apply_keywords {
 		unless (defined $rewrite) {
 			if ($target->has_rewrite) {
 				$rewrite = create_rewrite($callback, $path, \%zcispice_params);
-			} 
+			}
 			else {
 				$rewrite = '';
 			}
@@ -186,7 +187,7 @@ sub apply_keywords {
 	$stash->add_symbol('&get_nginx_conf',sub {
 		my $nginx_conf_func = $stash->get_symbol('&nginx_conf');
 		return $nginx_conf_func->(@_) if $nginx_conf_func;
- 
+
 		# (20151208 zt) just in case downstream can't handle undef ;-/
 		my $conf = '';
 		if($target->has_rewrite){

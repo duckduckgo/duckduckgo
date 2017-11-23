@@ -131,9 +131,8 @@ has upstream_timeouts => (
 );
 
 has content_type_javascript => (
-	is => 'lazy',
-	predicate => 'has_content_type_javascript',
-	default => sub { 0 }
+	is => 'ro',
+	default => sub { 0 },
 );
 
 sub _build_nginx_conf {
@@ -153,7 +152,8 @@ sub _build_nginx_conf {
 	my $wrap_jsonp_callback = $self->has_callback && $self->wrap_jsonp_callback;
 	my $wrap_string_callback = $self->has_callback && $self->wrap_string_callback;
 	my $uses_echo_module = $wrap_jsonp_callback || $wrap_string_callback;
-	my $content_type_javascript = $self->has_content_type_javascript && $self->content_type_javascript;
+	my $content_type_javascript = $self->content_type_javascript;
+
 	my $callback = $self->callback;
 	my ($spice_name) = $self->path =~ m{^/js/spice/(.+)/$};
 	$spice_name =~ s|/|_|og if $spice_name;
