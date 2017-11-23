@@ -60,6 +60,31 @@ is($rewrite->nginx_conf,'location ^~ /js/spice/spice_name/ {
 }
 ','Checking generated nginx.conf');
 
+my $jsContentTypeRewrite = DDG::Rewrite->new(
+	path => '/js/spice/spice_name/',
+	from => '([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|)',
+	to => 'http://some.api/$1/?a=$2&b=$3&cb={{callback}}&ak={{ENV{DDGTEST_DDG_REWRITE_TEST_API_KEY}}}',
+	callback => 'test',
+	proxy_cache_valid => '418 1d',
+	content_type_javascript => 1
+);
+
+isa_ok($jsContentTypeRewrite,'DDG::Rewrite');
+
+is($jsContentTypeRewrite->missing_envs ? 1 : 0,0,'Checking now not missing ENV');
+is($jsContentTypeRewrite->nginx_conf,'location ^~ /js/spice/spice_name/ {
+	more_set_headers \'Content-Type: application/javascript; charset=utf-8\';
+	set $spice_name_upstream http://some.api:80;
+	rewrite ^/js/spice/spice_name/([^/]+)/?(?:([^/]+)/?(?:([^/]+)|)|) /$1/?a=$2&b=$3&cb=test&ak=1 break;
+	proxy_pass $spice_name_upstream;
+	proxy_cache_valid 418 1d;
+	proxy_ignore_headers X-Accel-Expires Expires Cache-Control Set-Cookie;
+	proxy_intercept_errors on;
+	error_page 301 302 303 403 404 500 502 503 504 =200 /js/failed/test;
+	expires 1s;
+}
+','Checking generated nginx.conf');
+
 my $dollarrewrite = DDG::Rewrite->new(
 	path => '/js/spice/spice_name/',
 	to => 'http://some.api/{{dollar}}',
