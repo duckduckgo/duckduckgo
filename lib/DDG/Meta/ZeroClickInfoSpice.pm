@@ -28,7 +28,8 @@ sub zeroclickinfospice_attributes {qw(
 	ttl
 	error_fallback
 	alt_to
-        upstream_timeouts
+	upstream_timeouts
+	content_type_javascript
 )}
 
 my %applied;
@@ -62,7 +63,8 @@ sub apply_keywords {
 		delete $params{'accept_header'};
 		delete $params{'proxy_cache_valid'};
 		delete $params{'proxy_ssl_session_reuse'};
-                delete $params{'upstream_timeouts'};
+		delete $params{'upstream_timeouts'};
+		delete $params{'content_type_javascript'};
 		return DDG::ZeroClickInfo::Spice->new(
 			%params,
 		);

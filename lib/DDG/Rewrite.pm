@@ -130,6 +130,12 @@ has upstream_timeouts => (
     default => sub { +{} },
 );
 
+has content_type_javascript => (
+	is => 'lazy',
+	predicate => 'has_content_type_javascript',
+	default => sub { 0 }
+);
+
 sub _build_nginx_conf {
 	my ( $self ) = @_;
 
