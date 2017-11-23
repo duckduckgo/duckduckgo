@@ -239,6 +239,7 @@ sub create_rewrite {
 		to => $params->{to},
 		defined $params->{from} ? ( from => $params->{from}) : (),
 		defined $params->{proxy_cache_valid} ? ( proxy_cache_valid => $params->{proxy_cache_valid} ) : (),
+		defined $params->{content_type_javascript} ? ( content_type_javascript => $params->{content_type_javascript} ) : (),
 		defined $params->{proxy_ssl_session_reuse} ? ( proxy_ssl_session_reuse => $params->{proxy_ssl_session_reuse} ) : (),
 		defined $params->{post_body} ? ( post_body => $params->{post_body} ) : (),
 		callback => $callback,
@@ -247,7 +248,7 @@ sub create_rewrite {
 		wrap_string_callback => $params->{wrap_string_callback},
 		headers => $params->{headers},
 		error_fallback => $params->{error_fallback},
-                upstream_timeouts => $params->{upstream_timeouts},
+		upstream_timeouts => $params->{upstream_timeouts},
 	);
 }
 
