@@ -35,7 +35,7 @@ unless(%ia_metadata){
 
     debug && warn "Processing metadata";
 
-    my $f = "$mdir/metadata.json.bz2";
+    my $f = "$mdir/metadata.json.gz";
     my $tmp_bak = "$f.bak";
     my @timestamps = (stat $f)[8,9];
     if(-e $f){
@@ -50,8 +50,8 @@ unless(%ia_metadata){
     unless($ENV{NO_METADATA_DOWNLOAD}){
         my $ua = LWP::UserAgent->new;
         $ua->timeout(5);
-        $ua->default_header('Accept-Encoding' => scalar HTTP::Message::decodable());
-        my $res = $ua->mirror('http://ddg-community.s3.amazonaws.com/metadata/repo_all.json.bz2', $f);
+        $ua->default_header('Accept-Encoding' => 'gzip');
+        my $res = $ua->mirror('https://john.duckduckgo.com/iameta.json', $f);
         unless($res->is_success || $res->code == 304){
             debug && warn "Failed to download metdata: " . $res->status_line . " .  Restoring backup from $tmp_bak";
             $restore_backup->();
@@ -62,7 +62,7 @@ unless(%ia_metadata){
     while(!$metadata){
         eval {
             # Decompress to command-line
-            open my $fh, "bzip2 -dc $f |" or die "Failed to open file $f: $!";
+            open my $fh, "gzip -dc $f |" or die "Failed to open file $f: $!";
             # slurp into a single string
             my $json = do { local $/;  <$fh> };
             $metadata = decode_json($json);
