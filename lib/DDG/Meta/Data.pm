@@ -51,7 +51,7 @@ unless(%ia_metadata){
         my $ua = LWP::UserAgent->new;
         $ua->timeout(5);
         $ua->default_header('Accept-Encoding' => 'gzip');
-        my $res = $ua->mirror('https://john.duckduckgo.com/iameta.json', $f);
+        my $res = $ua->mirror('https://duckduckgo.com/iameta.json', $f);
         unless($res->is_success || $res->code == 304){
             debug && warn "Failed to download metdata: " . $res->status_line . " .  Restoring backup from $tmp_bak";
             $restore_backup->();
