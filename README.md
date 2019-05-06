@@ -2,7 +2,7 @@
 
 This repo is **only** for issues related to the DuckDuckHack (ZeroClickInfo) Architecture.
 
-General DuckDuckGo issues (unrelated to our open source projects) should be reported here: **https://duckduckgo.com/feedback**, or via the "Feedback" button in the bottom right corner of the search results page.
+General DuckDuckGo issues (unrelated to our open source projects) should be reported via the "Feedback" button in the bottom right corner of the search results page.
 
 # DuckDuckHack (Core) [![Build Status](https://travis-ci.org/duckduckgo/duckduckgo.png?branch=master)](https://travis-ci.org/duckduckgo/duckduckgo)
 
