@@ -8,7 +8,6 @@ use utf8;
 use FindBin qw($Bin);
 use lib "$Bin/lib";
 
-use DDG::Test::Longtail;
 use DDGTest::Longtail::MetaOnly;
 
 my $metaonly = DDGTest::Longtail::MetaOnly->new( block => undef );
