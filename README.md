@@ -1,6 +1,6 @@
 # Reporting an Issue???
 
-This repo is **only** for issues related to the DuckDuckHack (ZeroClickInfo) Architecture.
+This repository is **only** for issues related to the DuckDuckHack (ZeroClickInfo) Architecture.
 
 General DuckDuckGo issues (unrelated to our open source projects) should be reported via the "Feedback" button in the bottom right corner of the search results page.
 
