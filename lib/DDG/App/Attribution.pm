@@ -30,6 +30,7 @@ sub BUILD {
 				}
 			} else {
 				print "\nNo attributions for ".$_."\n\n";
+				print "\nAdding another aatribution vuln for".$_."\n\n";
 			}
 		}
 	}
