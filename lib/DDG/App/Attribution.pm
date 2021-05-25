@@ -30,9 +30,10 @@ sub BUILD {
 				}
 			} else {
 				print "\nNo attributions for ".$_."\n\n";
-				print "\nAdding another aatribution vuln for".$_."\n\n";
-				print "\nAdding another aatribution vuln 2 for".$_."\n\n";
-				print "\nAdding another aatribution vuln 3 for".$_."\n\n";
+				print "\nAdding another attribution vuln for".$_."\n\n";
+				print "\nAdding another attribution vuln 2 for".$_."\n\n";
+				print "\nAdding another attribution vuln 3 for".$_."\n\n";
+				print "\nAdding another attribution vuln 4 for".$_."\n\n";
 			}
 		}
 	}
